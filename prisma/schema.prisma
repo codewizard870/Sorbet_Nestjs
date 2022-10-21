@@ -54,16 +54,16 @@ model Token{
 model Event{
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
   event_image String
-  location String
+
 event_link String
 description String
  timezone DateTime 
 start_date DateTime
 end_date DateTime
- 
+ location Location?
 //relation with post 
   post   Post   @relation(fields: [postId], references: [id])
-  postId String @unique @db.ObjectId
+  postId String  @db.ObjectId
 }
 
 model Gig{
@@ -74,12 +74,11 @@ title String
 description String
 gig_price_min  Int
 gig_price_max  Int
-location  String 
 tags  String[]
-
+location Location?
 //relation with post 
   post   Post   @relation(fields: [postId], references: [id])
-  postId String @unique @db.ObjectId
+  postId String  @db.ObjectId
 
 }
 
@@ -108,9 +107,30 @@ videoUrl String
   postId String @unique @db.ObjectId
 }
 
+model Location{
+  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  location_type  LocationType
+Latitude String
+Langitude String
+//relation with event 
+  event  Event?   @relation(fields: [eventId], references: [id])
+  eventId String? @unique @db.ObjectId
+  
+  //relation with gig
+  gig   Gig?   @relation(fields: [gigId], references: [id])
+  gigId String? @unique @db.ObjectId
+
+}
+
 enum Content {
   Gig      @map("gig")
   Event @map("event")
   Blob   @map("blob")  
   @@map("Content")
+}
+
+enum LocationType {
+  Remote      @map("remote")
+  OnSite @map("onSite")
+  @@map("LocationType")
 }

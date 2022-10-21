@@ -9,9 +9,10 @@ import { TokensModule } from './utils/tokens/tokens.module';
 import { EventsModule } from './models/events/events.module';
 import { GigsModule } from './models/gigs/gigs.module';
 import { PostsModule } from './models/posts/posts.module';
+import { LocationsModule } from './models/locations/locations.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, TokensModule, EventsModule, GigsModule, PostsModule],
+  imports: [AuthModule, UsersModule, TokensModule, EventsModule, GigsModule, PostsModule, LocationsModule],
   controllers: [AppController],
   providers: [AppService,
     {

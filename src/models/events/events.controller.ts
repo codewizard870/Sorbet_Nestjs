@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-
-@Controller('events')
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
+@ApiTags('events')
+@Controller('/api/events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 

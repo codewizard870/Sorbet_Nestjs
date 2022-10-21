@@ -2,14 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { GigsService } from './gigs.service';
 import { CreateGigDto } from './dto/create-gig.dto';
 import { UpdateGigDto } from './dto/update-gig.dto';
-
-@Controller('gigs')
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
+@ApiTags('Gigs')
+@Controller('/api/gigs')
 export class GigsController {
   constructor(private readonly gigsService: GigsService) {}
 
   @Post()
-  create(@Body() createGigDto: CreateGigDto) {
-    return this.gigsService.create(createGigDto);
+ async create(@Body() createGigDto: CreateGigDto) {
+    return await this.gigsService.create(createGigDto);
   }
 
   @Get()
