@@ -2,10 +2,10 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { UsersModule } from './users/users.module';
-import { TokensModule } from './tokens/tokens.module';
+import { AuthModule } from './utils/auth/auth.module';
+import { JwtAuthGuard } from './utils/auth/guards/jwt-auth.guard';
+import { UsersModule } from './models/users/users.module';
+import { TokensModule } from './utils/tokens/tokens.module';
 
 @Module({
   imports: [AuthModule, UsersModule, TokensModule],

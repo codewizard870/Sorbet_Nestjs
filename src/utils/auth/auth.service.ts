@@ -1,4 +1,4 @@
-import { PasswordsService } from 'src/passwords/passwords.service';
+import { PasswordsService } from 'src/utils/passwords/passwords.service';
 /* eslint-disable prefer-const */
 import {
   BadRequestException,
@@ -6,8 +6,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UsersService } from 'src/users/users.service';
+import { PrismaService } from 'src/utils/prisma/prisma.service';
+import { UsersService } from 'src/models/users/users.service';
 import { ServerResponse } from 'http';
 import { ApiInternalServerErrorResponse } from '@nestjs/swagger';
 import { sendEmail } from './constants';
@@ -43,12 +43,12 @@ if(user){
   const content = {
     subject: "Please confirm your account",
     html: `<h1>Email Confirmation</h1>
-            <h2>Hello ${user.fullName}</h2>
+            <h2>Hello ${user.firstName}</h2>
             <p>Thank you for signing up. Please confirm your email by clicking on the following link</p>
             <a href=http://localhost:3003/confirm/${user.confirmationCode}> Click here</a>
             </div>`,
   };
-  sendEmail(user.fullName, user.email, content);
+  sendEmail(user.firstName, user.email, content);
 
   return {message: "User was registered successfully! Please check your email"}
 }
@@ -86,7 +86,8 @@ throw error;
 
     const obj={id: user._id,
     email: user.email,
-    fullName: user.fullName,
+    firstName:user.firstName,
+    lastName:user.lastName,
     jobProfile: user.jobProfile,
     location: user.location,
     bio: user.bio,
@@ -98,7 +99,10 @@ throw error;
   }
 
  async requestPasswordReset(email){
-  const user= this.usersService.getUserFromEmail(email);
+  const user= await this.usersService.getUserFromEmail(email);
+
+  console.log("user",user);
+  
   if(user){
     return await this.passwordsService.requestPasswordReset(user);
   }

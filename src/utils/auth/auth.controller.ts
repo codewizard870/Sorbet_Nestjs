@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { ForgetPasswordDto } from 'src/passwords/dto/forget-password.dto';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ForgetPasswordDto } from 'src/utils/passwords/dto/forget-password.dto';
+import { CreateUserDto } from 'src/models/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { Public } from './constants';
 import { LoginUserDto } from './dto/login-user.dto';
-
+@ApiBearerAuth()
 @ApiTags('auth')
 @Controller('/api/auth')
 export class AuthController {

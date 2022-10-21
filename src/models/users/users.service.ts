@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { PasswordsService } from 'src/passwords/passwords.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PasswordsService } from 'src/utils/passwords/passwords.service';
+import { PrismaService } from 'src/utils/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -24,7 +24,8 @@ export class UsersService {
          data.password = pass;
          const result = await this.prisma.user.create({
            data: {
-            fullName:data.fullName,
+            firstName:data.firstName,
+            lastName:data.lastName,
             email:data.email,
             password: data.password,
             jobProfile:data.jobProfile,
@@ -88,6 +89,15 @@ async getUserFromId(_id) {
   }
 };
 
+async getAll() {
+  try {
+    const user = await this.prisma.user.findMany();
+    return user;
+  } catch (error) {
+    console.log(`Error Occured, ${error}`);
+  }
+};
+
 async getUserFromConfirmationCode(confirmationCode)  {
   try {
     const user = await this.prisma.user.findFirst({
@@ -116,6 +126,19 @@ else{
 }
   
   }
+
+  async delete(_id,) {
+    const result= await this.prisma.user.delete({
+      where:{id:_id},
+    });
+    if(result){
+      return { message: "deleted Successfully" } ;
+    }
+    else{
+      return { message: "Something went wrong" };
+    }
+      
+      }
 
   
   async validateUser(email: string, pass: string) {

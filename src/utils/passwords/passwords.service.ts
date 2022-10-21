@@ -1,10 +1,10 @@
 import { BadGatewayException, BadRequestException, HttpException, ImATeapotException, Injectable } from '@nestjs/common';
 import { ApiBadGatewayResponse } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
-import crypto from "crypto";
-import { sendEmail } from 'src/auth/constants';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { TokensService } from 'src/tokens/tokens.service';
+import * as crypto from "crypto";
+import { sendEmail } from 'src/utils/auth/constants';
+import { PrismaService } from 'src/utils/prisma/prisma.service';
+import { TokensService } from 'src/utils/tokens/tokens.service';
 const saltOrRounds = 8;
 @Injectable()
 export class PasswordsService {
@@ -75,11 +75,11 @@ export class PasswordsService {
       const content = {
         subject: "Password Reset Successfully",
         html: `<h1>Password Reset Successfully</h1>
-                <h2>Hello ${user.fullName}</h2>
+                <h2>Hello ${user.firstName}</h2>
                 <p>Your password has been changed successfully</p>`,
       };
     
-      sendEmail(user.fullName, user.email, content);
+      sendEmail(user.firstName, user.email, content);
       await this.tokensService.deleteToken(passwordResetToken.id);
 return {message: "Password Reset Successfully"};
     }
