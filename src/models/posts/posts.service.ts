@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Content } from '@prisma/client';
 import { PrismaService } from 'src/utils/prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -11,18 +12,34 @@ export class PostsService {
   
   async create(data: CreatePostDto,email) {
     const existingUser=await this.usersService.getUserFromEmail(email);
+  if(data.content==='Gig'||data.content==='Event'){
     const result= await this.prismaService.post.create({
-        data:{
-    timestamp:data.timestamp,
-    text :data.text,
-    content:data.content,
-    userId:existingUser.id
-        }
+      data:{
+  timestamp:data.timestamp,
+  content:data.content,
+  userId:existingUser.id
       }
-    )
-  if(result){
-    return result;
+    }
+  )
+if(result){
+  return result;
+}
   }
+  else{
+    const result= await this.prismaService.post.create({
+      data:{
+  timestamp:data.timestamp,
+  text :data.text,
+  content:data.content,
+  userId:existingUser.id
+      }
+    }
+  )
+if(result){
+  return result;
+}
+  }
+    
   }
 
   findAll() {
