@@ -24,6 +24,7 @@ export class AuthService {
    generateToken(user: any) {
     const payload = {
       email: user.email,
+    
     };
 
     const token=this.jwtService.sign(payload);
@@ -49,6 +50,7 @@ if(user){
             </div>`,
   };
   sendEmail(user.firstName, user.email, content);
+console.log("token",token);
 
   return {message: "User was registered successfully! Please check your email"}
 }

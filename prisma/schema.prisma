@@ -23,7 +23,7 @@ model User {
 confirmationCode String @unique
 profileImage String?
   token Token?
-  Post Post?
+  Post Post[]
   createdAt          DateTime               @default(now())
 }
 
@@ -93,10 +93,9 @@ gig Gig[]
 event Event[]
 blob Blob[]
 
-
 //relation with user 
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique @db.ObjectId
+  userId String  @db.ObjectId
 }
 
 model Blob{
