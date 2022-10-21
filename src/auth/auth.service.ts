@@ -22,12 +22,10 @@ export class AuthService {
   ) {}
 
    generateToken(user: any) {
-    console.log('user account');
     const payload = {
       email: user.email,
     };
 
-    console.log('payload', payload);
     const token=this.jwtService.sign(payload);
     return  token;
     
@@ -67,13 +65,20 @@ if(user){
   }
   
 async validateUser(email: string, pass: string): Promise<any> {
+   try{ 
     const user = await this.usersService.validateUser(email, pass);
     if (user) {
+      console.log("user in validate User",user);
+      
       const newUser = this.loginUser(user);
       return newUser;
     } else {
       throw new UnauthorizedException('Inavalid User Name or password');
     }
+  }catch(error)
+  {
+throw error;
+  }
   }
 
  async loginUser(user: any) {

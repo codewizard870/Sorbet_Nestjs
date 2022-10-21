@@ -119,6 +119,7 @@ else{
 
   
   async validateUser(email: string, pass: string) {
+    
     try {
       const user1 = await this.prisma.user.findFirst({
         where: { email: email },
@@ -126,6 +127,13 @@ else{
       if (!user1) {
         throw new UnauthorizedException('Email/password incorrect');
       }
+      else if (user1.status === "Pending") {
+        throw new UnauthorizedException({message:"Pending Account. Please Verify Your Email!"}) 
+      }
+      else if (user1.status !== "Active") {
+        throw new UnauthorizedException({message:"Unauthorized!"})
+      }
+      else{
       const isMatch = await this.passwordsService.comparePassword(
         pass,
         user1.password,
@@ -134,10 +142,14 @@ else{
         throw new UnauthorizedException('Email/password incorrect');
       } else {
         const { password, ...user } = user1;
+        console.log("user",user);
+        
+    
         return user;
       }
-    } catch (ex) {
+  }  } catch (ex) {
       throw ex;
     }
+  
   }
 }

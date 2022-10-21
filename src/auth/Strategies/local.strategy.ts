@@ -18,10 +18,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new BadRequestException ({message: "We couldn't find an account with this email. Please try again."});
     }
     if (user.status === "Pending") {
-      return new UnauthorizedException({message:"Pending Account. Please Verify Your Email!"}) 
+      throw new UnauthorizedException({message:"Pending Account. Please Verify Your Email!"}) 
     }
     if (user.status !== "Active") {
-      return new UnauthorizedException({message:"Unauthorized!"})
+    throw new UnauthorizedException({message:"Unauthorized!"})
     }
 
     return user;
