@@ -24,7 +24,7 @@ export class AuthService {
    generateToken(user: any) {
     const payload = {
       email: user.email,
-    
+    id:user.id
     };
 
     const token=this.jwtService.sign(payload);
@@ -38,9 +38,11 @@ if(existingUser){
 throw new BadRequestException({ message: "Failed! Email is already in use!" });
 }
 else{
-    var token = this.generateToken(data);
+  let token =   this.generateToken(data);
 const user=await this.usersService.create(data,token);
 if(user){
+   const confirmationCode = this.generateToken(user);
+  const updateToken=await this.usersService.updateUserProfile(user.id,confirmationCode);
   const content = {
     subject: "Please confirm your account",
     html: `<h1>Email Confirmation</h1>
@@ -50,7 +52,7 @@ if(user){
             </div>`,
   };
   sendEmail(user.firstName, user.email, content);
-console.log("token",token);
+console.log("token",confirmationCode);
 
   return {message: "User was registered successfully! Please check your email"}
 }

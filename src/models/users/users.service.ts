@@ -116,7 +116,18 @@ async getUserFromConfirmationCode(confirmationCode)  {
  async updateUserProfile(_id, data) {
 const result= await this.prisma.user.update({
   where:{id:_id},
-  data:data
+  data:{
+    firstName:data.firstName,
+    lastName:data.lastName,
+    email:data.email,
+    password: data.password,
+    jobProfile:data.jobProfile,
+location:data.location,
+bio:data.bio,
+status: data.Status,     
+profileImage:data.profileImage,
+confirmationCode: data.confirmationCode,
+  }
 });
 if(result){
   return { message: "Update Successfully" } ;
