@@ -7,6 +7,9 @@ export class CreateGigDto {
     postId :string 
 
     @ApiProperty()
+    timezone:  Date
+    
+    @ApiProperty()
     start_date:  Date
     
     @ApiProperty()

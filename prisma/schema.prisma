@@ -59,7 +59,7 @@ event_link String
 description String
  timezone DateTime 
 start_date DateTime
-end_date DateTime
+end_date DateTime?
  location Location?
 //relation with post 
   post   Post   @relation(fields: [postId], references: [id])
@@ -68,6 +68,7 @@ end_date DateTime
 
 model Gig{
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+ timezone DateTime 
 start_date  DateTime 
 end_date  DateTime? 
 title String

@@ -1,20 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { TimezonesService } from 'src/timezones/timezones.service';
 import { PrismaService } from 'src/utils/prisma/prisma.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventsService {
-  constructor(private prismaService:PrismaService){}
+  constructor(private prismaService:PrismaService,private timezonesService:TimezonesService){}
  async create(data: CreateEventDto) {
-    const result= await this.prismaService.event.create({
+  const utcStartDate=this.timezonesService.convertToUtc(data.start_date);
+    const utcEndDate=this.timezonesService.convertToUtc(data.end_date);
+      
+  const result= await this.prismaService.event.create({
       data:{
         postId : data.postId,
 
         event_image: data.event_image,
 
-        start_date:  data.start_date,
-        end_date:  data.end_date,
+        start_date:  utcStartDate,
+        end_date:  utcEndDate,
 
         event_link :data.event_link,
 description :data.description,
@@ -28,8 +32,8 @@ if(result){
  
   }
 
-  findAll() {
-    return `This action returns all events`;
+  async findAll() {
+    return await this.prismaService.event.findMany();
   }
 
   findOne(id: number) {

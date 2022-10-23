@@ -3,6 +3,7 @@ import { GigsService } from './gigs.service';
 import { CreateGigDto } from './dto/create-gig.dto';
 import { UpdateGigDto } from './dto/update-gig.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/utils/auth/constants';
 @ApiBearerAuth()
 @ApiTags('Gigs')
 @Controller('/api/gigs')
@@ -15,8 +16,8 @@ export class GigsController {
   }
 
   @Get()
-  findAll() {
-    return this.gigsService.findAll();
+ async findAll() {
+    return await this.gigsService.findAll();
   }
 
   @Get(':id')

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { TimezonesService } from 'src/timezones/timezones.service';
 import { PrismaService } from 'src/utils/prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { CreateGigDto } from './dto/create-gig.dto';
@@ -7,15 +8,19 @@ import { UpdateGigDto } from './dto/update-gig.dto';
 @Injectable()
 export class GigsService {
   
-  constructor(private prismaService:PrismaService,){}
+  constructor(private prismaService:PrismaService,
+    private timezonesService:TimezonesService){}
   
    async create(data: CreateGigDto) {
+    const utcStartDate=this.timezonesService.convertToUtc(data.start_date);
+    const utcEndDate=this.timezonesService.convertToUtc(data.end_date);
     const result= await this.prismaService.gig.create({
       data:{
         
         postId :data.postId,
-        start_date:  data.start_date,
-        end_date:  data.end_date,
+        timezone:data.timezone,
+        start_date:  utcStartDate,
+        end_date:  utcEndDate,
         title:data.title,
     description: data.description,
     gig_price_min:data.gig_price_min,
@@ -32,8 +37,8 @@ if(result){
   
    
 
-  findAll() {
-    return `This action returns all gigs`;
+  async findAll() {
+    return await this.prismaService.gig.findMany(); 
   }
 
   findOne(id: number) {

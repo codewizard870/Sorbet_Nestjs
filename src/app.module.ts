@@ -11,11 +11,14 @@ import { GigsModule } from './models/gigs/gigs.module';
 import { PostsModule } from './models/posts/posts.module';
 import { LocationsModule } from './models/locations/locations.module';
 import { ImagesModule } from './images/images.module';
+import { TimezonesModule } from './timezones/timezones.module';
+import { PrismaService } from './utils/prisma/prisma.service';
 
 @Module({
-  imports: [AuthModule, UsersModule, TokensModule, EventsModule, GigsModule, PostsModule, LocationsModule, ImagesModule],
+  imports: [AuthModule, UsersModule, TokensModule, EventsModule, GigsModule, PostsModule, LocationsModule, ImagesModule, TimezonesModule],
   controllers: [AppController],
   providers: [AppService,
+      PrismaService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
