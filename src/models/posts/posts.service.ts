@@ -9,7 +9,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostsService {
   constructor(private prismaService:PrismaService,
     private usersService:UsersService){}
-  
+
   async create(data: CreatePostDto,email) {
     const existingUser=await this.usersService.getUserFromEmail(email);
   if(data.content==='Gig'||data.content==='Event'){
@@ -39,7 +39,7 @@ if(result){
   return result;
 }
   }
-    
+
   }
 
   findAll() {
