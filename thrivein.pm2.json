@@ -1,0 +1,8 @@
+{
+  "name": "thrivein nest api",
+  "script": "npm",
+  "args": [
+    "run",
+    "start:prod"
+  ]
+}

@@ -12,7 +12,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Post('signin')  
+  @Post('signin')
   async Login(@Body() createAuthDto: LoginUserDto) {
     return await this.authService.validateUser(
       createAuthDto.email,
@@ -20,11 +20,11 @@ export class AuthController {
     );
   }
 
-  
+
   @Public()
   @Post('signup')
   async signUp(@Body() data: CreateUserDto) {
-    return await this.authService.register(data); 
+    return await this.authService.register(data);
   }
 
   @Public()
@@ -36,7 +36,7 @@ export class AuthController {
     @Public()
     @Post('requestResetPassword/:email')
     async requestResetPassword(@Param('email') email: string) {
-      return await this.authService.requestPasswordReset(email); 
+      return await this.authService.requestPasswordReset(email);
     }
 
     @Public()
@@ -44,5 +44,5 @@ export class AuthController {
     async resetPassword(@Body()forgetPassword:ForgetPasswordDto){
       return await this.authService.requestPasswordReset(forgetPassword);
     }
-      
+
 }

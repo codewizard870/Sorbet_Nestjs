@@ -11,6 +11,7 @@ import { UsersService } from 'src/models/users/users.service';
 import { ServerResponse } from 'http';
 import { ApiInternalServerErrorResponse } from '@nestjs/swagger';
 import { sendEmail } from './constants';
+import jwt_decode, { JwtPayload } from "jwt-decode";
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,7 @@ export class AuthService {
 
     const token=this.jwtService.sign(payload);
     return  token;
-    
+
   }
 
   async register(data){
@@ -61,19 +62,24 @@ console.log("token",confirmationCode);
   }
 }
 }
-  
- 
-  
-  async verifyUserEmail (user)  {
-   return await this.usersService.verifyUserEmail(user);
+
+
+
+  async verifyUserEmail (confirmationCode)  {
+
+let decoded:any = jwt_decode(confirmationCode);
+
+const email=decoded.email;
+
+  return await this.usersService.verifyUserEmail(email);
   }
-  
+
 async validateUser(email: string, pass: string): Promise<any> {
-   try{ 
+   try{
     const user = await this.usersService.validateUser(email, pass);
     if (user) {
       console.log("user in validate User",user);
-      
+
       const newUser = this.loginUser(user);
       return newUser;
     } else {
@@ -106,7 +112,7 @@ throw error;
   const user= await this.usersService.getUserFromEmail(email);
 
   console.log("user",user);
-  
+
   if(user){
     return await this.passwordsService.requestPasswordReset(user);
   }
@@ -120,9 +126,9 @@ throw error;
 return await this.passwordsService.resetPassword(userId, token, password);
  }
 
-  
 
- 
+
+
 
 
 }

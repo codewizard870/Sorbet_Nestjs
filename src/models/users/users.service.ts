@@ -61,6 +61,7 @@ export class UsersService {
   }
 
   async verifyUserEmail(email){
+
     const result = await this.prisma.user.update({
       where: {
         email: email,
