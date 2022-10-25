@@ -49,8 +49,8 @@ if(user){
     html: `<h1>Email Confirmation</h1>
             <h2>Hello ${user.firstName}</h2>
             <p>Thank you for signing up. Please confirm your email by clicking on the following link</p>
-            <a href=http://localhost:3003/confirm/${user.confirmationCode}> Click here</a>
-            </div>`,
+            <a href=${process.env.HOST}/api/auth/confirm/${user.confirmationCode}> Click here</a>
+           </div>`,
   };
   sendEmail(user.firstName, user.email, content);
 console.log("token",confirmationCode);
