@@ -10,5 +10,7 @@ export class AppService {
 
  async resetDatabase(){
     await this.prismaService.gig.deleteMany();
+    await this.prismaService.user.deleteMany();
+    return {message:'database reseted successfully'}
   }
 }

@@ -10,9 +10,9 @@ export class UsersService {
     private prisma: PrismaService,
     private passwordsService: PasswordsService,
   ) {}
-  
+
   async create(data, token) {
-    
+
        const user = await this.getUserFromEmail(data.email);
        if (user) {
          throw new BadRequestException('User already Exists');
@@ -31,7 +31,7 @@ export class UsersService {
             jobProfile:data.jobProfile,
     location:data.location,
   bio:data.bio,
-  status: data.Status,     
+  status: data.Status,
   profileImage:null,
     confirmationCode: token,
            },
@@ -39,13 +39,13 @@ export class UsersService {
          if(result){
           return result;
          }
-         
+
        }
-     
+
    }catch(error){
  throw new BadRequestException('Unable to create User',error);
    }
-   
+
 
    async getUserFromEmail(email: string) {
     const result = await this.prisma.user.findFirst({
@@ -104,7 +104,7 @@ async getUserFromConfirmationCode(confirmationCode)  {
     const user = await this.prisma.user.findFirst({
       where:{
         confirmationCode:confirmationCode,
-      } 
+      }
     });
     return user;
   } catch (error) {
@@ -125,7 +125,7 @@ const result= await this.prisma.user.update({
     jobProfile:data.jobProfile,
 location:data.location,
 bio:data.bio,
-status: data.Status,     
+status: data.Status,
 profileImage:data.profileImage,
 confirmationCode: data.confirmationCode,
   }
@@ -136,7 +136,7 @@ if(result){
 else{
   return { message: "Something went wrong" };
 }
-  
+
   }
 
   async delete(_id,) {
@@ -149,12 +149,12 @@ else{
     else{
       return { message: "Something went wrong" };
     }
-      
+
       }
 
-  
+
   async validateUser(email: string, pass: string) {
-    
+
     try {
       const user1 = await this.prisma.user.findFirst({
         where: { email: email },
@@ -163,7 +163,7 @@ else{
         throw new UnauthorizedException('Email/password incorrect');
       }
       else if (user1.status === "Pending") {
-        throw new UnauthorizedException({message:"Pending Account. Please Verify Your Email!"}) 
+        throw new UnauthorizedException({message:"Pending Account. Please Verify Your Email!"})
       }
       else if (user1.status !== "Active") {
         throw new UnauthorizedException({message:"Unauthorized!"})
@@ -178,13 +178,13 @@ else{
       } else {
         const { password, ...user } = user1;
         console.log("user",user);
-        
-    
+
+
         return user;
       }
   }  } catch (ex) {
       throw ex;
     }
-  
+
   }
 }

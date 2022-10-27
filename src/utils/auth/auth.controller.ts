@@ -5,11 +5,12 @@ import { CreateUserDto } from 'src/models/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { Public } from './constants';
 import { LoginUserDto } from './dto/login-user.dto';
+import { userInfo } from 'os';
 @ApiBearerAuth()
 @ApiTags('auth')
 @Controller('/api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public()
   @Post('signin')
@@ -20,7 +21,6 @@ export class AuthController {
     );
   }
 
-
   @Public()
   @Post('signup')
   async signUp(@Body() data: CreateUserDto) {
@@ -29,20 +29,23 @@ export class AuthController {
 
   @Public()
   @Get('confirm/:confirmationCode')
-    async verifyUserEmail(@Param('confirmationCode') confirmationCode: string) {
-      return await this.authService.verifyUserEmail(confirmationCode);
-    }
+  async verifyUserEmail(@Param('confirmationCode') confirmationCode: string) {
+    return await this.authService.verifyUserEmail(confirmationCode);
+  }
 
-    @Public()
-    @Post('requestResetPassword/:email')
-    async requestResetPassword(@Param('email') email: string) {
-      return await this.authService.requestPasswordReset(email);
-    }
+  @Public()
+  @Post('requestResetPassword/:email')
+  async requestResetPassword(@Param('email') email: string) {
+    return await this.authService.requestPasswordReset(email);
+  }
 
-    @Public()
-    @Post('resetPassword')
-    async resetPassword(@Body()forgetPassword:ForgetPasswordDto){
-      return await this.authService.requestPasswordReset(forgetPassword);
-    }
+  @Public()
+  @Get('resetPassword')
+  async resetPassword(
+    @Query('token') token: string,
+    @Query('userId') userId: string,
+    @Body() forgetPassword: ForgetPasswordDto) {
+    return await this.authService.resetPassword(userId, token, forgetPassword.password);
+  }
 
 }

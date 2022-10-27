@@ -23,12 +23,12 @@ export class CreateUserDto {
     @IsOptional()
     @ApiProperty()
     location:string
-    
+
     @IsOptional()
     @ApiProperty()
     bio:string
-    
+
     @IsOptional()
     @ApiProperty()
-    status:String     
+    status:String
 }
