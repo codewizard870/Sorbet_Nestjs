@@ -11,7 +11,6 @@ datasource db {
 }
 
 model User {
-model User {
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
   firstName           String?
   lastName String?
@@ -21,8 +20,8 @@ model User {
   location String?
   bio                String?
   status Status? @default(Pending)
-confirmationCode String? @unique
-profileImage String?
+  confirmationCode String? @unique
+  profileImage String?
   token Token?
   Post Post[]
   createdAt          DateTime               @default(now())
@@ -31,7 +30,6 @@ profileImage String?
  enum Status {
   Pending      @map("pending")
   Active @map("active")
-  Disabled   @map("disabled")
   Disabled   @map("disabled")
   @@map("Status")
 }
@@ -57,14 +55,12 @@ model Token{
 model Event{
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
   event_image String
-
-event_link String
-description String
- timezone DateTime
- timezone DateTime
-start_date DateTime
-end_date DateTime?
- location Location?
+  event_link String
+  description String
+  timezone DateTime
+  start_date DateTime
+  end_date DateTime?
+  location Location?
 //relation with post
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String  @db.ObjectId
@@ -72,18 +68,15 @@ end_date DateTime?
 
 model Gig{
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
- timezone DateTime
-start_date  DateTime
-end_date  DateTime?
- timezone DateTime
-start_date  DateTime
-end_date  DateTime?
-title String
-description String
-gig_price_min  Int
-gig_price_max  Int
-tags  String[]
-location Location?
+  timezone DateTime
+  start_date  DateTime
+  end_date  DateTime?
+  title String
+  description String
+  gig_price_min  Int
+  gig_price_max  Int
+  tags  String[]
+  location Location?
 //relation with post
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String  @db.ObjectId
@@ -93,12 +86,12 @@ location Location?
 
 model Post{
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-timestamp DateTime
-text String?
-content Content
-gig Gig[]
-event Event[]
-blob Blob[]
+  timestamp DateTime
+  text String?
+  content Content
+  gig Gig[]
+  event Event[]
+  blob Blob[]
 
 //relation with user
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -118,9 +111,8 @@ videoUrl String
 model Location{
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
   location_type  LocationType
-Latitude String
-Langitude String
-//relation with event
+  Latitude String
+  Langitude String
 //relation with event
   event  Event?   @relation(fields: [eventId], references: [id])
   eventId String? @unique @db.ObjectId
@@ -135,7 +127,6 @@ Langitude String
 enum Content {
   Gig      @map("gig")
   Event @map("event")
-  Blob   @map("blob")
   Blob   @map("blob")
   @@map("Content")
 }
