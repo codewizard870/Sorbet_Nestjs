@@ -11,6 +11,7 @@ datasource db {
 }
 
 model User {
+model User {
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
   firstName           String?
   lastName String?
@@ -31,6 +32,7 @@ profileImage String?
   Pending      @map("pending")
   Active @map("active")
   Disabled   @map("disabled")
+  Disabled   @map("disabled")
   @@map("Status")
 }
 
@@ -46,6 +48,7 @@ model Token{
   createdAt  DateTime               @default(now())
 
 //relation with user
+//relation with user
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @db.ObjectId
 }
@@ -58,6 +61,7 @@ model Event{
 event_link String
 description String
  timezone DateTime
+ timezone DateTime
 start_date DateTime
 end_date DateTime?
  location Location?
@@ -68,6 +72,9 @@ end_date DateTime?
 
 model Gig{
   id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+ timezone DateTime
+start_date  DateTime
+end_date  DateTime?
  timezone DateTime
 start_date  DateTime
 end_date  DateTime?
@@ -114,8 +121,10 @@ model Location{
 Latitude String
 Langitude String
 //relation with event
+//relation with event
   event  Event?   @relation(fields: [eventId], references: [id])
   eventId String? @unique @db.ObjectId
+
 
   //relation with gig
   gig   Gig?   @relation(fields: [gigId], references: [id])
@@ -126,6 +135,7 @@ Langitude String
 enum Content {
   Gig      @map("gig")
   Event @map("event")
+  Blob   @map("blob")
   Blob   @map("blob")
   @@map("Content")
 }

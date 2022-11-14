@@ -1,6 +1,5 @@
 {
-  "name": "conversion-project",
-  "version": "0.0.1",
+  "name": "thrivein","version": "0.0.1",
   "description": "",
   "author": "",
   "private": true,
@@ -91,3 +90,4 @@
     "testEnvironment": "node"
   }
 }
+
