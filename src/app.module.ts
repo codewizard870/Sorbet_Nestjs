@@ -13,9 +13,11 @@ import { LocationsModule } from './models/locations/locations.module';
 import { ImagesModule } from './images/images.module';
 import { TimezonesModule } from './timezones/timezones.module';
 import { PrismaService } from './utils/prisma/prisma.service';
+import { ChatsModule } from './chats/chats.module';
+import { ContactsModule } from './chats/contacts/contacts.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, TokensModule, EventsModule, GigsModule, PostsModule, LocationsModule, ImagesModule, TimezonesModule],
+  imports: [AuthModule, UsersModule, TokensModule, EventsModule, GigsModule, PostsModule, LocationsModule, ImagesModule, TimezonesModule, ChatsModule, ContactsModule],
   controllers: [AppController],
   providers: [AppService,
       PrismaService,

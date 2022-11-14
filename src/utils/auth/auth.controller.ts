@@ -5,6 +5,7 @@ import { CreateUserDto } from 'src/models/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { Public } from './constants';
 import { LoginUserDto } from './dto/login-user.dto';
+import { userInfo } from 'os';
 @ApiBearerAuth()
 @ApiTags('auth')
 @Controller('/api/auth')
@@ -40,9 +41,12 @@ export class AuthController {
     }
 
     @Public()
-    @Post('resetPassword')
-    async resetPassword(@Body()forgetPassword:ForgetPasswordDto){
-      return await this.authService.requestPasswordReset(forgetPassword);
+    @Get('resetPassword')
+    async resetPassword(
+      @Query('token')token : string,
+      @Query('userId') userId:string,
+      @Body()forgetPassword:ForgetPasswordDto){
+      return await this.authService.resetPassword(userId, token, forgetPassword.password);
     }
       
 }

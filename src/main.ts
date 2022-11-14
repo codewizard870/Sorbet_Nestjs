@@ -10,7 +10,7 @@ async function bootstrap() {
 app.enableCors();
   //openapi
   const config = new DocumentBuilder()
-    .setTitle('ThriveIn API')
+    .setTitle('Conversion App')
     .setDescription('...')
     .setVersion('1.0')
     .addBearerAuth()

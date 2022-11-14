@@ -6,6 +6,10 @@ import { sendEmail } from 'src/utils/auth/constants';
 import { PrismaService } from 'src/utils/prisma/prisma.service';
 import { TokensService } from 'src/utils/tokens/tokens.service';
 const saltOrRounds = 8;
+import * as dotenv from 'dotenv';
+dotenv.config()
+
+const BaseUrl=process.env.BASEURL; 
 @Injectable()
 export class PasswordsService {
   constructor(
@@ -31,7 +35,7 @@ export class PasswordsService {
     
     let resetToken = crypto.randomBytes(32).toString("hex");
     const hash = bcrypt.hashSync(resetToken, 8);
-  const result= await this.tokensService.createTokenByUserId(user._id,hash)
+  const result= await this.tokensService.createTokenByUserId(user.id,hash)
     if(result){
       const content = {
         subject: "Please confirm your account",
@@ -39,10 +43,13 @@ export class PasswordsService {
                 <h2>Hello ${user.fullName}</h2>
                 <p>You requested to reset your password.</p>
                 <p> Please, click the link below to reset your password</p>
-                <a href=http://localhost:3003/passwordReset?token=${resetToken}&id=${user._id.toString()}> Click here to reset password!</a>
+                <a href=${BaseUrl}/api/auth/resetPassword?token=${resetToken}&userId=${user.id}> Click here to reset password!</a>
                 </div>`,
       };
-      sendEmail(user.fullName, user.email, content);
+      http://localhost:3000/api/auth/resetPassword?token=81129669e5f97486d8de5e5178b9e352105e1c4e252ea11a4188d578a977ce4b&userId=63581447075b294c2885502f
+      console.log(`link,${BaseUrl}/api/auth/resetPassword?token=${resetToken}&userId=${user.id}`);
+      
+      // sendEmail(user.fullName, user.email, content);
     return { message: "Reset link sent to your mail"}
     }else{
       throw new BadRequestException();
