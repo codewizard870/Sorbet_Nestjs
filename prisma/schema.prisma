@@ -56,7 +56,7 @@ model Token {
   token     String
   createdAt DateTime @default(now())
 
-  //relation with user 
+  //relation with user
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @db.ObjectId
 }
@@ -71,7 +71,7 @@ model Event {
   start_date  DateTime
   end_date    DateTime?
   location    Location[]
-  //relation with post 
+  //relation with post
   post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId      String    @db.ObjectId
 }
@@ -87,7 +87,7 @@ model Gig {
   gig_price_max Int
   tags          String[]
   location      Location[]
-  //relation with post 
+  //relation with post
   post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId        String    @db.ObjectId
 }
@@ -101,7 +101,7 @@ model Post {
   event     Event[]
   blob      Blob[]
 location Location[]
-  //relation with user 
+  //relation with user
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @db.ObjectId
 }
@@ -111,7 +111,7 @@ model Blob {
   imageUrl String
   videoUrl String
 
-  //relation with post 
+  //relation with post
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String @unique @db.ObjectId
 }
@@ -126,17 +126,17 @@ model Location {
   Latitude      Float
   Langitude     Float
 
-//relation with post 
+//relation with post
   post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String?  @db.ObjectId
 
-  //relation with user 
+  //relation with user
   user         User?       @relation(fields: [userId], references: [id])
-  userId       String?       @db.ObjectId 
+  userId       String?       @db.ObjectId
 
-  //relation with event 
+  //relation with event
   event         Event?       @relation(fields: [eventId], references: [id])
-  eventId       String?       @db.ObjectId 
+  eventId       String?       @db.ObjectId
 
   //relation with gig
   gig   Gig?    @relation(fields: [gigId], references: [id])
@@ -172,7 +172,7 @@ model Chat {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @default(now())
 
-  //relation with contact 
+  //relation with contact
   contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
   contactId String  @db.ObjectId
 }
