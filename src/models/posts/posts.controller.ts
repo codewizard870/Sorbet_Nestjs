@@ -1,18 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Request,
+} from "@nestjs/common";
+import { PostsService } from "./posts.service";
+import { CreatePostDto } from "./dto/create-post.dto";
+import { UpdatePostDto } from "./dto/update-post.dto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 @ApiBearerAuth()
-@ApiTags('posts')
-@Controller('/api/posts')
+@ApiTags("posts")
+@Controller("/api/posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-async  create(@Body() createPostDto: CreatePostDto,@Request() req) {
-    const email=req.user.email;
-    return await this.postsService.create(createPostDto,email);
+  async create(@Body() createPostDto: CreatePostDto, @Request() req) {
+    const email = req.user.email;
+    return await this.postsService.create(createPostDto, email);
   }
 
   @Get()
@@ -20,18 +29,18 @@ async  create(@Body() createPostDto: CreatePostDto,@Request() req) {
     return this.postsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.postsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(+id, updatePostDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.postsService.remove(+id);
   }
 }

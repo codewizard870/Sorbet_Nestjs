@@ -1,12 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { LocationsService } from './locations.service';
-import { CreateLocationDto } from './dto/create-location.dto';
-import { UpdateLocationDto } from './dto/update-location.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Request,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from "@nestjs/common";
+import { LocationsService } from "./locations.service";
+import {
+  CreateLocationDto,
+  CreateMyLocationDto,
+} from "./dto/create-location.dto";
+import { UpdateLocationDto } from "./dto/update-location.dto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Public } from "src/utils/auth/constants";
 
 @ApiBearerAuth()
-@ApiTags('locations')
-@Controller('/api/locations')
+@ApiTags("locations")
+@Controller("/api/locations")
 export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
 
@@ -14,24 +27,39 @@ export class LocationsController {
   create(@Body() createLocationDto: CreateLocationDto) {
     return this.locationsService.create(createLocationDto);
   }
-
-  @Get()
-  findAll() {
-    return this.locationsService.findAll();
+  @Post("createMyLocation")
+  createMyLocation(
+    @Request() req,
+    @Body() createLocationDto: CreateMyLocationDto
+  ) {
+    return this.locationsService.createMyLocation(
+      createLocationDto,
+      req.user.id
+    );
   }
+  // @Public()
+  //   @Get('testharversine')
+  //   testHarvensine() {
+  //     return this.locationsService.testHarversine();
+  //   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.locationsService.findOne(+id);
-  }
+  // @Get()
+  // findAll() {
+  //   return this.locationsService.findAll();
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLocationDto: UpdateLocationDto) {
-    return this.locationsService.update(+id, updateLocationDto);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.locationsService.findOne(+id);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.locationsService.remove(+id);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateLocationDto: UpdateLocationDto) {
+  //   return this.locationsService.update(+id, updateLocationDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.locationsService.remove(+id);
+  // }
 }

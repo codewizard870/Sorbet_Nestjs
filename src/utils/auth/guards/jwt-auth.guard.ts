@@ -3,13 +3,13 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
-import { IS_PUBLIC_KEY } from '../constants';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { AuthGuard } from "@nestjs/passport";
+import { IS_PUBLIC_KEY } from "../constants";
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtAuthGuard extends AuthGuard("jwt") {
   constructor(private reflector: Reflector) {
     super();
   }
@@ -30,17 +30,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err, user, info) {
     // console.log('user ', user, info);
-     console.log('entered handler in jwt auth guard ');
+    console.log("entered handler in jwt auth guard ");
     // You can throw an exception based on either "info" or "err" arguments
     if (err || !user) {
-      throw err || new UnauthorizedException( "Invalid token!");
+      throw err || new UnauthorizedException("Invalid token!");
+    } else if (user.status === "Active") {
+      return { message: "User Already Verified" };
+    } else if (user.status === "Disabled") {
+      throw new UnauthorizedException("Unauthorized!");
     }
-    else if (user.status === "Active") {
-        return { message: "User Already Verified" };
-      }
-       else if (user.status === "Disabled") {
-       throw new UnauthorizedException( "Unauthorized!");
-      }
     return user;
   }
 }

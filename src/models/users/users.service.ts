@@ -2,23 +2,23 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { PasswordsService } from 'src/utils/passwords/passwords.service';
-import { PrismaService } from 'src/utils/prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+} from "@nestjs/common";
+import { PasswordsService } from "src/utils/passwords/passwords.service";
+import { PrismaService } from "src/utils/prisma/prisma.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UsersService {
   constructor(
     private prisma: PrismaService,
-    private passwordsService: PasswordsService,
-  ) { }
+    private passwordsService: PasswordsService
+  ) {}
 
   async create(data, token) {
     const user = await this.getUserFromEmail(data.email);
     if (user) {
-      throw new BadRequestException('User already Exists');
+      throw new BadRequestException("User already Exists");
     } else {
       //hashing new user password
       const pass = await this.passwordsService.hashPassword(data.password);
@@ -45,7 +45,7 @@ export class UsersService {
     }
   }
   catch(error) {
-    throw new BadRequestException('Unable to create User', error);
+    throw new BadRequestException("Unable to create User", error);
   }
 
   async getUserFromEmail(email: string) {
@@ -55,7 +55,7 @@ export class UsersService {
       },
     });
     if (result) {
-      console.log('resultttttt', result);
+      console.log("resultttttt", result);
 
       return result;
     }
@@ -67,13 +67,13 @@ export class UsersService {
         email: email,
       },
       data: {
-        status: 'Active',
+        status: "Active",
       },
     });
     if (result) {
-      return { message: 'Email verified' };
+      return { message: "Email verified" };
     } else {
-      throw new BadRequestException('Unable to verify Email');
+      throw new BadRequestException("Unable to verify Email");
     }
   }
 
@@ -81,6 +81,7 @@ export class UsersService {
     try {
       const user = await this.prisma.user.findFirst({
         where: { id: _id },
+        include: { jobProfile: true, location: true },
       });
       return user;
     } catch (error) {
@@ -92,6 +93,7 @@ export class UsersService {
     try {
       const user = this.prisma.user.findMany({
         select: {
+          id: true,
           email: true,
           firstName: true,
           lastName: true,
@@ -137,9 +139,9 @@ export class UsersService {
       },
     });
     if (result) {
-      return { message: 'Update Successfully' };
+      return { message: "Update Successfully" };
     } else {
-      return { message: 'Something went wrong' };
+      return { message: "Something went wrong" };
     }
   }
 
@@ -148,9 +150,9 @@ export class UsersService {
       where: { id: _id },
     });
     if (result) {
-      return { message: 'deleted Successfully' };
+      return { message: "deleted Successfully" };
     } else {
-      return { message: 'Something went wrong' };
+      return { message: "Something went wrong" };
     }
   }
 
@@ -160,23 +162,23 @@ export class UsersService {
         where: { email: email },
       });
       if (!user1) {
-        throw new UnauthorizedException('Email/password incorrect');
-      } else if (user1.status === 'Pending') {
+        throw new UnauthorizedException("Email/password incorrect");
+      } else if (user1.status === "Pending") {
         throw new UnauthorizedException({
-          message: 'Pending Account. Please Verify Your Email!',
+          message: "Pending Account. Please Verify Your Email!",
         });
-      } else if (user1.status !== 'Active') {
-        throw new UnauthorizedException({ message: 'Unauthorized!' });
+      } else if (user1.status !== "Active") {
+        throw new UnauthorizedException({ message: "Unauthorized!" });
       } else {
         const isMatch = await this.passwordsService.comparePassword(
           pass,
-          user1.password,
+          user1.password
         );
         if (!isMatch) {
-          throw new UnauthorizedException('Email/password incorrect');
+          throw new UnauthorizedException("Email/password incorrect");
         } else {
           const { password, ...user } = user1;
-          console.log('user', user);
+          console.log("user", user);
 
           return user;
         }

@@ -1,6 +1,6 @@
-import { Controller, Delete, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-import { Public } from './utils/auth/constants';
+import { Controller, Delete, Get } from "@nestjs/common";
+import { AppService } from "./app.service";
+import { Public } from "./utils/auth/constants";
 
 @Public()
 @Controller()
@@ -12,8 +12,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  
-  @Delete('Reset')
+  @Delete("Reset")
   async delete() {
     return await this.appService.resetDatabase();
   }

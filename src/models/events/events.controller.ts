@@ -1,12 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { EventsService } from './events.service';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/utils/auth/constants';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from "@nestjs/common";
+import { EventsService } from "./events.service";
+import { CreateEventDto } from "./dto/create-event.dto";
+import { UpdateEventDto } from "./dto/update-event.dto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Public } from "src/utils/auth/constants";
 @ApiBearerAuth()
-@ApiTags('events')
-@Controller('/api/events')
+@ApiTags("events")
+@Controller("/api/events")
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
@@ -16,22 +24,22 @@ export class EventsController {
   }
 
   @Get()
- async  findAll() {
+  async findAll() {
     return await this.eventsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.eventsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventsService.update(+id, updateEventDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.eventsService.remove(+id);
   }
 }

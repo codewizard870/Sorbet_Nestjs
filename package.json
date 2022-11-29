@@ -1,5 +1,6 @@
 {
-  "name": "thrivein","version": "0.0.1",
+  "name": "thrivein",
+  "version": "0.0.1",
   "description": "",
   "author": "",
   "private": true,
@@ -17,7 +18,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "format": "prettier --check --ignore-path .gitignore .",
+    "format:fix": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -35,9 +38,11 @@
     "class-validator": "^0.13.2",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
+    "haversine-distance": "^1.2.1",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
     "multer": "^1.4.5-lts.1",
+    "node-geocoder": "^4.2.0",
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
@@ -90,4 +95,3 @@
     "testEnvironment": "node"
   }
 }
-

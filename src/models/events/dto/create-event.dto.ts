@@ -1,26 +1,27 @@
-import { ApiProperty } from "@nestjs/swagger"
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateEventDto {
-    
-    @ApiProperty()
-    postId : string
+  @ApiProperty()
+  postId: string;
 
-    @ApiProperty()
-    event_image: string
+  @ApiProperty()
+  name: string;
 
-    @ApiProperty()
-    start_date:  Date
-    
-    @ApiProperty()
-    end_date:  Date
+  @ApiProperty()
+  event_image: string;
 
-    @ApiProperty()
-    timezone :Date
- 
-    @ApiProperty()
-    event_link :string
-    
-    @ApiProperty()
-    description :string
+  @ApiProperty()
+  start_date: Date;
 
+  @ApiProperty()
+  end_date: Date;
+
+  @ApiProperty()
+  timezone: Date;
+
+  @ApiProperty()
+  event_link: string;
+
+  @ApiProperty()
+  description: string;
 }

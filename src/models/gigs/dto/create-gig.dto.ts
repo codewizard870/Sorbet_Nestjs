@@ -1,35 +1,32 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { IsOptional } from "class-validator"
+import { ApiProperty } from "@nestjs/swagger";
+import { IsOptional } from "class-validator";
 
 export class CreateGigDto {
-    
-    @ApiProperty()
-    postId :string 
+  @ApiProperty()
+  postId: string;
 
-    @ApiProperty()
-    timezone:  Date
-    
-    @ApiProperty()
-    start_date:  Date
-    
-    @ApiProperty()
-    @IsOptional() 
-    end_date:  Date
-    
-    @ApiProperty() 
-    title:string
+  @ApiProperty()
+  timezone: Date;
 
-@ApiProperty()
-description:string
+  @ApiProperty()
+  start_date: Date;
 
-@ApiProperty()
-gig_price_min:number
+  @ApiProperty()
+  @IsOptional()
+  end_date: Date;
 
-@ApiProperty()
-gig_price_max:number
+  @ApiProperty()
+  title: string;
 
-@ApiProperty()
-tags:  string[]
+  @ApiProperty()
+  description: string;
 
+  @ApiProperty()
+  gig_price_min: number;
 
+  @ApiProperty()
+  gig_price_max: number;
+
+  @ApiProperty()
+  tags: string[];
 }

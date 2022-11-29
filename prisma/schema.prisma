@@ -11,156 +11,168 @@ datasource db {
 }
 
 model User {
-model User {
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-  firstName           String?
-  lastName String?
-  email       String                 @unique
-  password           String
-  jobProfile String?
-  location String?
-  bio                String?
-  status Status? @default(Pending)
-confirmationCode String? @unique
-profileImage String?
-  token Token?
-  Post Post[]
-  createdAt          DateTime               @default(now())
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  firstName        String?
+  lastName         String?
+  email            String       @unique
+  password         String
+  bio              String?
+  status           Status?      @default(Pending)
+  confirmationCode String?      @unique
+  profileImage     String?
+  jobProfile       JobProfile[]
+  token            Token?
+  location    Location[]
+  Post             Post[]
+  createdAt        DateTime     @default(now())
 }
 
- enum Status {
-  Pending      @map("pending")
-  Active @map("active")
-  Disabled   @map("disabled")
-  Disabled   @map("disabled")
+model JobProfile {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  type      String?
+  createdAt DateTime @default(now())
+  //relation with user
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?  @db.ObjectId
+}
+
+enum Status {
+  Pending  @map("pending")
+  Active   @map("active")
+  Disabled @map("disabled")
+
   @@map("Status")
 }
 
-model SocialMedia{
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-    socialMedia String
-        link String
+model SocialMedia {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  socialMedia String
+  link        String
 }
 
-model Token{
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-  token String
-  createdAt  DateTime               @default(now())
+model Token {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     String
+  createdAt DateTime @default(now())
 
-//relation with user
-//relation with user
+  //relation with user 
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @db.ObjectId
 }
 
-
-model Event{
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+model Event {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   event_image String
-
-event_link String
-description String
- timezone DateTime
- timezone DateTime
-start_date DateTime
-end_date DateTime?
- location Location?
-//relation with post
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String  @db.ObjectId
+  event_link  String
+  name String
+  description String
+  timezone    DateTime
+  start_date  DateTime
+  end_date    DateTime?
+  location    Location[]
+  //relation with post 
+  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId      String    @db.ObjectId
 }
 
-model Gig{
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
- timezone DateTime
-start_date  DateTime
-end_date  DateTime?
- timezone DateTime
-start_date  DateTime
-end_date  DateTime?
-title String
-description String
-gig_price_min  Int
-gig_price_max  Int
-tags  String[]
-location Location?
-//relation with post
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String  @db.ObjectId
-
+model Gig {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  timezone      DateTime
+  start_date    DateTime
+  end_date      DateTime?
+  title         String
+  description   String
+  gig_price_min Int
+  gig_price_max Int
+  tags          String[]
+  location      Location[]
+  //relation with post 
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId        String    @db.ObjectId
 }
 
-
-model Post{
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-timestamp DateTime
-text String?
-content Content
-gig Gig[]
-event Event[]
-blob Blob[]
-
-//relation with user
+model Post {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp DateTime
+  text      String?
+  content   Content
+  gig       Gig[]
+  event     Event[]
+  blob      Blob[]
+location Location[]
+  //relation with user 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String  @db.ObjectId
+  userId String @db.ObjectId
 }
 
-model Blob{
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-imageUrl String
-videoUrl String
+model Blob {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  imageUrl String
+  videoUrl String
 
-//relation with post
+  //relation with post 
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String @unique @db.ObjectId
 }
 
-model Location{
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-  location_type  LocationType
-Latitude String
-Langitude String
-//relation with event
-//relation with event
-  event  Event?   @relation(fields: [eventId], references: [id])
-  eventId String? @unique @db.ObjectId
+model Location {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  location_type LocationType
+  country       String
+  province      String
+  district      String
+  city          String
+  Latitude      Float
+  Langitude     Float
 
+//relation with post 
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String?  @db.ObjectId
+
+  //relation with user 
+  user         User?       @relation(fields: [userId], references: [id])
+  userId       String?       @db.ObjectId 
+
+  //relation with event 
+  event         Event?       @relation(fields: [eventId], references: [id])
+  eventId       String?       @db.ObjectId 
 
   //relation with gig
-  gig   Gig?   @relation(fields: [gigId], references: [id])
-  gigId String? @unique @db.ObjectId
-
+  gig   Gig?    @relation(fields: [gigId], references: [id])
+  gigId String?  @db.ObjectId
 }
 
 enum Content {
-  Gig      @map("gig")
+  Gig   @map("gig")
   Event @map("event")
-  Blob   @map("blob")
-  Blob   @map("blob")
+  Blob  @map("blob")
+
   @@map("Content")
 }
 
 enum LocationType {
-  Remote      @map("remote")
+  Remote @map("remote")
   OnSite @map("onSite")
+
   @@map("LocationType")
 }
 
 model Contact {
-    id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-  userId String
- contacted_userId String
-  chat Chat[]
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String
+  contacted_userId String
+  chat             Chat[]
 }
 
-model Chat{
-      id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
-message String
-creatorId String
-createdAt DateTime @default(now())
-updatedAt DateTime? @default(now())
+model Chat {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  message   String
+  creatorId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now())
 
-//relation with contact
-  contact   Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  //relation with contact 
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
   contactId String  @db.ObjectId
 }

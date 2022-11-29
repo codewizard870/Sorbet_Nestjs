@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
-import * as dotenv from 'dotenv';
-dotenv.config()
+import * as dotenv from "dotenv";
+dotenv.config();
 export const jwtConstants = {
   secret: process.env.JWTSECRET,
 };
 
-export const IS_PUBLIC_KEY = 'isPublic';
+export const IS_PUBLIC_KEY = "isPublic";
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 const user = process.env.EMAIL_USER;
@@ -33,4 +33,3 @@ export const sendEmail = (name, email, content) => {
     })
     .catch((err) => console.log(err));
 };
-

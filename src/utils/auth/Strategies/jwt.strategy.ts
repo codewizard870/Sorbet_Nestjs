@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AuthService } from '../auth.service';
-import { jwtConstants } from '../constants';
+import { Injectable } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { ExtractJwt, Strategy } from "passport-jwt";
+import { AuthService } from "../auth.service";
+import { jwtConstants } from "../constants";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private authsService: AuthService) {
@@ -15,9 +15,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-     console.log('entered validate in jwwt strategy', 'payload', payload);
+    console.log("entered validate in jwwt strategy", "payload", payload);
     return {
-      id:payload.id,
+      id: payload.id,
       email: payload.email,
     };
   }

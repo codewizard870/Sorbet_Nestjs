@@ -1,7 +1,7 @@
-import { Controller } from '@nestjs/common';
-import { PasswordsService } from './passwords.service';
+import { Controller } from "@nestjs/common";
+import { PasswordsService } from "./passwords.service";
 
-@Controller('passwords')
+@Controller("passwords")
 export class PasswordsController {
   constructor(private readonly passwordsService: PasswordsService) {}
 }
