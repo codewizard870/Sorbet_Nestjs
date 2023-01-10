@@ -53,6 +53,7 @@ export class GlobalSearchController {
       text
     );
   }
+
   @Post("globalSearchGigByDistance/:text/:distance")
   async globalSearchGigByDistance(
     @Request() req,
@@ -65,6 +66,7 @@ export class GlobalSearchController {
       text
     );
   }
+  
   @Post("globalSearchLocationByDistance/:text/:distance")
   async globalSearchLocationByDistance(
     @Request() req,

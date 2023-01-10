@@ -3,6 +3,7 @@ import { APP_GUARD, APP_PIPE } from "@nestjs/core";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./utils/auth/auth.module";
+import { MagicModule } from "./utils/magic/magic.module";
 import { JwtAuthGuard } from "./utils/auth/guards/jwt-auth.guard";
 import { UsersModule } from "./models/users/users.module";
 import { TokensModule } from "./utils/tokens/tokens.module";
@@ -22,6 +23,7 @@ import { GlobalSearchModule } from "./global-search/global-search.module";
 @Module({
   imports: [
     AuthModule,
+    MagicModule,
     UsersModule,
     TokensModule,
     GoogleMapsModule,
