@@ -2,6 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
+import * as session from 'express-session'
 import * as passport from 'passport';
 
 async function bootstrap() {
@@ -10,8 +11,14 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
   // passport initialization
-  // app.use(passport.initialize());
-  // app.use(passport.session());
+  app.use(session({
+    secret: 'thesecret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 3600000 }
+  }))
+  app.use(passport.initialize());
+  app.use(passport.session());
   // openapi
   const config = new DocumentBuilder()
     .setTitle("Conversion App")
