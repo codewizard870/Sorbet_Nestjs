@@ -15,5 +15,5 @@ export class SessionSerializer extends PassportSerializer {
           } catch (err) {
             done(err, null);
           }
-    }
+        }
 }

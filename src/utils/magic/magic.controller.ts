@@ -6,12 +6,13 @@ import {
     Post,
     UseGuards,
     HttpStatus,
-    UnauthorizedException
+    UnauthorizedException,
+    Patch
   } from "@nestjs/common";
   import { Public } from "../auth/constants";
   import { ApiTags } from "@nestjs/swagger";
   import { Magic } from '@magic-sdk/admin';
-import { MagicAuthGuard } from "./magic.guard";
+import { MagicAuthGuard } from "./guards/magic.guard";
 
   const magic = new Magic(process.env.MAGIC_SECRET_KEY);
 
@@ -61,6 +62,6 @@ import { MagicAuthGuard } from "./magic.guard";
             return res.status(HttpStatus.UNAUTHORIZED).end(`Could not log user in.`);
             // throw new UnauthorizedException()
         }
-    } 
+    }
 }
   

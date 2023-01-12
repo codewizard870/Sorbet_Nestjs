@@ -19,6 +19,7 @@ model User {
   bio              String?
   status           Status?      @default(Pending)
   confirmationCode String?      @unique
+  // magicAuth        Boolean
   profileImage     String?
   jobProfile       JobProfile[]
   token            Token?

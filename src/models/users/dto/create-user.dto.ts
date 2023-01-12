@@ -4,23 +4,26 @@ import { IsOptional } from "class-validator";
 export class CreateUserDto {
   @IsOptional()
   @ApiProperty()
-  firstName: string;
+  firstName: String;
 
   @IsOptional()
   @ApiProperty()
-  lastName: string;
+  lastName: String;
 
   @ApiProperty()
-  email: string;
+  email: String;
 
   @ApiProperty()
-  password: string;
+  password: String;
 
   @IsOptional()
   @ApiProperty()
-  bio: string;
+  bio: String;
 
   @IsOptional()
   @ApiProperty()
   status: String;
+
+  @ApiProperty()
+  magicAuthentication: Boolean
 }

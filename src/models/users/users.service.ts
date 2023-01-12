@@ -15,7 +15,7 @@ export class UsersService {
     private passwordsService: PasswordsService
   ) {}
 
-  async create(data, token) {
+  async create(data: any, token: string) {
     const user = await this.getUserFromEmail(data.email);
     if (user) {
       throw new BadRequestException("User already Exists");
@@ -37,6 +37,7 @@ export class UsersService {
           status: data.Status,
           profileImage: null,
           confirmationCode: token,
+          // magicAuth: false,
         },
       });
       if (result) {
@@ -55,7 +56,7 @@ export class UsersService {
       },
     });
     if (result) {
-      console.log("resultttttt", result);
+      console.log("RESULT", result);
 
       return result;
     }
@@ -119,6 +120,42 @@ export class UsersService {
       return user;
     } catch (error) {
       console.log(`Error Occured, ${error}`);
+    }
+  }
+
+  async updateUserVerification(data) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { email: data.email },
+      });
+      if (user) {
+        const result = await this.prisma.user.update({
+          where: { email: data.email },
+          data: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            password: data.password,
+            jobProfile: data.jobProfile,
+            location: data.location,
+            bio: data.bio,
+            status: data.Status,
+            profileImage: data.profileImage,
+            confirmationCode: data.confirmationCode,
+            // magicAuth: true,
+          },
+        });
+        if (result) {
+          return { message: "User magic verification updated successfully!" };
+        } 
+        else {
+          return { message: "Unable to update user magic verification." };
+        }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Unable to update user magic verification. Please try again.")
     }
   }
 
