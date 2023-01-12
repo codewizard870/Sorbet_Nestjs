@@ -123,7 +123,7 @@ export class UsersService {
     }
   }
 
-  async updateUserVerification(data) {
+  async updateUserVerification(data: any) {
     try {
       const user = await this.prisma.user.findFirst({
         where: { email: data.email },
