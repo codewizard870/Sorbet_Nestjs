@@ -8,7 +8,7 @@ import { UpdateJobProfileDto } from "./dto/update-job-profile.dto";
 export class JobProfileService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(data, id) {
+  async create(data: any, id: string) {
     try {
       const result = await this.prismaService.jobProfile.create({
         data: {
@@ -27,84 +27,117 @@ export class JobProfileService {
     }
   }
 
-  async getFromUserId(userId) {
-    const result = await this.prismaService.jobProfile.findMany({
-      where: {
-        userId: userId,
-      },
-    });
-    if (result) {
-      console.log("resultttttt", result);
-
-      return result;
-    }
-  }
-  async getFromJobName(name) {
-    const result = await this.prismaService.jobProfile.findMany({
-      where: {
-        name: name,
-      },
-      include: {
-        user: true,
-      },
-    });
-    if (result) {
-      console.log("resultttttt", result);
-
-      return result;
-    }
-  }
-  async getFromjobType(jobType) {
-    const result = await this.prismaService.jobProfile.findMany({
-      where: {
-        type: jobType,
-      },
-      include: {
-        user: true,
-      },
-    });
-    if (result) {
-      console.log("resultttttt", result);
-
-      return result;
-    }
-  }
-
-  async getFromJobId(id) {
+  async getFromUserId(userId: string) {
     try {
-      const jobProfile = await this.prismaService.jobProfile.findFirst({
-        where: { id: id },
+      const result = await this.prismaService.jobProfile.findMany({
+        where: {
+          userId: userId,
+        },
+      });
+      if (result) {
+        return result;
+      } 
+      else {
+        throw new Error("Job profile not found.");
+      }  
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
+    }
+  }
+  async getFromJobName(name: string) {
+    try {
+      const result = await this.prismaService.jobProfile.findMany({
+        where: {
+          name: name,
+        },
         include: {
           user: true,
         },
       });
-      return jobProfile;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+      if (result) {
+        return result;
+      }
+      else {
+        throw new Error("Job profile not found.");
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
+    }
+  }
+  async getFromJobType(jobType: string) {
+    try {
+      const result = await this.prismaService.jobProfile.findMany({
+        where: { type: jobType },
+        include: { user: true },
+      });
+      if (result) {
+        return result;
+      } 
+      else {
+        throw new Error("Job profile not found.");
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
+    }
+  }
+
+  async getFromJobId(id: string) {
+    try {
+      const result = await this.prismaService.jobProfile.findMany({
+        where: { id: id },
+        include: {user: true},
+      });
+      if (result) {
+        return result;
+      } 
+      else {
+        throw new Error("Job profile not found.");
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
     }
   }
 
   async getAll() {
     try {
-      const job = this.prismaService.jobProfile.findMany({
-        include: {
-          user: true,
-        },
+      const result = this.prismaService.jobProfile.findMany({
+        include: {user: true},
       });
-      return job;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+      if(result) {
+        return result;
+      }
+      else {
+        throw new Error("No job profiles were found.");
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
     }
   }
 
-  async remove(id) {
-    const result = await this.prismaService.jobProfile.delete({
-      where: { id: id },
-    });
-    if (result) {
-      return { message: "deleted Successfully" };
-    } else {
-      return { message: "Something went wrong" };
+  async remove(id: string) {
+    try {
+      const result = await this.prismaService.jobProfile.delete({
+        where: { id: id },
+      });
+      if (result) {
+        return { message: "Deleted Successfully" };
+      } else {
+        return { message: "Something went wrong" };
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
     }
   }
 }

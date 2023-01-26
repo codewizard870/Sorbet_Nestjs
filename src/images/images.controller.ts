@@ -2,10 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
   Param,
-  Delete,
   UploadedFile,
   Request,
   UseInterceptors,
@@ -52,7 +49,7 @@ export class ImagesController {
   }
 
   @Get("download/:Key")
-  async downloadImage(@Param("Key") Key: String, @Request() req) {
+  async downloadImage(@Param("Key") Key: string, @Request() req) {
     console.log("req.user", req.user.id);
     return await this.imagesService.downloadProfileImage(Key, req.user.id);
   }

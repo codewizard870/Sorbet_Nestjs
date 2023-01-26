@@ -13,12 +13,17 @@ import {
   import { ApiTags } from "@nestjs/swagger";
   import { Magic } from '@magic-sdk/admin';
 import { MagicAuthGuard } from "./guards/magic.guard";
+import { MagicService } from "./magic.service";
 
   const magic = new Magic(process.env.MAGIC_SECRET_KEY);
 
   @ApiTags("auth")
   @Controller("/api/auth")
   export class MagicController {
+    constructor(
+        private readonly magicAuthGuard: MagicAuthGuard,
+        private readonly magicService: MagicService
+    ){}
 
     @Public()
     @UseGuards(MagicAuthGuard)
@@ -51,7 +56,6 @@ import { MagicAuthGuard } from "./guards/magic.guard";
     @Public()
     @Post('logout-magic')
     async logout(@Request() req, @Response() res) {
-        console.log(req.isAuthenticated())
         if (req.isAuthenticated()) {
             await magic.users.logoutByIssuer(req.user.issuer);
             req.logout();

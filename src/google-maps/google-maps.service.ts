@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-
 import * as NodeGeocoder from "node-geocoder";
 
 @Injectable()
@@ -19,17 +18,23 @@ export class GoogleMapsService {
   // Using callback
 
   async getCoordinates(address: string) {
-    console.log("address in get coordinates", address);
-    const geocoder = NodeGeocoder(this.options);
+    try {
+      console.log("address in get coordinates", address);
+      const geocoder = NodeGeocoder(this.options);
 
-    const res = await geocoder.geocode(address);
-    console.log("response", res);
-    console.log("latitude", res[0].latitude);
-    console.log("longitude", res[0].longitude);
-    return {
-      lat: res[0].latitude,
-      lng: res[0].longitude,
-    };
+      const res = await geocoder.geocode(address);
+      console.log("response", res);
+      console.log("latitude", res[0].latitude);
+      console.log("longitude", res[0].longitude);
+      return {
+        lat: res[0].latitude,
+        lng: res[0].longitude,
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
+    }
   }
 }
 //   constructor(private config: ConfigService) {

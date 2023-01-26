@@ -16,43 +16,61 @@ export class ImagesService {
     region: "eu-west-1.",
   });
 
-  async uploadProfileImage(file, id) {
+  async uploadProfileImage(file: any, id: string) {
     //   const { originalname } = file;
-    const name = id + ".png";
-    return await this.s3_upload(
-      file.buffer,
-      this.AWS_S3_PROFILE_BUCKET,
-      name,
-      file.mimetype,
-      id
-    );
+    try {
+      const name = id + ".png";
+      return await this.s3_upload(
+        file.buffer,
+        this.AWS_S3_PROFILE_BUCKET,
+        name,
+        file.mimetype,
+        id
+      )
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occurred. Please try again.")
+    }
   }
 
-  async uploadGigImage(file, id) {
+  async uploadGigImage(file: any, id: string) {
     //   const { originalname } = file;
-    const name = id + ".png";
-    return await this.s3_upload(
-      file.buffer,
-      this.AWS_S3_GIG_BUCKET,
-      name,
-      file.mimetype,
-      id
-    );
+    try {
+      const name = id + ".png";
+      return await this.s3_upload(
+        file.buffer,
+        this.AWS_S3_GIG_BUCKET,
+        name,
+        file.mimetype,
+        id
+      )
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occurred. Please try again.")
+    }
   }
 
-  async uploadEventImage(file, id) {
+  async uploadEventImage(file: any, id: string) {
     //   const { originalname } = file;
-    const name = id + ".png";
-    return await this.s3_upload(
-      file.buffer,
-      this.AWS_S3_EVENT_BUCKET,
-      name,
-      file.mimetype,
-      id
-    );
+    try {
+      const name = id + ".png";
+      return await this.s3_upload(
+        file.buffer,
+        this.AWS_S3_EVENT_BUCKET,
+        name,
+        file.mimetype,
+        id
+      ) 
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occurred. Please try again.")
+    }
   }
 
-  async s3_upload(file, bucket, name, mimetype, userId) {
+  async s3_upload(file: any, bucket: string, name: string, mimetype: string, userId: string) {
     const params = {
       Bucket: bucket,
       Key: String(name),
@@ -74,27 +92,28 @@ export class ImagesService {
         data: { profileImage: s3Response.Key },
       });
       return s3Response;
-    } catch (e) {
-      console.log("error", e);
+    } catch (error) {
+        console.log(error)
+        throw new Error("There was an error uploading. Please try again.")
     }
   }
 
-  async downloadProfileImage(Key, id) {
+  async downloadProfileImage(Key: string, id: string) {
     const name = id + ".png";
     return await this.s3_download(this.AWS_S3_PROFILE_BUCKET, Key);
   }
 
-  async downloadGigImage(Key, id) {
+  async downloadGigImage(Key: string, id: string) {
     const name = id + ".png";
     return await this.s3_download(this.AWS_S3_GIG_BUCKET, Key);
   }
 
-  async downloadEventImage(Key, id) {
+  async downloadEventImage(Key: string, id: string) {
     const name = id + ".png";
     return await this.s3_download(this.AWS_S3_EVENT_BUCKET, Key);
   }
 
-  async s3_download(bucket, key) {
+  async s3_download(bucket: string, key: string) {
     const params = {
       Bucket: bucket,
       Key: String(key),

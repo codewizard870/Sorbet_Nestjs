@@ -24,12 +24,19 @@ export class TimezonesService {
     // // console.log(new Date(localDate.toISOString()));
     // // console.log(new_utc.toLocaleString().toString());
     // // console.log(date.getTimezoneOffset());
+    return (createTimezoneDto)
   }
 
-  convertToUtc(getdate) {
-    const date = new Date(getdate);
-    var new_utc = new Date(date.toUTCString());
-    return new_utc;
+  convertToUtc(getdate: any) {
+    try {
+      const date = new Date(getdate);
+      var new_utc = new Date(date.toUTCString());
+      return new_utc;
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occurred. Please try again.")
+    }
   }
 
   findAll() {

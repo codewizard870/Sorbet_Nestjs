@@ -7,7 +7,7 @@ import { UpdateTokenDto } from "./dto/update-token.dto";
 export class TokensService {
   constructor(private prismaService: PrismaService) {}
 
-  async getTokenByUserId(userId) {
+  async getTokenByUserId(userId: string) {
     try {
       const token = await this.prismaService.token.findFirst({
         where: {
@@ -16,12 +16,14 @@ export class TokensService {
       });
 
       return token;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
     }
   }
 
-  async createTokenByUserId(_id, hash) {
+  async createTokenByUserId(_id: string, hash: string) {
     try {
       const token = await this.prismaService.token.create({
         data: {
@@ -31,20 +33,24 @@ export class TokensService {
       });
 
       return token;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
     }
   }
 
-  async deleteToken(id) {
+  async deleteToken(id: string) {
     try {
       return await this.prismaService.token.delete({
         where: {
-          id: id,
+          userId: id,
         },
       });
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
     }
   }
 }

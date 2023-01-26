@@ -30,7 +30,7 @@ export class GigsController {
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.gigsService.findOne(+id);
+    return this.gigsService.findOne(id);
   }
 
   @Patch(":id")

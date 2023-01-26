@@ -23,7 +23,7 @@ model User {
   profileImage     String?
   jobProfile       JobProfile[]
   token            Token?
-  location    Location[]
+  location         Location[]
   Post             Post[]
   createdAt        DateTime     @default(now())
 }
@@ -176,4 +176,14 @@ model Chat {
   //relation with contact
   contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
   contactId String  @db.ObjectId
+}
+
+model Collab {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  collabId         String
+  userId           String
+  wallet_address   String
+  public_key       String
+  createdAt        DateTime
+  updatedAt        DateTime?
 }

@@ -1,11 +1,7 @@
 import {
-  BadGatewayException,
   BadRequestException,
-  HttpException,
-  ImATeapotException,
   Injectable,
 } from "@nestjs/common";
-import { ApiBadGatewayResponse } from "@nestjs/swagger";
 import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
 import { sendEmail } from "src/utils/auth/constants";
@@ -31,7 +27,7 @@ export class PasswordsService {
     return isMatch;
   }
 
-  async requestPasswordReset(user) {
+  async requestPasswordReset(user: any) {
     const token = await this.tokensService.getTokenByUserId(user._id);
     if (token) {
       await this.tokensService.deleteToken(token.id);
@@ -57,12 +53,13 @@ export class PasswordsService {
 
       // sendEmail(user.fullName, user.email, content);
       return { message: "Reset link sent to your mail" };
-    } else {
+    } 
+    else {
       throw new BadRequestException();
     }
   }
 
-  async resetPassword(userId, token, password) {
+  async resetPassword(userId: string, token: string, password: string) {
     const passwordResetToken = await this.tokensService.getTokenByUserId(
       userId
     );

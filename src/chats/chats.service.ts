@@ -7,7 +7,7 @@ import { UpdateChatDto } from "./dto/update-chat.dto";
 export class ChatsService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(data, userId) {
+  async create(data: any, userId: string) {
     try {
       const result = await this.prismaService.chat.create({
         data: {
@@ -26,7 +26,7 @@ export class ChatsService {
     }
   }
 
-  async getChatByContactId(id) {
+  async getChatByContactId(id: string) {
     try {
       const chat = await this.prismaService.chat.findMany({
         where: { contactId: id },
@@ -43,7 +43,7 @@ export class ChatsService {
     }
   }
 
-  async getChatByUserId(id) {
+  async getChatByUserId(id: string) {
     try {
       const chat = await this.prismaService.chat.findMany({
         where: { creatorId: id },
@@ -59,7 +59,7 @@ export class ChatsService {
     }
   }
 
-  async findOne(id) {
+  async findOne(id: string) {
     console.log("id", id);
 
     try {
@@ -98,7 +98,7 @@ export class ChatsService {
       where: { id: id },
     });
     if (result) {
-      return { message: "deleted Successfully" };
+      return { message: "Deleted Successfully" };
     } else {
       return { message: "Something went wrong" };
     }

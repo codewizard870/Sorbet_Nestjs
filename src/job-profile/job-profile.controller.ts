@@ -44,12 +44,12 @@ export class JobProfileController {
   }
 
   @Get("/jobType/:jobType")
-  getFromjobType(@Param("jobType") jobType: string) {
-    return this.jobProfileService.getFromjobType(jobType);
+  getFromJobType(@Param("jobType") jobType: string) {
+    return this.jobProfileService.getFromJobType(jobType);
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.jobProfileService.remove(+id);
+    return this.jobProfileService.remove(id);
   }
 }

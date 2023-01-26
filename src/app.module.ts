@@ -5,6 +5,7 @@ import { AppService } from "./app.service";
 import { AuthModule } from "./utils/auth/auth.module";
 import { MagicModule } from "./utils/magic/magic.module";
 import { JwtAuthGuard } from "./utils/auth/guards/jwt-auth.guard";
+import { MagicAuthGuard } from "./utils/magic/guards/magic.guard";
 import { UsersModule } from "./models/users/users.module";
 import { TokensModule } from "./utils/tokens/tokens.module";
 import { EventsModule } from "./models/events/events.module";
@@ -19,6 +20,7 @@ import { ContactsModule } from "./chats/contacts/contacts.module";
 import { JobProfileModule } from "./job-profile/job-profile.module";
 import { GoogleMapsModule } from "./google-maps/google-maps.module";
 import { GlobalSearchModule } from "./global-search/global-search.module";
+import { CollabModule } from "./models/collab/collab.module";
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { GlobalSearchModule } from "./global-search/global-search.module";
     ContactsModule,
     JobProfileModule,
     GlobalSearchModule,
+    CollabModule,
   ],
   controllers: [AppController],
   providers: [
@@ -45,6 +48,10 @@ import { GlobalSearchModule } from "./global-search/global-search.module";
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: MagicAuthGuard,
     },
     {
       provide: APP_PIPE,

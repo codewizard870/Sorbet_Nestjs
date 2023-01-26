@@ -1,12 +1,11 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Request,
   Patch,
-  Param,
   Delete,
+  Post,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -17,6 +16,11 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 @ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post("createUser")
+  async create(@Request() req, @Body() token: string) {
+    return await this.usersService.create(req, token)
+  }
 
   @Get("getAll")
   async getAll() {

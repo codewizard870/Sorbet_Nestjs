@@ -16,33 +16,40 @@ export class UsersService {
   ) {}
 
   async create(data: any, token: string) {
-    const user = await this.getUserFromEmail(data.email);
-    if (user) {
-      throw new BadRequestException("User already Exists");
-    } else {
-      //hashing new user password
-      const pass = await this.passwordsService.hashPassword(data.password);
-      //create new user account with hashed password
-      //hashed password in pass
-      data.password = pass;
-      const result = await this.prisma.user.create({
-        data: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          password: data.password,
-          jobProfile: data.jobProfile,
-          location: data.location,
-          bio: data.bio,
-          status: data.Status,
-          profileImage: null,
-          confirmationCode: token,
-          // magicAuth: false,
-        },
-      });
-      if (result) {
-        return result;
+    try {
+      const user = await this.getUserFromEmail(data.email);
+      if (user) {
+        throw new BadRequestException("User already Exists");
+      } 
+      else {
+        //hashing new user password
+        const pass = await this.passwordsService.hashPassword(data.password);
+        //create new user account with hashed password
+        //hashed password in pass
+        data.password = pass;
+        const result = await this.prisma.user.create({
+          data: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            password: data.password,
+            jobProfile: data.jobProfile,
+            location: data.location,
+            bio: data.bio,
+            status: data.Status,
+            profileImage: null,
+            confirmationCode: token,
+            // magicAuth: false,
+          },
+        });
+        if (result) {
+          return result;
+        }
       }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
   catch(error) {
@@ -50,43 +57,57 @@ export class UsersService {
   }
 
   async getUserFromEmail(email: string) {
-    const result = await this.prisma.user.findFirst({
-      where: {
-        email: email,
-      },
-    });
-    if (result) {
-      console.log("RESULT", result);
-
-      return result;
+    try {
+      const result = await this.prisma.user.findFirst({
+        where: {
+          email: email,
+        },
+      });
+      if (result) {
+        console.log("RESULT", result);
+  
+        return result;
+      } 
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async verifyUserEmail(email) {
-    const result = await this.prisma.user.update({
-      where: {
-        email: email,
-      },
-      data: {
-        status: "Active",
-      },
-    });
-    if (result) {
-      return { message: "Email verified" };
-    } else {
-      throw new BadRequestException("Unable to verify Email");
+  async verifyUserEmail(email: string) {
+    try {
+      const result = await this.prisma.user.update({
+        where: {
+          email: email,
+        },
+        data: {
+          status: "Active",
+        },
+      });
+      if (result) {
+        return { message: "Email verified" };
+      } else {
+        throw new BadRequestException("Unable to verify Email");
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async getUserFromId(_id) {
+  async getUserFromId(_id: string) {
     try {
       const user = await this.prisma.user.findFirst({
         where: { id: _id },
         include: { jobProfile: true, location: true },
       });
       return user;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -105,12 +126,14 @@ export class UsersService {
         },
       });
       return user;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async getUserFromConfirmationCode(confirmationCode) {
+  async getUserFromConfirmationCode(confirmationCode: string) {
     try {
       const user = await this.prisma.user.findFirst({
         where: {
@@ -118,8 +141,10 @@ export class UsersService {
         },
       });
       return user;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -159,37 +184,51 @@ export class UsersService {
     }
   }
 
-  async updateUserProfile(_id, data) {
-    const result = await this.prisma.user.update({
-      where: { id: _id },
-      data: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password,
-        jobProfile: data.jobProfile,
-        location: data.location,
-        bio: data.bio,
-        status: data.Status,
-        profileImage: data.profileImage,
-        confirmationCode: data.confirmationCode,
-      },
-    });
-    if (result) {
-      return { message: "Update Successfully" };
-    } else {
-      return { message: "Something went wrong" };
+  async updateUserProfile(_id: string, data: any) {
+    try {
+      const result = await this.prisma.user.update({
+        where: { id: _id },
+        data: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          password: data.password,
+          jobProfile: data.jobProfile,
+          location: data.location,
+          bio: data.bio,
+          status: data.Status,
+          profileImage: data.profileImage,
+          confirmationCode: data.confirmationCode,
+        },
+      });
+      if (result) {
+        return { message: "Update Successfully" };
+      } 
+      else {
+        return { message: "Something went wrong" };
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async delete(_id) {
-    const result = await this.prisma.user.delete({
-      where: { id: _id },
-    });
-    if (result) {
-      return { message: "deleted Successfully" };
-    } else {
-      return { message: "Something went wrong" };
+  async delete(_id: string) {
+    try {
+      const result = await this.prisma.user.delete({
+        where: { id: _id },
+      });
+      if (result) {
+        return { message: "deleted Successfully" };
+      } 
+      else {
+        return { message: "Something went wrong" };
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -220,8 +259,10 @@ export class UsersService {
           return user;
         }
       }
-    } catch (ex) {
-      throw ex;
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 }

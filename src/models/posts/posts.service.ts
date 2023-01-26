@@ -12,46 +12,58 @@ export class PostsService {
     private usersService: UsersService
   ) {}
 
-  async create(data: CreatePostDto, email) {
-    const existingUser = await this.usersService.getUserFromEmail(email);
-    if (data.content === "Gig" || data.content === "Event") {
-      const result = await this.prismaService.post.create({
-        data: {
-          timestamp: data.timestamp,
-          content: data.content,
-          userId: existingUser.id,
-        },
-      });
-      if (result) {
-        return result;
+  async create(data: CreatePostDto, email: string) {
+    try {
+      const existingUser = await this.usersService.getUserFromEmail(email);
+      if (data.content === "Gig" || data.content === "Event") {
+        const result = await this.prismaService.post.create({
+          data: {
+            timestamp: data.timestamp,
+            content: data.content,
+            userId: existingUser.id,
+          },
+        });
+        if (result) {
+          return result;
+        }
+      } else {
+        const result = await this.prismaService.post.create({
+          data: {
+            timestamp: data.timestamp,
+            text: data.text,
+            content: data.content,
+            userId: existingUser.id,
+          },
+        });
+        if (result) {
+          return result;
+        }
       }
-    } else {
-      const result = await this.prismaService.post.create({
-        data: {
-          timestamp: data.timestamp,
-          text: data.text,
-          content: data.content,
-          userId: existingUser.id,
-        },
-      });
-      if (result) {
-        return result;
-      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
   async findAll() {
-    return await this.prismaService.post.findMany({
-      include: {
-        blob: true,
-        location: true,
-        gig: true,
-        event: true,
-      },
-    });
+    try {
+      return await this.prismaService.post.findMany({
+        include: {
+          blob: true,
+          location: true,
+          gig: true,
+          event: true,
+        },
+      });
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
   }
 
-  async findOne(_id) {
+  async findOne(_id: string) {
     try {
       const post = await this.prismaService.post.findFirst({
         where: { id: _id },
@@ -63,8 +75,10 @@ export class PostsService {
         },
       });
       return post;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 

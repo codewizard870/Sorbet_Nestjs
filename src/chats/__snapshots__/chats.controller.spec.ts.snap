@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChatsController should create a chat and post to the database 1`] = `
+Object {
+  "contactId": "000102030405060708090a0b",
+  "createdAt": Any<Date>,
+  "creatorId": "000102030405060708090a0b",
+  "id": Any<String>,
+  "message": "hey",
+  "updatedAt": Any<Date>,
+}
+`;

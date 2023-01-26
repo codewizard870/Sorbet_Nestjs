@@ -13,6 +13,7 @@ import { CreateGlobalSearchDto } from "./dto/create-global-search.dto";
 import { UpdateGlobalSearchDto } from "./dto/update-global-search.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import {
+  FindUserDistanceDto,
   FindEventDistanceDto,
   FindGigDistanceDto,
   FindPostDistanceDto,
@@ -79,6 +80,7 @@ export class GlobalSearchController {
       text
     );
   }
+
   @Post("globalSearchPostByDistance/:text/:distance")
   async globalSearchPostByDistance(
     @Request() req,
@@ -91,6 +93,7 @@ export class GlobalSearchController {
       text
     );
   }
+
   @Post("globalSearchUserByDistance/:text/:distance")
   async globalSearchUserByDistance(
     @Request() req,
@@ -118,7 +121,7 @@ export class GlobalSearchController {
   ///to check distance between a loged in user and using eventID postID gigID userId
   //that the eventID postID gigID userId exists inside the inputted range or not from the loggedIn user
   @Post("findUserInDistance")
-  async findUserInDistance(@Request() req, @Body() data: FindEventDistanceDto) {
+  async findUserInDistance(@Request() req, @Body() data: FindUserDistanceDto) {
     return await this.globalSearchService.findUserDistance(req.user.id, data);
   }
 

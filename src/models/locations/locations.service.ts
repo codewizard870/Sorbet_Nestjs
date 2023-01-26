@@ -4,6 +4,7 @@ import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateLocationDto } from "./dto/create-location.dto";
 import { UpdateLocationDto } from "./dto/update-location.dto";
 import * as haversine from "haversine-distance";
+
 @Injectable()
 export class LocationsService {
   constructor(
@@ -11,29 +12,41 @@ export class LocationsService {
     private googleMapService: GoogleMapsService
   ) {}
 
-  getDistanceUsingHarversine(user, saved) {
-    // latitude:31.5203696,longitude:74.35874729999999 lahore
-    // latitude:33.2615676,longitude:73.3057508 gujar khan
-    const a = { latitude: 33.5651107, longitude: 73.0169135 };
-    const b = { latitude: 33.2615676, longitude: 73.3057508 };
-    const distanceInMeters = haversine(user, saved);
-    const distanceInkilometers = distanceInMeters / 1000;
-    console.log("distance ", distanceInkilometers);
-    return distanceInkilometers;
+  getDistanceUsingHaversine(user: any, saved: any) {
+    try {
+      // latitude:31.5203696,longitude:74.35874729999999 lahore
+      // latitude:33.2615676,longitude:73.3057508 gujar khan
+      const a = { latitude: 33.5651107, longitude: 73.0169135 };
+      const b = { latitude: 33.2615676, longitude: 73.3057508 };
+      const distanceInMeters = haversine(user, saved);
+      const distanceInkilometers = distanceInMeters / 1000;
+      console.log("distance ", distanceInkilometers);
+      return distanceInkilometers;
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
   }
 
   async findAll() {
-    return await this.prismaService.location.findMany({
-      include: {
-        post: true,
-        user: true,
-        event: true,
-        gig: true,
-      },
-    });
+    try {
+      return await this.prismaService.location.findMany({
+        include: {
+          post: true,
+          user: true,
+          event: true,
+          gig: true,
+        },
+      });
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
   }
 
-  async findOne(_id) {
+  async findOne(_id: string) {
     try {
       const location = await this.prismaService.location.findFirst({
         where: { id: _id },
@@ -45,12 +58,14 @@ export class LocationsService {
         },
       });
       return location;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async createMyLocation(data, userId) {
+  async createMyLocation(data: any, userId: string) {
     const address =
       data.city +
       " " +
@@ -82,79 +97,85 @@ export class LocationsService {
   }
 
   async create(data: CreateLocationDto) {
-    const address =
-      data.city +
-      " " +
-      data.district +
-      " " +
-      data.province +
-      " " +
-      data.country;
-    const location = await this.googleMapService.getCoordinates(address);
-    console.log("location", location);
-    if (data.gigId) {
-      const result = await this.prismaService.location.create({
-        data: {
-          country: data.country,
-          province: data.province,
-          district: data.district,
-          city: data.city,
-          gigId: data.gigId,
-
-          location_type: data.location_type,
-
-          Latitude: location.lat,
-
-          Langitude: location.lng,
-        },
-      });
-      if (result) {
-        return result;
+    try {
+      const address =
+        data.city +
+        " " +
+        data.district +
+        " " +
+        data.province +
+        " " +
+        data.country;
+      const location = await this.googleMapService.getCoordinates(address);
+      console.log("location", location);
+      if (data.gigId) {
+        const result = await this.prismaService.location.create({
+          data: {
+            country: data.country,
+            province: data.province,
+            district: data.district,
+            city: data.city,
+            gigId: data.gigId,
+  
+            location_type: data.location_type,
+  
+            Latitude: location.lat,
+  
+            Langitude: location.lng,
+          },
+        });
+        if (result) {
+          return result;
+        } else {
+          throw new BadRequestException("Please try again later");
+        }
+      } else if (data.eventId) {
+        const result = await this.prismaService.location.create({
+          data: {
+            eventId: data.eventId,
+            country: data.country,
+            province: data.province,
+            district: data.district,
+            city: data.city,
+            location_type: data.location_type,
+  
+            Latitude: location.lat,
+  
+            Langitude: location.lng,
+          },
+        });
+        if (result) {
+          return result;
+        } else {
+          throw new BadRequestException("Please try again later");
+        }
+      } else if (data.postId) {
+        const result = await this.prismaService.location.create({
+          data: {
+            postId: data.postId,
+            country: data.country,
+            province: data.province,
+            district: data.district,
+            city: data.city,
+            location_type: data.location_type,
+  
+            Latitude: location.lat,
+  
+            Langitude: location.lng,
+          },
+        });
+        if (result) {
+          return result;
+        } else {
+          throw new BadRequestException("Please try again later");
+        }
       } else {
-        throw new BadRequestException("Please try again later");
+        throw new BadRequestException("This id does not exists");
       }
-    } else if (data.eventId) {
-      const result = await this.prismaService.location.create({
-        data: {
-          eventId: data.eventId,
-          country: data.country,
-          province: data.province,
-          district: data.district,
-          city: data.city,
-          location_type: data.location_type,
-
-          Latitude: location.lat,
-
-          Langitude: location.lng,
-        },
-      });
-      if (result) {
-        return result;
-      } else {
-        throw new BadRequestException("Please try again later");
-      }
-    } else if (data.postId) {
-      const result = await this.prismaService.location.create({
-        data: {
-          postId: data.postId,
-          country: data.country,
-          province: data.province,
-          district: data.district,
-          city: data.city,
-          location_type: data.location_type,
-
-          Latitude: location.lat,
-
-          Langitude: location.lng,
-        },
-      });
-      if (result) {
-        return result;
-      } else {
-        throw new BadRequestException("Please try again later");
-      }
-    } else {
-      throw new BadRequestException("This id does not exists");
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 }

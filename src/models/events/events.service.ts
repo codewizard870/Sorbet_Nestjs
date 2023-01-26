@@ -3,6 +3,7 @@ import { TimezonesService } from "src/timezones/timezones.service";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
+import { ContactsModule } from "src/chats/contacts/contacts.module";
 
 @Injectable()
 export class EventsService {
@@ -10,46 +11,62 @@ export class EventsService {
     private prismaService: PrismaService,
     private timezonesService: TimezonesService
   ) {}
+
   async create(data: CreateEventDto) {
-    const utcStartDate = this.timezonesService.convertToUtc(data.start_date);
-    const utcEndDate = this.timezonesService.convertToUtc(data.end_date);
-
-    const result = await this.prismaService.event.create({
-      data: {
-        postId: data.postId,
-        name: data.name,
-        event_image: data.event_image,
-
-        start_date: utcStartDate,
-        end_date: utcEndDate,
-
-        event_link: data.event_link,
-        description: data.description,
-        timezone: data.timezone,
-      },
-    });
-    if (result) {
-      return result;
-    } else {
-      throw new BadRequestException();
+    try {
+      const utcStartDate = this.timezonesService.convertToUtc(data.start_date);
+      const utcEndDate = this.timezonesService.convertToUtc(data.end_date);
+  
+      const result = await this.prismaService.event.create({
+        data: {
+          postId: data.postId,
+          name: data.name,
+          event_image: data.event_image,
+  
+          start_date: utcStartDate,
+          end_date: utcEndDate,
+  
+          event_link: data.event_link,
+          description: data.description,
+          timezone: data.timezone,
+        },
+      });
+      if (result) {
+        return result;
+      } 
+      else {
+        throw new BadRequestException();
+      } 
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
   async findAll() {
-    return await this.prismaService.event.findMany({
-      include: { post: true, location: true },
-    });
+    try {
+      return await this.prismaService.event.findMany({
+        include: { post: true, location: true },
+      })
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
   }
 
-  async findOne(_id) {
+  async findOne(_id: string) {
     try {
       const event = await this.prismaService.event.findFirst({
         where: { id: _id },
         include: { location: true },
       });
       return event;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
