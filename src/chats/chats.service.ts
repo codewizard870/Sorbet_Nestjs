@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateChatDto } from "./dto/create-chat.dto";
 import { UpdateChatDto } from "./dto/update-chat.dto";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class ChatsService {
@@ -51,7 +52,8 @@ export class ChatsService {
       });
       if (chat) {
         return chat;
-      } else {
+      } 
+      else {
         throw new BadRequestException("chat not found");
       }
     } catch (error) {
@@ -60,8 +62,6 @@ export class ChatsService {
   }
 
   async findOne(id: string) {
-    console.log("id", id);
-
     try {
       const chat = await this.prismaService.chat.findMany({
         where: { id: id },
@@ -70,7 +70,8 @@ export class ChatsService {
       console.log("chat", chat);
       if (chat) {
         return chat;
-      } else {
+      } 
+      else {
         throw new BadRequestException("chat not found");
       }
     } catch (error) {
@@ -85,7 +86,8 @@ export class ChatsService {
       });
       if (chat) {
         return chat;
-      } else {
+      } 
+      else {
         throw new BadRequestException("chat not found");
       }
     } catch (error) {
@@ -93,13 +95,27 @@ export class ChatsService {
     }
   }
 
-  async remove(id) {
+  async update(id: string, data: any) {
+    const result = await this.prismaService.chat.update({
+      where: { id: id },
+      data: data,
+    })
+    if (result) {
+      return { message: "Updated Successfully" }
+    }
+    else {
+      return { message: "Something went wrong" }
+    }
+   }
+
+  async remove(id: string) {
     const result = await this.prismaService.chat.delete({
       where: { id: id },
     });
     if (result) {
       return { message: "Deleted Successfully" };
-    } else {
+    } 
+    else {
       return { message: "Something went wrong" };
     }
   }

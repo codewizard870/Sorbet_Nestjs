@@ -4,6 +4,9 @@ import { ChatsService } from "./chats.service";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { Context, MockContext, createMockContext } from "../../test/prisma/context"
 import { PrismaClient } from '@prisma/client'
+import { CreateChatDto } from "./dto/create-chat.dto";
+import { UpdateChatDto } from "./dto/update-chat.dto";
+
 
 const prisma = new PrismaClient()
 
@@ -18,9 +21,13 @@ describe("ChatsController", () => {
   let mockCtx: MockContext
   let ctx: Context
 
-  let createChatDto = {
-    message: 'hey', 
+  const mockCreateChatDto: CreateChatDto = {
+    message: 'hey',
     contactId: '000102030405060708090a0b'
+  }
+
+  const mockUpdateChatDto: UpdateChatDto = {
+    message: 'hey'
   }
 
   let req = {
@@ -29,11 +36,6 @@ describe("ChatsController", () => {
     }
   }
 
-  const chatData = {
-    message: 'hey',
-    creatorId: '000102030405060708090a0b',
-    contactId: '000102030405060708090a0b'
-  }
   const userId = '000102030405060708090a0b'
 
   let mockChatsService = {
@@ -45,7 +47,7 @@ describe("ChatsController", () => {
             creatorId: userId,
             contactId: chat.contactId,
           },
-        });
+        })
         if (result) {
           return result;
         } else {
@@ -61,11 +63,12 @@ describe("ChatsController", () => {
       try {
         const chat = await prisma.chat.findMany({
           where: { contactId: id },
-        include: { contact: true },
-        });
+          // include: { contact: true },
+        })
         if (chat) {
           return chat;
-        } else {
+        } 
+        else {
           throw new Error("contact not found");
         }
       } 
@@ -78,30 +81,36 @@ describe("ChatsController", () => {
       try {
         const chat = await prisma.chat.findMany({
           where: { creatorId: id },
-          include: { contact: true },
-        });
+          // include: { contact: true },
+        })
         if (chat) {
           return chat;
-        } else {
+        } 
+        else {
           throw new Error("chat not found");
         }
-      } catch (error) {
+      } 
+      catch (error) {
         console.log(`Error Occured, ${error}`);
       }
     }),
 
     findOne: jest.fn().mockImplementation(async (id: string) => {
+      console.log("id", id);
+
       try {
         const chat = await prisma.chat.findMany({
           where: { id: id },
-          include: { contact: true },
-        });
+          // include: { contact: true },
+        })
         if (chat) {
           return chat;
-        } else {
+        } 
+        else {
           throw new Error("chat not found");
         }
-      } catch (error) {
+      } 
+      catch (error) {
         console.log(`Error Occured, ${error}`);
       }
     }),
@@ -109,25 +118,41 @@ describe("ChatsController", () => {
     getAll: jest.fn().mockImplementation(async (id: string) => {
       try {
         const chat = await prisma.chat.findMany({
-          include: { contact: true },
-        });
+          // include: { contact: true },
+        })
         if (chat) {
           return chat;
-        } else {
+        } 
+        else {
           throw new Error("chat not found");
         }
-      } catch (error) {
+      } 
+      catch (error) {
         console.log(`Error Occured, ${error}`);
+      }
+    }),
+
+    update: jest.fn().mockImplementation(async (id: string, data: any) => {
+      const result = await prisma.chat.update({
+        where: { id: id },
+        data: data,
+      })
+      if (result) {
+        return { message: "Updated Successfully" }
+      }
+      else {
+        return { message: "Something went wrong" }
       }
     }),
 
     remove: jest.fn().mockImplementation(async (id: string) => {
       const result = await prisma.chat.delete({
         where: { id: id },
-      });
+      })
       if (result) {
         return { message: "Deleted Successfully" };
-      } else {
+      } 
+      else {
         return { message: "Something went wrong" };
       }
     })
@@ -156,79 +181,107 @@ describe("ChatsController", () => {
     expect(controller.create).toBeDefined()
   })
 
-  let createdChat: any
+  let chat: any
   it("should create a chat and post to the database", async () => {
-    createdChat = await controller.create(createChatDto, req)
+    const createdChat = await controller.create(mockCreateChatDto, req)
+    chat = createdChat
     expect(createdChat).toEqual({
-        id: expect.any(String),
-        message: 'hey',
-        creatorId: '000102030405060708090a0b',
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
-        contactId: '000102030405060708090a0b'
-      })
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
   })
 
-  // GET - getAll
   it("getAll get request should be defined", () => {
     expect(controller.findAll).toBeDefined()
   })
 
   it("should get all of the chats and return them in an array", async () => {
     const allChats = await controller.findAll()
-    // expect(controller.findAll).toBeCalled()
+    expect(allChats).toEqual(expect.any(Array))
+    expect(allChats[0]).toEqual({
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
   })
 
-  // GET - findOne
   it("findOne get request should be defined", () => {
     expect(controller.findOne).toBeDefined()
   })
 
   it("get a chat by the id and return it", async () => {
-    const chat = await controller.findOne(createdChat.id)
-    // expect(controller.findOne).toBeCalled()
-    // expect(chat).toEqual({
-    //   id: expect.any(String),
-    //   message: 'hey',
-    //   creatorId: '000102030405060708090a0b',
-    //   createdAt: expect.any(Date),
-    //   updatedAt: expect.any(Date),
-    //   contactId: '000102030405060708090a0b'
-    // }) 
+    const chatById = await controller.findOne(chat.id)
+    expect(chatById).toEqual(expect.any(Array))
+    expect(chatById[0]).toEqual({
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    }) 
   })
 
   it("findBycontactId get request should be defined", () => {
-    expect(controller.findBycontactId).toBeDefined()
+    expect(controller.findByContactId).toBeDefined()
   })
 
   it("finds a chat by the contactId and returns it", async () => {
-    const chat = await controller.findBycontactId(createdChat.contactId)
-    // expect(controller.findBycontactId).toBeCalled()
-    // expect(chat).toEqual({
-    //   id: expect.any(String),
-    //   message: 'hey',
-    //   creatorId: '000102030405060708090a0b',
-    //   createdAt: expect.any(Date),
-    //   updatedAt: expect.any(Date),
-    //   contactId: '000102030405060708090a0b'
-    // })
+    const chatByContactId = await controller.findByContactId(chat.contactId)
+    expect(chatByContactId).toEqual(expect.any(Array))
+    expect(chatByContactId[0]).toEqual({
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
   })
 
   it("findByuserId get request should be defined", () => {
-    expect(controller.findByuserId).toBeDefined()
+    expect(controller.findByUserId).toBeDefined()
   })
 
   it("finds a chat by the userId and returns it", async () => {
-    const chat = await controller.findByuserId(createdChat.userId)
-    // expect(controller.findByuserId).toBeCalled()
-    // expect(chat).toEqual({
-    //   id: expect.any(String),
-    //   message: 'hey',
-    //   creatorId: '000102030405060708090a0b',
-    //   createdAt: expect.any(Date),
-    //   updatedAt: expect.any(Date),
-    //   contactId: '000102030405060708090a0b'
-    // })
+    const chatByUserId = await controller.findByUserId(chat.creatorId)
+    expect(chatByUserId).toEqual(expect.any(Array))
+    expect(chatByUserId[0]).toEqual({
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
+  })
+
+  it("should define a function to update a chat by the id", () => {
+    expect(controller.update).toBeDefined()
+  })
+
+  it("should update a chat by the id", async () => {
+    const updatedChat = await controller.update(chat.id, mockUpdateChatDto)
+    expect(updatedChat).toEqual({
+      message: "Updated Successfully"
+    })
+    const isChatUpdated = await controller.findOne(chat.id)
+    expect(isChatUpdated).toEqual(expect.any(Array))
+    expect(isChatUpdated[0]).toEqual({
+      id: expect.any(String),
+      message: mockUpdateChatDto.message,
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
   })
 
   it("remove delete request should be defined", () => {
@@ -236,9 +289,11 @@ describe("ChatsController", () => {
   })
 
   it("removes a chat from the database by id", async () => {
-    const removedChat = await controller.remove(createdChat.id)
+    const removedChat = await controller.remove(chat.id)
     expect(removedChat).toEqual({
       message: "Deleted Successfully"
     })
+    const isChatRemoved = await controller.findOne(chat.id)
+    expect(isChatRemoved).toEqual([])
   })
 })

@@ -35,13 +35,18 @@ export class ChatsController {
   }
 
   @Get("findBycontactId/:contactId")
-  async findBycontactId(@Param("contactId") contactId: string) {
+  async findByContactId(@Param("contactId") contactId: string) {
     return await this.chatsService.getChatByContactId(contactId);
   }
 
   @Get("findByuserId/:contactId")
-  async findByuserId(@Param("contactId") contactId: string) {
+  async findByUserId(@Param("contactId") contactId: string) {
     return await this.chatsService.getChatByUserId(contactId);
+  }
+
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateChatsDto: UpdateChatDto) {
+    return this.chatsService.update(id, updateChatsDto);
   }
 
   @Delete(":id")

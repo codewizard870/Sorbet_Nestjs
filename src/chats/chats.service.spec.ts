@@ -3,6 +3,8 @@ import { ChatsService } from "./chats.service";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { Context, MockContext, createMockContext } from "../../test/prisma/context"
 import { PrismaClient } from '@prisma/client'
+import { CreateChatDto } from "./dto/create-chat.dto";
+import { UpdateChatDto } from "./dto/update-chat.dto";
 
 const prisma = new PrismaClient()
 
@@ -16,11 +18,15 @@ interface CreateChat {
   contactId: string
 }
 
-const chatData = {
+const mockCreateChatDto: CreateChatDto = {
   message: 'hey',
-  creatorId: '000102030405060708090a0b',
   contactId: '000102030405060708090a0b'
 }
+
+const mockUpdateChatDto: UpdateChatDto = {
+  message: 'hey'
+}
+
 const userId = '000102030405060708090a0b'
 
 describe("ChatsService", () => {
@@ -35,7 +41,7 @@ describe("ChatsService", () => {
             creatorId: userId,
             contactId: chat.contactId,
           },
-        });
+        })
         if (result) {
           return result;
         } else {
@@ -51,12 +57,12 @@ describe("ChatsService", () => {
       try {
         const chat = await prisma.chat.findMany({
           where: { contactId: id },
-        include: { contact: true },
-        });
-        console.log("chat", chat);
+          // include: { contact: true },
+        })
         if (chat) {
           return chat;
-        } else {
+        } 
+        else {
           throw new Error("contact not found");
         }
       } 
@@ -69,14 +75,16 @@ describe("ChatsService", () => {
       try {
         const chat = await prisma.chat.findMany({
           where: { creatorId: id },
-          include: { contact: true },
-        });
+          // include: { contact: true },
+        })
         if (chat) {
           return chat;
-        } else {
+        } 
+        else {
           throw new Error("chat not found");
         }
-      } catch (error) {
+      } 
+      catch (error) {
         console.log(`Error Occured, ${error}`);
       }
     }),
@@ -87,15 +95,16 @@ describe("ChatsService", () => {
       try {
         const chat = await prisma.chat.findMany({
           where: { id: id },
-          include: { contact: true },
-        });
-        console.log("chat", chat);
+          // include: { contact: true },
+        })
         if (chat) {
           return chat;
-        } else {
+        } 
+        else {
           throw new Error("chat not found");
         }
-      } catch (error) {
+      } 
+      catch (error) {
         console.log(`Error Occured, ${error}`);
       }
     }),
@@ -103,25 +112,41 @@ describe("ChatsService", () => {
     getAll: jest.fn().mockImplementation(async (id: string) => {
       try {
         const chat = await prisma.chat.findMany({
-          include: { contact: true },
-        });
+          // include: { contact: true },
+        })
         if (chat) {
           return chat;
-        } else {
+        } 
+        else {
           throw new Error("chat not found");
         }
-      } catch (error) {
+      } 
+      catch (error) {
         console.log(`Error Occured, ${error}`);
+      }
+    }),
+
+    update: jest.fn().mockImplementation(async (id: string, data: any) => {
+      const result = await prisma.chat.update({
+        where: { id: id },
+        data: data,
+      })
+      if (result) {
+        return { message: "Updated Successfully" }
+      }
+      else {
+        return { message: "Something went wrong" }
       }
     }),
 
     remove: jest.fn().mockImplementation(async (id: string) => {
       const result = await prisma.chat.delete({
         where: { id: id },
-      });
+      })
       if (result) {
         return { message: "Deleted Successfully" };
-      } else {
+      } 
+      else {
         return { message: "Something went wrong" };
       }
     })
@@ -152,16 +177,16 @@ describe("ChatsService", () => {
   // Creates a chat and posts to the mock database
   let chat: any
   it("should create a chat and return the result", async () => {
-    const createdChat = await service.create(chatData, userId)
+    const createdChat = await service.create(mockCreateChatDto, userId)
     expect(service.create).toBeCalled()
     chat = createdChat
     expect(createdChat).toEqual({
       id: expect.any(String),
-      message: 'hey',
-      creatorId: '000102030405060708090a0b',
+      message: expect.any(String),
+      creatorId: expect.any(String),
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
-      contactId: '000102030405060708090a0b'
+      contactId: expect.any(String)
     })
   })
 
@@ -169,84 +194,110 @@ describe("ChatsService", () => {
     expect(service.getChatByContactId).toBeDefined()
   })
 
-  // Gets a chat by contactId and returns it
-  it("should get a chat by the contact id", async () => {
+  it("should get a chats by the contact id", async () => {
     const chatByContactId = await service.getChatByContactId(chat.contactId)
     expect(service.getChatByContactId).toBeCalled()
-    // expect(chatByContactId).toEqual({
-    //   id: expect.any(String),
-    //   message: 'hey',
-    //   creatorId: '000102030405060708090a0b',
-    //   createdAt: expect.any(Date),
-    //   updatedAt: expect.any(Date),
-    //   contactId: '000102030405060708090a0b'
-    // })
+    expect(chatByContactId).toEqual(expect.any(Array))
+    expect(chatByContactId[0]).toEqual({
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
   })
 
   it("should define a function to get a chat by the user id", async () => {
     expect(service.getChatByUserId).toBeDefined()
   })
 
-  // Gets a chat by userId and returns it
   it("should get a chat by user id", async () => {
     const chatByUserId = await service.getChatByUserId(chat.creatorId)
     expect(service.getChatByUserId).toBeCalled()
-    // expect(chatByUserId).toEqual({
-    //   id: expect.any(String),
-    //   message: 'hey',
-    //   creatorId: '000102030405060708090a0b',
-    //   createdAt: expect.any(Date),
-    //   updatedAt: expect.any(Date),
-    //   contactId: '000102030405060708090a0b'
-    // })
+    expect(chatByUserId).toEqual(expect.any(Array))
+    expect(chatByUserId[0]).toEqual({
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
   })
 
   it("should define a function to find one chat by the id", async () => {
     expect(service.findOne).toBeDefined()
   })
 
-  // Gets a chat by id and returns it
   it("should get a chat by the chat's id", async () => {
     const chatById = await service.findOne(chat.id)
     expect(service.findOne).toBeCalled()
-    // expect(chatById).toEqual({
-    //   id: expect.any(String),
-    //   message: 'hey',
-    //   creatorId: '000102030405060708090a0b',
-    //   createdAt: expect.any(Date),
-    //   updatedAt: expect.any(Date),
-    //   contactId: '000102030405060708090a0b'
-    // })
+    expect(chatById).toEqual(expect.any(Array))
+    expect(chatById[0]).toEqual({
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
   })
 
   it("should define a function to get all the chats", async () => {
     expect(service.getAll).toBeDefined()
   })
 
-  // Gets all of the chats saved in the mock database
   it("should get all of the chats", async () => {
     const allChats = await service.getAll()
     expect(service.getAll).toBeCalled()
+    expect(allChats).toEqual(expect.any(Array))
+    expect(allChats[0]).toEqual({
+      id: expect.any(String),
+      message: expect.any(String),
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
+  })
 
-    // expect(await service.getAll()).toEqual({
-    //   id: expect.any(String),
-    //   message: 'hey',
-    //   creatorId: '000102030405060708090a0b',
-    //   createdAt: expect.any(Date),
-    //   updatedAt: expect.any(Date),
-    //   contactId: '000102030405060708090a0b'
-    // })
+  it("should define a function to update a chat by the id", () => {
+    expect(service.update).toBeDefined()
+  })
+
+  it("should update a chat by the id", async () => {
+    const updatedChat = await service.update(chat.id, mockUpdateChatDto)
+    console.log(updatedChat)
+    expect(service.update).toBeCalled()
+    expect(updatedChat).toEqual({
+      message: "Updated Successfully"
+    })
+    const isChatUpdated = await service.findOne(chat.id)
+    expect(service.findOne).toBeCalled()
+    expect(isChatUpdated).toEqual(expect.any(Array))
+    expect(isChatUpdated[0]).toEqual({
+      id: expect.any(String),
+      message: mockUpdateChatDto.message,
+      creatorId: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+      contactId: expect.any(String)
+    })
   })
 
   it("should define a function to remove a chat by the id", async () => {
     expect(service.remove).toBeDefined()
   })
 
-  // Removes a chat from the database based on the given id
   it("should remove a chat by the id", async () => {
-    const removeChat = await service.remove(chat.id)
-    expect(removeChat).toEqual({
+    const removedChat = await service.remove(chat.id)
+    expect(service.remove).toBeCalled()
+    expect(removedChat).toEqual({
       message: "Deleted Successfully"
     })
+    const isChatRemoved = await service.findOne(chat.id)
+    expect(service.findOne).toBeCalled()
+    expect(isChatRemoved).toEqual([])
   })
-});
+})
