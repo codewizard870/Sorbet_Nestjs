@@ -170,21 +170,23 @@ describe("UsersController", () => {
 
     getAll: jest.fn().mockImplementation(async () => {
       try {
-        const user = prisma.user.findMany({
-            select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-            jobProfile: true,
-            location: true,
-            bio: true,
-            profileImage: true,
-          },
+        const allUsers = await prisma.user.findMany({
+          //   select: {
+          //   id: true,
+          //   email: true,
+          //   firstName: true,
+          //   lastName: true,
+          //   jobProfile: true,
+          //   location: true,
+          //   bio: true,
+          //   profileImage: true,
+          // },
         });
-        return user;
-      } catch (error) {
+        return allUsers;
+      } 
+      catch (error) {
         console.log(`Error Occured, ${error}`);
+        throw new Error("Error getting all users.")
       }
     }),
 
@@ -709,6 +711,172 @@ describe("UsersController", () => {
         throw new Error("Unable to unfollow this user. Please try again.")
       }
     }),
+
+    followerIntersection: jest.fn().mockImplementation(async (user1_Id: string, user2_Id: string) => {
+      try {
+        const user1 = await prisma.user.findFirst({
+          where: { id: user1_Id }
+        })
+    
+        const user2 = await prisma.user.findFirst({
+          where: { id: user2_Id }
+        })
+    
+        if (user1 && user2) {
+          const connections_user1 = user1.connections
+          const connections_user2 = user2.connections
+          const connectionsIntersection = connections_user1.filter(connection => connections_user2.includes(connection))
+          if (connectionsIntersection.length > 0) {
+            return connectionsIntersection
+          }
+          else {
+            console.log(`User: ${user1.firstName} ${user1.lastName} has no common connections with user: ${user2.firstName} ${user2.lastName}`)
+            return {message: `User: ${user1.firstName} ${user1.lastName} has no common followers with user: ${user2.firstName} ${user2.lastName}`}
+          }
+        }
+        else {
+          console.log("Could not find user1 or user2.")
+          throw new Error("Could not find user1 or user2.")
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Unable to check for mutual followers. Please try again.")
+      }
+    }),
+
+    connectionIntersection: jest.fn().mockImplementation(async (user1_Id: string, user2_Id: string) => {
+      try {
+        const user1 = await prisma.user.findFirst({
+          where: { id: user1_Id }
+        })
+    
+        const user2 = await prisma.user.findFirst({
+          where: { id: user2_Id }
+        })
+    
+        if (user1 && user2) {
+          const connections_user1 = user1.connections
+          const connections_user2 = user2.connections
+          const connectionsIntersection = connections_user1.filter(connection => connections_user2.includes(connection))
+          if (connectionsIntersection.length > 0) {
+            return connectionsIntersection
+          }
+          else {
+            console.log(`User: ${user1.firstName} ${user1.lastName} has no common connections with user: ${user2.firstName} ${user2.lastName}`)
+            return {message: `User: ${user1.firstName} ${user1.lastName} has no common connections with user: ${user2.firstName} ${user2.lastName}`}
+          }
+        }
+        else {
+          console.log("Could not find user1 or user2.")
+          throw new Error("Could not find user1 or user2.")
+        } 
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Unable to check for mutual connections. Please try again.")
+      }
+    }),
+
+    userRandomRecommendations: jest.fn().mockImplementation(async (userId: string) => {
+      try {
+        const user = await prisma.user.findFirst({
+          where: { id: userId }
+        })
+        const userFollowers = user.followers
+        const allUsers = await mockUsersService.getAll()
+        if (user && allUsers) {
+          const filteredUsers = allUsers.filter((filterUser: any) => !userFollowers.includes(filterUser.id))
+          if (filteredUsers) {
+            let recommendationsResult = []
+            for (let i = 0; i < 3; i++) {
+              const randomInt = Math.floor((filteredUsers.length - 1) * Math.random())
+              const randomUser = filteredUsers[randomInt]
+              if (randomUser) {
+                recommendationsResult.push(randomUser)
+                filteredUsers.splice(randomInt, 1)
+              }
+              else {
+                console.log("Could not find random user.")
+                throw new Error("Could not find random user.")
+              }
+            }
+            return recommendationsResult
+          }
+          else {
+            console.log(`Could not find users that ${user.firstName} ${user.lastName} does not follow.`)
+            throw new Error(`Could not find users that ${user.firstName} ${user.lastName} does not follow.`)
+          }
+        }
+        else {
+          console.log("Could not get user or allUsers")
+          throw new Error("Could not get user or allUsers")
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Unable to recommend users. Please try again.")
+      }
+    }),
+
+    userRecommendations: jest.fn().mockImplementation(async (userId: string) => {
+      try {
+        const user = await prisma.user.findFirst({
+          where: { id: userId }
+        })
+        const allUsers = await mockUsersService.getAll()
+        if (allUsers.length > 0) {
+          let intersectionsCounts = []
+          for (let i = 0; i < allUsers.length; i++) {
+            const connectionIntersections = allUsers[i].connections.filter((connection: string) => user.connections.includes(connection))
+            const followerIntersections = allUsers[i].followers.filter((follower: string) => user.followers.includes(follower))
+            const totalIntersections = connectionIntersections.length + followerIntersections.length
+            intersectionsCounts.push([allUsers[i].id, totalIntersections])
+          }
+          // sort array by most follower / connection intersections and return
+          const mostMutual = intersectionsCounts
+            .sort(([ , a], [ , b]) => b - a)
+            .slice(0, 3)
+          const recommendations = []
+          if (mostMutual) {
+            for (let i = 0; i < mostMutual.length; i++) {
+              const _user = await prisma.user.findFirst({
+                where: { id: mostMutual[i][0] }
+              })
+              const filteredFollowers = _user.followers.filter((follower: string) => !user.followers.includes(follower))
+              if (filteredFollowers.length > 0) {
+                const getUser = await prisma.user.findFirst({
+                  where: { id: filteredFollowers[0] }
+                })
+                recommendations.push(getUser)
+              }
+              else {
+                return {
+                  message: `Could not retrieve recommendations for ${user.firstName} ${user.lastName} to follow.`,
+                }
+              }
+            }
+            return {
+              message: `Recommendations for ${user.firstName} ${user.lastName} to follow.`,
+              recommendations: recommendations
+            }
+          }
+          else {
+            console.log("Could not find the most mutual followers / connections")
+            throw new Error ("Could not find the most mutual followers / connections")
+          }
+          return
+        }
+        else {
+          console.log(`Could not find any users.`)
+          throw new Error(`Could not find any users.`)
+        }
+      }
+      catch (error) {
+        console.log(error)
+        throw new Error("Unable to recommend users. Please try again.")
+      }
+    }),
   }
 
   beforeEach(async () => {
@@ -943,5 +1111,50 @@ describe("UsersController", () => {
     expect(removedFollower).toEqual({
       message: expect.any(String)
     })
+  })
+
+  it("should define a function to check for follower intersection between two users", () => {
+    expect(controller.getMutualFollowers).toBeDefined()
+  })
+
+  it("should check for follower intersection between two users", async () => {
+    const allUsers = await controller.getAll()
+    const user1 = allUsers[0]
+    const user2 = allUsers[1]
+    const followerIntersection = await controller.getMutualFollowers(req , user2.id)
+    console.log('followerIntersection', followerIntersection)
+    expect(followerIntersection).toEqual(expect.any(Object))
+  })
+
+  it("should define a function to check for connection intersection between two users", () => {
+    expect(controller.getMutualConnections).toBeDefined()
+  })
+
+  it("should check for connection intersection between two users", async () => {
+    const allUsers = await controller.getAll()
+    const user1 = allUsers[0]
+    const user2 = allUsers[1]
+    const connectionIntersection = await controller.getMutualConnections(req , user2.id)
+    console.log('connectionIntersection', connectionIntersection)
+    expect(connectionIntersection).toEqual(expect.any(Object))
+  })
+
+  it("should define a function to recommend random users to follow / connect with", () => {
+    expect(controller.getMutualConnections).toBeDefined()
+  })
+
+  it("should recommend users to follow / connect with", async () => {
+    const getRandomUserRecommendations = await controller.userRandomRecommendations(req)
+    expect(getRandomUserRecommendations).toHaveLength(3)
+    expect(getRandomUserRecommendations[0]).toEqual(expect.any(Object))
+  })
+
+  it("should define a function to recommend users to follow / connect with", () => {
+    expect(controller.userRecommendations).toBeDefined()
+  })
+
+  it("should recommend users to follow / connect with", async () => {
+    const getUserRecommendations = await controller.userRecommendations(req)
+    expect(getUserRecommendations).toEqual(expect.any(Object))
   })
 })

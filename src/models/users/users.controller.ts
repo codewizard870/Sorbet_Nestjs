@@ -109,4 +109,34 @@ export class UsersController {
       userToUnfollowId
     )
   }
+
+  @Get("getMutualFollowers")
+  async getMutualFollowers(@Request() req, @Body() user2_Id: string) {
+    return await this.usersService.followerIntersection(
+      req.user.id,
+      user2_Id
+    )
+  }
+
+  @Get("getMutualConnections")
+  async getMutualConnections(@Request() req, @Body() user2_Id: string) {
+    return await this.usersService.connectionIntersection(
+      req.user.id,
+      user2_Id
+    )
+  }
+
+  @Get("userRandomRecommendations")
+  async userRandomRecommendations(@Request() req) {
+    return await this.usersService.userRandomRecommendations(
+      req.user.id
+    )
+  }
+
+  @Get("userRecommendations")
+  async userRecommendations(@Request() req) {
+    return await this.usersService.userRecommendations(
+      req.user.id
+    )
+  }
 }

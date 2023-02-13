@@ -1301,7 +1301,6 @@ describe("UsersService", () => {
 
   it("should recommend users to follow / connect with", async () => {
     const getUserRecommendations = await service.userRecommendations('63954916dce005928e2d3ae2')
-    console.log('getUserRecommendations', getUserRecommendations)
     expect(service.userRecommendations).toBeCalled()
     expect(getUserRecommendations).toEqual(expect.any(Object))
   })
