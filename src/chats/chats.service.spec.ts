@@ -152,7 +152,6 @@ describe("ChatsService", () => {
     })
   }
 
-  // Runs before each test - sets service and creates mock services
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [ChatsService, PrismaService]
@@ -174,7 +173,6 @@ describe("ChatsService", () => {
     expect(service.create).toBeDefined()
   })
 
-  // Creates a chat and posts to the mock database
   let chat: any
   it("should create a chat and return the result", async () => {
     const createdChat = await service.create(mockCreateChatDto, userId)

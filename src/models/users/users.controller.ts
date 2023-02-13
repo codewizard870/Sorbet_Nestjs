@@ -27,16 +27,86 @@ export class UsersController {
     return await this.usersService.getAll();
   }
 
-  @Patch()
+  @Get("getUserFromEmail")
+  async getUserFromEmail(@Body() email: string) {
+    return await this.usersService.getUserFromEmail(
+      email
+    )
+  }
+
+  @Get("getUserFromId")
+  async getUserFromId(@Request() req) {
+    return await this.usersService.getUserFromId(
+      req.user.id
+    )
+  }
+
+  @Patch('update')
   async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.updateUserProfile(
       req.user.id,
       updateUserDto
-    );
+    )
   }
 
-  @Delete("")
+  @Delete("delete")
   deleteUser(@Request() req) {
     return this.usersService.delete(req.user.id);
+  }
+
+  @Patch("addUserToGroup")
+  async addUserToGroup(@Request() req, @Body() groupId: string) {
+    return await this.usersService.addUserToGroup(
+      req.user.id,
+      groupId
+    )
+  }
+
+  @Patch("removeUserFromGroup")
+  async removeUserFromGroup(@Request() req, @Body() groupId: string) {
+    return await this.usersService.removeUserFromGroup(
+      req.user.id,
+      groupId
+    )
+  }
+
+  @Patch("addConnectionRequestToUser")
+  async addConnectionRequestToUser(@Request() req, @Body() userToConnectWithId: string) {
+    return await this.usersService.addConnectionRequestToUser(
+      req.user.id,
+      userToConnectWithId
+    )
+  }
+
+  @Patch("approveConnectionRequest")
+  async approveConnectionRequest(@Request() req, @Body() userToConnectWithId: string) {
+    return await this.usersService.approveConnectionRequest(
+      req.user.id,
+      userToConnectWithId
+    )
+  }
+
+  @Patch("removeConnection")
+  async removeConnection(@Request() req, @Body() userToUnconnectWithId: string) {
+    return await this.usersService.removeConnection(
+      req.user.id,
+      userToUnconnectWithId
+    )
+  }
+
+  @Patch("addFollowerToUser")
+  async addFollowerToUser(@Request() req, @Body() userToFollowId: string) {
+    return await this.usersService.addFollowerToUser(
+      req.user.id,
+      userToFollowId
+    )
+  }
+
+  @Patch("removeFollowerFromUser")
+  async removeFollowerFromUser(@Request() req, @Body() userToUnfollowId: string) {
+    return await this.usersService.removeFollowerFromUser(
+      req.user.id,
+      userToUnfollowId
+    )
   }
 }
