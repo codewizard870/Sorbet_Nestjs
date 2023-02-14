@@ -176,7 +176,6 @@ describe("ChatsController", () => {
     expect(controller).toBeDefined()
   })
 
-  // POST - create
   it("create post request should be defined", async () => {
     expect(controller.create).toBeDefined()
   })

@@ -11,31 +11,37 @@ datasource db {
 }
 
 model User {
-  id               String       @id @default(auto()) @map("_id") @db.ObjectId
-  firstName        String?
-  lastName         String?
-  email            String       @unique
-  password         String
-  bio              String?
-  status           Status?      @default(Pending)
-  confirmationCode String?      @unique
-  // magicAuth        Boolean
-  profileImage     String?
-  jobProfile       JobProfile[]
-  token            Token?
-  location         Location[]
-  Post             Post[]
-  createdAt        DateTime     @default(now())
+  id                    String       @id @default(auto()) @map("_id") @db.ObjectId
+  firstName             String?
+  lastName              String?
+  email                 String       @unique
+  password              String
+  bio                   String?
+  status                Status?      @default(Pending)
+  confirmationCode      String?      @unique
+  // magicAuth          Boolean
+  profileImage          String?
+  connections           String[]     @db.ObjectId @default([])
+  connection_requests   String[]     @db.ObjectId @default([])
+  followers             String[]     @db.ObjectId @default([])
+  following             String[]     @db.ObjectId @default([])
+  jobProfile            JobProfile[]
+  token                 Token?
+  location              Location[]
+  post                  Post[]
+  groupIDs              String[]     @db.ObjectId
+  groups                Group[]      @relation(name: "members", fields: [groupIDs], references: [id])
+  createdAt             DateTime     @default(now())
 }
 
 model JobProfile {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
   name      String?
   type      String?
-  createdAt DateTime @default(now())
+  createdAt DateTime      @default(now())
   //relation with user
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?  @db.ObjectId
+  user      User?         @relation(fields: [userId], references: [id])
+  userId    String?       @db.ObjectId
 }
 
 enum Status {
@@ -47,23 +53,23 @@ enum Status {
 }
 
 model SocialMedia {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
   socialMedia String
   link        String
 }
 
 model Token {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
   token     String
-  createdAt DateTime @default(now())
+  createdAt DateTime      @default(now())
 
   //relation with user
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique @db.ObjectId
+  user   User             @relation(fields: [userId], references: [id])
+  userId String           @unique @db.ObjectId
 }
 
 model Event {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
   event_image String
   event_link  String
   name String
@@ -73,8 +79,8 @@ model Event {
   end_date    DateTime?
   location    Location[]
   //relation with post
-  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId      String    @db.ObjectId
+  post        Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId      String      @db.ObjectId
 }
 
 model Gig {
@@ -94,31 +100,31 @@ model Gig {
 }
 
 model Post {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
   timestamp DateTime
   text      String?
   content   Content
   gig       Gig[]
   event     Event[]
   blob      Blob[]
-location Location[]
+  location  Location[]
   //relation with user
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.ObjectId
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String        @db.ObjectId
 }
 
 model Blob {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  id       String         @id @default(auto()) @map("_id") @db.ObjectId
   imageUrl String
   videoUrl String
 
   //relation with post
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String @unique @db.ObjectId
+  post   Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String           @unique @db.ObjectId
 }
 
 model Location {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
   location_type LocationType
   country       String
   province      String
@@ -127,21 +133,29 @@ model Location {
   Latitude      Float
   Langitude     Float
 
-//relation with post
-  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String?  @db.ObjectId
+// relation with post
+  post   Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String?          @db.ObjectId
 
-  //relation with user
-  user         User?       @relation(fields: [userId], references: [id])
-  userId       String?       @db.ObjectId
+  // relation with user
+  user         User?      @relation(fields: [userId], references: [id])
+  userId       String?    @db.ObjectId
 
-  //relation with event
-  event         Event?       @relation(fields: [eventId], references: [id])
-  eventId       String?       @db.ObjectId
+  // relation with event
+  event         Event?    @relation(fields: [eventId], references: [id])
+  eventId       String?   @db.ObjectId
 
-  //relation with gig
-  gig   Gig?    @relation(fields: [gigId], references: [id])
-  gigId String?  @db.ObjectId
+  // relation with gig
+  gig           Gig?      @relation(fields: [gigId], references: [id])
+  gigId         String?   @db.ObjectId
+
+  // relation with group
+  group         Group?    @relation(fields: [groupId], references: [id])
+  groupId       String?   @db.ObjectId
+
+  // relation with collab
+  // collab        Collab?   @relation(fields: [collabId], references: [id])
+  // collabId      String?   @db.ObjectId
 }
 
 enum Content {
@@ -160,30 +174,44 @@ enum LocationType {
 }
 
 model Contact {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
   userId           String
   contacted_userId String
   chat             Chat[]
 }
 
 model Chat {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
   message   String
   creatorId String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @default(now())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime?       @default(now())
 
   //relation with contact
-  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  contactId String  @db.ObjectId
+  contact   Contact         @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactId String          @db.ObjectId
 }
 
 model Collab {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
   collabId         String
   userId           String
   wallet_address   String
   public_key       String
+  // location         Location[]
   createdAt        DateTime
+  updatedAt        DateTime?
+}
+
+model Group {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  description      String?
+  image            String?
+  group_owner      String   @db.ObjectId
+  userIDs          String[] @db.ObjectId
+  members          User[]   @relation(name: "members", fields: [userIDs], references: [id])
+  location         Location[]
+  createdAt        DateTime @default(now())
   updatedAt        DateTime?
 }

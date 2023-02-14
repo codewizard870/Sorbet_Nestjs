@@ -16,14 +16,15 @@ export class ChatsService {
           creatorId: userId,
           contactId: data.contactId,
         },
-      });
+      })
       if (result) {
-        return result;
+        return result
       } else {
         throw new BadRequestException("result not found");
       }
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.log(`Error Occured, ${error}`)
     }
   }
 
@@ -111,7 +112,7 @@ export class ChatsService {
   async remove(id: string) {
     const result = await this.prismaService.chat.delete({
       where: { id: id },
-    });
+    })
     if (result) {
       return { message: "Deleted Successfully" };
     } 

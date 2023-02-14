@@ -7,6 +7,7 @@ import { GigsService } from "src/models/gigs/gigs.service";
 import { LocationsService } from "src/models/locations/locations.service";
 import { PostsService } from "src/models/posts/posts.service";
 import { UsersService } from "src/models/users/users.service";
+import { GroupsService } from "src/models/groups/groups.service";
 import { TimezonesService } from "src/timezones/timezones.service";
 import { GoogleMapsService } from "src/google-maps/google-maps.service";
 import { PasswordsService } from "src/utils/passwords/passwords.service";
@@ -172,6 +173,32 @@ const findmatchingLocation = async (text: string) => {
     if (location.length === 0 || location.length > 0) {
       return location;
     } 
+  } 
+  catch (error) {
+    console.log(error)
+    throw new Error("An error occured, please try again.")
+  }
+}
+
+const findmatchingGroup = async (text: string) => {
+  try {
+    const group = await prisma.group.findMany({
+      where: {
+        OR: [
+          {
+            name: text,
+          },
+          {
+            description: text,
+          },
+        ]
+      },
+      include: { members: true, location: true },
+    })
+    console.log('group', group)
+    if (group.length === 0 || group.length > 0) {
+      return group;
+    }
   } 
   catch (error) {
     console.log(error)
@@ -362,6 +389,48 @@ const findPostDistance = async (userId: string, data: any) => {
   }
 }
 
+const findGroupDistance = async (userId: string, data: any) => {
+  try {
+    const user = await mockUsersService.getUserFromId(userId);
+    const group = await mockGroupsService.findOne(data.groupId);
+    console.log("group", group);
+    if (!user || !group) {
+      return false
+    }
+    const a = {
+      latitude: user.location[0].Latitude,
+      longitude: user.location[0].Langitude,
+    };
+
+    const b = {
+      // @ts-ignore
+      latitude: group.location[0].Latitude,
+       // @ts-ignore
+      longitude: group.location[0].Langitude,
+    };
+
+    const calculatedDistance = mockLocationService.getDistanceUsingHaversine(
+      a,
+      b
+    );
+    if (calculatedDistance === data.distance) {
+      const message = "group exists inside the distance";
+      return message;
+    } 
+    else if (data.distance > calculatedDistance) {
+      const message = "group exists inside the distance";
+      return message;
+    } 
+    else {
+      return false;
+    } 
+  } 
+  catch (error) {
+    console.log(error)
+    throw new Error("An error occured, please try again.")
+  }
+}
+
 const globalSearchLocationByDistance = async (userId: string, distance: any, text: string) => {
   try {
     const filteredLocation = [];
@@ -526,6 +595,34 @@ const globalSearchUserByDistance = async (userId: string, distance: any, text: s
   }
 }
 
+const globalSearchGroupByDistance = async (userId: string, distance: any, text: string) => {
+  try {
+    const filteredGroup = [];
+    const groups = await findmatchingGroup(text);
+    console.log("groups", groups);
+    if (groups) {
+      for (let i = 0; i < groups.length; i++) {
+        const element = groups[i];
+        const newUserId = element.id;
+        const data = { newUserId, distance };
+        const result = await findUserDistance(userId, data);
+        console.log("result", result);
+
+        if (result) {
+          filteredGroup.push(element);
+        }
+        console.log("filteredGroup", filteredGroup);
+      }
+
+      return filteredGroup;
+    }
+  } 
+  catch (error) {
+    console.log(error)
+    throw new Error("An error occured, please try again.")
+  }
+}
+
 let mockPostsService = {
   findOne: jest.fn().mockImplementation(async (_id: string) => {
     try {
@@ -606,7 +703,8 @@ let mockUsersService = {
         include: { jobProfile: true, location: true },
       });
       return user;
-    } catch (error) {
+    } 
+    catch (error) {
       console.log(`Error Occured, ${error}`);
     }
   }),
@@ -803,22 +901,32 @@ let mockLocationService = {
   }),
 }
 
+let mockGroupsService = {
+  findOne: jest.fn().mockImplementation(async (_id: string) => {
+    try {
+      const group = await prisma.group.findFirst({
+        where: { id: _id },
+        include: { location: true },
+      });
+      return group
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }),
+}
+
 let mockGlobalSearchService = {
   globalSearch: jest.fn().mockImplementation(async (text: string) => {
     try {
-      
       const users = await findmatchingUser(text);
       const posts = await findmatchingPost(text);
       const events = await findmatchingEvent(text);
       const gigs = await findmatchingGig(text);
       const locations = await findmatchingLocation(text);
-      return {
-        users,
-        gigs,
-        events,
-        posts,
-        locations,
-      }; 
+      const groups = await findmatchingGroup(text);
+      return { users, gigs, events, posts, locations, groups};
     } 
     catch (error) {
       console.log(error)
@@ -828,12 +936,13 @@ let mockGlobalSearchService = {
 
   globalSearchByDistance: jest.fn().mockImplementation(async (userId: string, distance: any, text: string) => {
     try {
-      const users = await globalSearchUserByDistance(userId, distance, text)
-      const posts = await globalSearchPostByDistance(userId, distance, text)
-      const gigs = await globalSearchGigByDistance(userId, distance, text)
-      const events = await globalSearchEventByDistance(userId, distance, text)
-      const locations = await globalSearchLocationByDistance(userId, distance,text)
-      return { users, posts, gigs, events, locations }
+      const users = await globalSearchUserByDistance(userId, distance, text);
+      const posts = await globalSearchPostByDistance(userId, distance, text);
+      const gigs = await globalSearchGigByDistance(userId, distance, text);
+      const events = await globalSearchEventByDistance(userId, distance, text);
+      const locations = await globalSearchLocationByDistance(userId, distance, text);
+      const groups = await globalSearchGroupByDistance(userId, distance, text)
+      return { users, posts, gigs, events, locations, groups };
     } 
     catch (error) {
       console.log(error)
@@ -928,7 +1037,6 @@ let mockGlobalSearchService = {
   globalSearchEventByDistance: jest.fn().mockImplementation(async (userId: string, distance: any, text: string) => {
     try {
       const filteredEvent = [];
-      // @ts-ignore
       const events = await findmatchingEvent(text);
       console.log("events", events);
       if (events) {
@@ -936,7 +1044,6 @@ let mockGlobalSearchService = {
           const element = events[i];
           const eventId = element.id;
           const data = { eventId, distance };
-          // @ts-ignore
           const result = await findEventDistance(userId, data);
           console.log("post", result);
   
@@ -986,7 +1093,6 @@ let mockGlobalSearchService = {
   globalSearchUserByDistance: jest.fn().mockImplementation(async (userId: string, distance: any, text: string) => {
     try {
       const filteredUser = [];
-      // @ts-ignore
       const users = await findmatchingUser(text);
       console.log("result", users);
       if (users) {
@@ -994,7 +1100,6 @@ let mockGlobalSearchService = {
           const element = users[i];
           const newUserId = element.id;
           const data = { newUserId, distance };
-          // @ts-ignore
           const result = await findUserDistance(userId, data);
           console.log("result", result);
   
@@ -1005,6 +1110,34 @@ let mockGlobalSearchService = {
         }
   
         return filteredUser;
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
+    }
+  }),
+
+  globalSearchGroupByDistance: jest.fn().mockImplementation(async (userId: string, distance: any, text: string) => {
+    try {
+      const filteredGroup = [];
+      const groups = await findmatchingGroup(text);
+      console.log("groups", groups);
+      if (groups) {
+        for (let i = 0; i < groups.length; i++) {
+          const element = groups[i];
+          const newUserId = element.id;
+          const data = { newUserId, distance };
+          const result = await findUserDistance(userId, data);
+          console.log("result", result);
+  
+          if (result) {
+            filteredGroup.push(element);
+          }
+          console.log("filteredGroup", filteredGroup);
+        }
+  
+        return filteredGroup;
       }
     } 
     catch (error) {
@@ -1031,7 +1164,8 @@ describe("GlobalSearchService", () => {
         GoogleMapsService,
         PasswordsService,
         ConfigService,
-        TokensService
+        TokensService,
+        GroupsService
       ],
     })
     .overrideProvider(GlobalSearchService)
@@ -1059,6 +1193,7 @@ describe("GlobalSearchService", () => {
     expect(globalSearchReturn).toEqual({
       users: expect.any(Array),
       gigs: expect.any(Array),
+      groups: expect.any(Array),
       events: expect.any(Array),
       posts: expect.any(Array),
       locations: expect.any(Array)
@@ -1075,6 +1210,7 @@ describe("GlobalSearchService", () => {
     expect(globalSearchByDistanceReturn).toEqual({
       users: expect.any(Array),
       gigs: expect.any(Array),
+      groups: expect.any(Array),
       events: expect.any(Array),
       posts: expect.any(Array),
       locations: expect.any(Array)
@@ -1138,6 +1274,16 @@ describe("GlobalSearchService", () => {
   it("should search user by distance", async () => {
     const globalSearchUserByDistanceReturn = await service.globalSearchUserByDistance(user.id, 50, "Daena")
     expect(service.globalSearchUserByDistance).toBeCalled()
+    expect(globalSearchUserByDistanceReturn).toEqual(expect.any(Array))
+  })
+
+  it("should define a function for global search of group by distance", () => {
+    expect(service.globalSearchGroupByDistance).toBeDefined()
+  })
+
+  it("should search group by distance", async () => {
+    const globalSearchUserByDistanceReturn = await service.globalSearchGroupByDistance(user.id, 50, "Daena")
+    expect(service.globalSearchGroupByDistance).toBeCalled()
     expect(globalSearchUserByDistanceReturn).toEqual(expect.any(Array))
   })
 })
