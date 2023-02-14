@@ -5,6 +5,7 @@ import { Context, MockContext, createMockContext } from "../../test/prisma/conte
 import { PrismaClient } from '@prisma/client'
 import { CreateChatDto } from "./dto/create-chat.dto";
 import { UpdateChatDto } from "./dto/update-chat.dto";
+import { BadRequestException } from "@nestjs/common";
 
 const prisma = new PrismaClient()
 
@@ -33,23 +34,25 @@ describe("ChatsService", () => {
 
   // Mock Chats Service
   let mockChatsService = {
-    create: jest.fn().mockImplementation(async (chat: CreateChat) => {
+    create: jest.fn().mockImplementation(async (data: CreateChat) => {
       try {
         const result = await prisma.chat.create({
           data: {
-            message: chat.message,
+            message: data.message,
             creatorId: userId,
-            contactId: chat.contactId,
+            contactId: data.contactId,
           },
-        })
+        });
         if (result) {
-          return result;
-        } else {
-          throw new Error("result not found");
+          return result
+        } 
+        else {
+          throw new BadRequestException("result not found")
         }
       } 
       catch (error) {
-        console.log(error)
+        console.log(`Error Occured, ${error}`)
+        throw new Error("Could not create message")
       }
     }),
 
@@ -58,16 +61,17 @@ describe("ChatsService", () => {
         const chat = await prisma.chat.findMany({
           where: { contactId: id },
           // include: { contact: true },
-        })
+        });
         if (chat) {
           return chat;
         } 
         else {
-          throw new Error("contact not found");
+          console.log("contact not found")
+          throw new BadRequestException("contact not found");
         }
-      } 
-      catch (error) {
-        console.log(error)
+      } catch (error) {
+        console.log(`Error Occured, ${error}`);
+        throw new Error("Could not find message by id")
       }
     }),
 
@@ -76,78 +80,109 @@ describe("ChatsService", () => {
         const chat = await prisma.chat.findMany({
           where: { creatorId: id },
           // include: { contact: true },
-        })
+        });
         if (chat) {
           return chat;
         } 
         else {
-          throw new Error("chat not found");
+          throw new BadRequestException("chat not found")
         }
       } 
       catch (error) {
-        console.log(`Error Occured, ${error}`);
+        console.log(`Error Occured, ${error}`)
+        throw new Error("Could not find chat by userId")
       }
     }),
 
     findOne: jest.fn().mockImplementation(async (id: string) => {
-      console.log("id", id);
-
       try {
         const chat = await prisma.chat.findMany({
           where: { id: id },
           // include: { contact: true },
-        })
+        });
         if (chat) {
           return chat;
         } 
         else {
-          throw new Error("chat not found");
+          throw new BadRequestException("chat not found");
         }
       } 
       catch (error) {
-        console.log(`Error Occured, ${error}`);
+        console.log(`Error Occured, ${error}`)
+        throw new Error("Could not find chat by id")
       }
     }),
 
     getAll: jest.fn().mockImplementation(async (id: string) => {
       try {
-        const chat = await prisma.chat.findMany({
+        const allChats = await prisma.chat.findMany({
           // include: { contact: true },
         })
-        if (chat) {
-          return chat;
+        if (allChats) {
+          return allChats
         } 
         else {
-          throw new Error("chat not found");
+          throw new BadRequestException("chats not found")
         }
       } 
       catch (error) {
-        console.log(`Error Occured, ${error}`);
+        console.log(`Error Occured, ${error}`)
+        throw new Error("Could not find all chats")
       }
     }),
 
     update: jest.fn().mockImplementation(async (id: string, data: any) => {
-      const result = await prisma.chat.update({
-        where: { id: id },
-        data: data,
-      })
-      if (result) {
-        return { message: "Updated Successfully" }
-      }
-      else {
-        return { message: "Something went wrong" }
+      try {
+        const result = await prisma.chat.update({
+          where: { id: id },
+          data: data,
+        })
+        if (result) {
+          return { message: "Updated Successfully" }
+        }
+        else {
+          console.log('updated chat error', result)
+          return { message: "Could not update chat" }
+        } 
+      } 
+      catch (error) {
+        console.log(`Error Occured, ${error}`)
+        throw new Error("Could not update chat")
       }
     }),
 
     remove: jest.fn().mockImplementation(async (id: string) => {
-      const result = await prisma.chat.delete({
-        where: { id: id },
-      })
-      if (result) {
-        return { message: "Deleted Successfully" };
+      try {
+        const result = await prisma.chat.delete({
+          where: { id: id },
+        })
+        if (result) {
+          return { message: "Deleted Successfully" }
+        } 
+        else {
+          console.log('delete chat error', result)
+          return { message: "Something went wrong" }
+        }
       } 
-      else {
-        return { message: "Something went wrong" };
+      catch (error) {
+        console.log(`Error Occured, ${error}`)
+        throw new Error("Could not delete chat")
+      }
+    }),
+
+    searchMessages: jest.fn().mockImplementation(async (text: string) => {
+      try {
+        const messages = await prisma.chat.findMany({
+          where: { message: text }
+        })
+    
+        if (messages.length === 0 || messages.length > 0) {
+          return messages
+        }
+      } 
+      catch (error) {
+        console.log(`Error Occured, ${error}`)
+        throw new Error("Could not search chats")
       }
     })
   }
@@ -180,6 +215,7 @@ describe("ChatsService", () => {
     const createdChat = await service.create(mockCreateChatDto, userId)
     expect(service.create).toBeCalled()
     chat = createdChat
+    expect(createdChat).toEqual(expect.any(Object))
     expect(createdChat).toEqual({
       id: expect.any(String),
       message: expect.any(String),
@@ -274,6 +310,7 @@ describe("ChatsService", () => {
       message: "Updated Successfully"
     })
     const isChatUpdated = await service.findOne(chat.id)
+    console.log('isChatUpdated', isChatUpdated)
     expect(service.findOne).toBeCalled()
     expect(isChatUpdated).toEqual(expect.any(Array))
     expect(isChatUpdated[0]).toEqual({
@@ -299,5 +336,15 @@ describe("ChatsService", () => {
     const isChatRemoved = await service.findOne(chat.id)
     expect(service.findOne).toBeCalled()
     expect(isChatRemoved).toEqual([])
+  })
+
+  it("should define a function to search messages by message text", async () => {
+    expect(service.searchMessages).toBeDefined()
+  })
+
+  it("should remove a chat by the id", async () => {
+    const chats = await service.searchMessages(chat.message)
+    expect(service.searchMessages).toBeCalled()
+    expect(chats).toEqual(expect.any(Array))
   })
 })
