@@ -39,9 +39,9 @@ export class ChatsController {
     return await this.chatsService.getChatByContactId(contactId);
   }
 
-  @Get("findByuserId/:contactId")
-  async findByUserId(@Param("contactId") contactId: string) {
-    return await this.chatsService.getChatByUserId(contactId);
+  @Get("findByuserId/:userId")
+  async findByUserId(@Param("userId") userId: string) {
+    return await this.chatsService.getChatByUserId(userId);
   }
 
   @Patch(":id")
@@ -52,5 +52,10 @@ export class ChatsController {
   @Delete(":id")
   async remove(@Param("id") id: string) {
     return await this.chatsService.remove(id);
+  }
+
+  @Get("searchMessages")
+  async searchMessages(@Body() text: string) {
+    return await this.chatsService.searchMessages(text)
   }
 }
