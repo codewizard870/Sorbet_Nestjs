@@ -30,8 +30,8 @@ const generateRandomString = (length: number) => {
 const createUserDto: CreateUserDto = {
   firstName: "Daena",
   lastName: "McClintock",
-  // email: generateRandomString(6) + "@gmail.com",
-  email: 'daena.mcclintock@gmail.com',
+  email: generateRandomString(6) + "@gmail.com",
+  // email: 'daena.mcclintock@gmail.com',
   password: "ThriveIN1234",
   bio: "Software Engineer at ThriveIN",
   status: "Employed",
