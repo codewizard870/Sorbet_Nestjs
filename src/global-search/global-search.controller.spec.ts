@@ -949,7 +949,6 @@ let mockGlobalSearchService = {
   globalSearchEventByDistance: jest.fn().mockImplementation(async (userId: string, distance: any, text: string) => {
     try {
       const filteredEvent = [];
-      // @ts-ignore
       const events = await findmatchingEvent(text);
       console.log("events", events);
       if (events) {
@@ -957,7 +956,6 @@ let mockGlobalSearchService = {
           const element = events[i];
           const eventId = element.id;
           const data = { eventId, distance };
-          // @ts-ignore
           const result = await findEventDistance(userId, data);
           console.log("post", result);
   
@@ -1007,7 +1005,6 @@ let mockGlobalSearchService = {
   globalSearchUserByDistance: jest.fn().mockImplementation(async (userId: string, distance: any, text: string) => {
     try {
       const filteredUser = [];
-      // @ts-ignore
       const users = await findmatchingUser(text);
       console.log("result", users);
       if (users) {
@@ -1015,7 +1012,6 @@ let mockGlobalSearchService = {
           const element = users[i];
           const newUserId = element.id;
           const data = { newUserId, distance };
-          // @ts-ignore
           const result = await findUserDistance(userId, data);
           console.log("result", result);
   

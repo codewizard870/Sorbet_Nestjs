@@ -6,6 +6,7 @@ import { UsersService } from "src/models/users/users.service";
 import { EventsService } from "src/models/events/events.service";
 import { GigsService } from "src/models/gigs/gigs.service";
 import { PostsService } from "src/models/posts/posts.service";
+import { GroupsService } from "src/models/groups/groups.service";
 import { LocationsService } from "src/models/locations/locations.service";
 import { PasswordsService } from "src/utils/passwords/passwords.service";
 import { TokensService } from "src/utils/tokens/tokens.service";
@@ -27,6 +28,7 @@ import { ConfigService } from "@nestjs/config";
     EventsService,
     GigsService,
     PostsService,
+    GroupsService,
     LocationsService,
   ],
 })

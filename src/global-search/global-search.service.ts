@@ -4,6 +4,7 @@ import { GigsService } from "src/models/gigs/gigs.service";
 import { LocationsService } from "src/models/locations/locations.service";
 import { PostsService } from "src/models/posts/posts.service";
 import { UsersService } from "src/models/users/users.service";
+import { GroupsService } from "src/models/groups/groups.service";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateGlobalSearchDto } from "./dto/create-global-search.dto";
 import { UpdateGlobalSearchDto } from "./dto/update-global-search.dto";
@@ -16,7 +17,8 @@ export class GlobalSearchService {
     private eventService: EventsService,
     private locationService: LocationsService,
     private gigsService: GigsService,
-    private postsService: PostsService
+    private postsService: PostsService,
+    private groupsService: GroupsService
   ) {}
 
   async globalSearch(text: string) {
@@ -26,13 +28,8 @@ export class GlobalSearchService {
       const events = await this.findmatchingEvent(text);
       const gigs = await this.findmatchingGig(text);
       const locations = await this.findmatchingLocation(text);
-      return {
-        users,
-        gigs,
-        events,
-        posts,
-        locations,
-      }; 
+      const groups = await this.findmatchingGroup(text);
+      return { users, gigs, events, posts, locations, groups};
     } 
     catch (error) {
       console.log(error)
@@ -45,17 +42,10 @@ export class GlobalSearchService {
       const users = await this.globalSearchUserByDistance(userId, distance, text);
       const posts = await this.globalSearchPostByDistance(userId, distance, text);
       const gigs = await this.globalSearchGigByDistance(userId, distance, text);
-      const events = await this.globalSearchEventByDistance(
-        userId,
-        distance,
-        text
-      );
-      const locations = await this.globalSearchLocationByDistance(
-        userId,
-        distance,
-        text
-      );
-      return { users, posts, gigs, events, locations };
+      const events = await this.globalSearchEventByDistance(userId, distance, text);
+      const locations = await this.globalSearchLocationByDistance(userId, distance, text);
+      const groups = await this.globalSearchGroupByDistance(userId, distance, text)
+      return { users, posts, gigs, events, locations, groups };
     } 
     catch (error) {
       console.log(error)
@@ -231,6 +221,34 @@ export class GlobalSearchService {
     }
   }
 
+  async globalSearchGroupByDistance(userId: string, distance: any, text: string) {
+    try {
+      const filteredGroup = [];
+      const groups = await this.findmatchingGroup(text);
+      console.log("groups", groups);
+      if (groups) {
+        for (let i = 0; i < groups.length; i++) {
+          const element = groups[i];
+          const newUserId = element.id;
+          const data = { newUserId, distance };
+          const result = await this.findUserDistance(userId, data);
+          console.log("result", result);
+  
+          if (result) {
+            filteredGroup.push(element);
+          }
+          console.log("filteredGroup", filteredGroup);
+        }
+  
+        return filteredGroup;
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
+    }
+  }
+
   async findmatchingLocation(text: string) {
     try {
       const location = await this.prismaService.location.findMany({
@@ -375,6 +393,32 @@ export class GlobalSearchService {
     }
   }
 
+  async findmatchingGroup(text: string) {
+    try {
+      const group = await this.prismaService.group.findMany({
+        where: {
+          OR: [
+            {
+              name: text,
+            },
+            {
+              description: text,
+            },
+          ]
+        },
+        include: { members: true, location: true },
+      })
+      console.log('group', group)
+      if (group.length === 0 || group.length > 0) {
+        return group;
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
+    }
+  }
+
   async findUserDistance(myuserId: string, data: any) {
     try {
       const myUser = await this.userService.getUserFromId(myuserId);
@@ -386,9 +430,11 @@ export class GlobalSearchService {
       }
       if (myUser.location.length === 0) {
         return false;
-      } else if (otherUser.location.length === 0) {
+      } 
+      else if (otherUser.location.length === 0) {
         return false;
-      } else {
+      } 
+      else {
         const a = {
           latitude: myUser.location[0].Latitude,
           longitude: myUser.location[0].Langitude,
@@ -408,9 +454,11 @@ export class GlobalSearchService {
         }
         if (calculatedDistance === data.distance) {
           return true;
-        } else if (calculatedDistance < data.distance) {
+        } 
+        else if (calculatedDistance < data.distance) {
           return true;
-        } else {
+        } 
+        else {
           return false;
         }
       }
@@ -446,10 +494,12 @@ export class GlobalSearchService {
       if (calculatedDistance === data.distance) {
         const message = "event exists inside the distance";
         return message;
-      } else if (data.distance > calculatedDistance) {
+      } 
+      else if (data.distance > calculatedDistance) {
         const message = "event exists inside the distance";
         return message;
-      } else {
+      } 
+      else {
         return false;
       }
     } 
@@ -484,10 +534,12 @@ export class GlobalSearchService {
       if (calculatedDistance === data.distance) {
         const message = "event exists inside the distance";
         return message;
-      } else if (data.distance > calculatedDistance) {
+      } 
+      else if (data.distance > calculatedDistance) {
         const message = "event exists inside the distance";
         return message
-      } else {
+      } 
+      else {
         return false
       } 
     } 
@@ -522,10 +574,12 @@ export class GlobalSearchService {
       if (calculatedDistance === data.distance) {
         const message = "location exists inside the distance";
         return message;
-      } else if (data.distance > calculatedDistance) {
+      } 
+      else if (data.distance > calculatedDistance) {
         const message = "location exists inside the distance";
         return message;
-      } else {
+      } 
+      else {
         return false;
       } 
     } 
@@ -560,10 +614,54 @@ export class GlobalSearchService {
       if (calculatedDistance === data.distance) {
         const message = "post exists inside the distance";
         return message;
-      } else if (data.distance > calculatedDistance) {
+      } 
+      else if (data.distance > calculatedDistance) {
         const message = "post exists inside the distance";
         return message;
-      } else {
+      } 
+      else {
+        return false;
+      } 
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
+    }
+  }
+
+  async findGroupDistance(userId: string, data: any) {
+    try {
+      const user = await this.userService.getUserFromId(userId);
+      const group = await this.groupsService.findOne(data.groupId);
+      console.log("group", group);
+      if (!user || !group) {
+        return false
+      }
+      const a = {
+        latitude: user.location[0].Latitude,
+        longitude: user.location[0].Langitude,
+      };
+  
+      const b = {
+        // @ts-ignore
+        latitude: group.location[0].Latitude,
+         // @ts-ignore
+        longitude: group.location[0].Langitude,
+      };
+  
+      const calculatedDistance = this.locationService.getDistanceUsingHaversine(
+        a,
+        b
+      );
+      if (calculatedDistance === data.distance) {
+        const message = "group exists inside the distance";
+        return message;
+      } 
+      else if (data.distance > calculatedDistance) {
+        const message = "group exists inside the distance";
+        return message;
+      } 
+      else {
         return false;
       } 
     } 

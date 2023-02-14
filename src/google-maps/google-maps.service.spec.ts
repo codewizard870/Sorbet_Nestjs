@@ -8,7 +8,6 @@ const accessKey = process.env.GOOGLE_MAPS_ACCESS_KEY
 
 const options = {
   provider: "google",
-
   // Optional depending on the providers
   apiKey: accessKey, // for Mapquest, OpenCage, Google Premier
   formatter: null, // 'gpx', 'string', ...

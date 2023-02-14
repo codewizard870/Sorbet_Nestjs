@@ -9,7 +9,6 @@ export class GoogleMapsService {
 
   options = {
     provider: "google",
-
     // Optional depending on the providers
     apiKey: this.accessKey, // for Mapquest, OpenCage, Google Premier
     formatter: null, // 'gpx', 'string', ...
