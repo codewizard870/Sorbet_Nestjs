@@ -12,14 +12,12 @@ datasource db {
 
 model User {
   id                    String       @id @default(auto()) @map("_id") @db.ObjectId
+  nearWallet            String?      @unique
   firstName             String?
   lastName              String?
   email                 String       @unique
-  password              String
   bio                   String?
-  status                Status?      @default(Pending)
   confirmationCode      String?      @unique
-  // magicAuth          Boolean
   profileImage          String?
   connections           String[]     @db.ObjectId @default([])
   connection_requests   String[]     @db.ObjectId @default([])

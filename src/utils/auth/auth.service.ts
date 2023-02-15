@@ -79,12 +79,13 @@ export class AuthService {
 
     const email = decoded.email;
 
-    return await this.usersService.verifyUserEmail(email);
+    return
   }
 
   async validateUser(email: string, pass: string): Promise<any> {
     try {
-      const user = await this.usersService.validateUser(email, pass);
+      let user: any
+      // const user = await this.usersService.validateUser(email, pass);
       if (user) {
         console.log("user in validate User", user);
 
@@ -126,7 +127,7 @@ export class AuthService {
     }
   }
 
-  async resetPassword(userId, token, password) {
-    return await this.passwordsService.resetPassword(userId, token, password);
-  }
+  // async resetPassword(userId, token, password) {
+  //   return await this.passwordsService.resetPassword(userId, token, password);
+  // }
 }

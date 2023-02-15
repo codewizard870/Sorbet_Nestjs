@@ -34,6 +34,13 @@ export class UsersController {
     )
   }
 
+  @Get("getUserFromNearWallet")
+  async getUserFromNearWallet(@Body() nearWallet: string) {
+    return await this.usersService.getUserFromNearWallet(
+      nearWallet
+    )
+  }
+
   @Get("getUserFromId")
   async getUserFromId(@Request() req) {
     return await this.usersService.getUserFromId(
