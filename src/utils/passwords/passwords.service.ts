@@ -59,40 +59,40 @@ export class PasswordsService {
     }
   }
 
-  async resetPassword(userId: string, token: string, password: string) {
-    const passwordResetToken = await this.tokensService.getTokenByUserId(
-      userId
-    );
+  // async resetPassword(userId: string, token: string, password: string) {
+  //   const passwordResetToken = await this.tokensService.getTokenByUserId(
+  //     userId
+  //   );
 
-    if (!passwordResetToken) {
-      throw new BadRequestException("Invalid or expired password reset token");
-    }
+  //   if (!passwordResetToken) {
+  //     throw new BadRequestException("Invalid or expired password reset token");
+  //   }
 
-    const isValid = await this.comparePassword(token, passwordResetToken.token);
+  //   const isValid = await this.comparePassword(token, passwordResetToken.token);
 
-    if (!isValid) {
-      throw new BadRequestException("Invalid or expired password reset token");
-    }
+  //   if (!isValid) {
+  //     throw new BadRequestException("Invalid or expired password reset token");
+  //   }
 
-    const hash = await this.hashPassword(password);
+  //   const hash = await this.hashPassword(password);
 
-    const user = await this.prismaService.user.update({
-      where: {
-        id: userId,
-      },
-      data: { password: hash },
-    });
-    if (user) {
-      const content = {
-        subject: "Password Reset Successfully",
-        html: `<h1>Password Reset Successfully</h1>
-                <h2>Hello ${user.firstName}</h2>
-                <p>Your password has been changed successfully</p>`,
-      };
+  //   const user = await this.prismaService.user.update({
+  //     where: {
+  //       id: userId,
+  //     },
+  //     data: { password: hash },
+  //   });
+  //   if (user) {
+  //     const content = {
+  //       subject: "Password Reset Successfully",
+  //       html: `<h1>Password Reset Successfully</h1>
+  //               <h2>Hello ${user.firstName}</h2>
+  //               <p>Your password has been changed successfully</p>`,
+  //     };
 
-      sendEmail(user.firstName, user.email, content);
-      await this.tokensService.deleteToken(passwordResetToken.id);
-      return { message: "Password Reset Successfully" };
-    }
-  }
+  //     sendEmail(user.firstName, user.email, content);
+  //     await this.tokensService.deleteToken(passwordResetToken.id);
+  //     return { message: "Password Reset Successfully" };
+  //   }
+  // }
 }

@@ -2,7 +2,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { UsersController } from "./users.controller";
 import { UsersService } from "./users.service";
 import {BadRequestException, UnauthorizedException} from "@nestjs/common";
-import { PasswordsService } from "src/utils/passwords/passwords.service";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -31,14 +30,13 @@ const generateRandomString = (length) => {
 const groupId = "63d466d560f07622c546614f"
 
 const createUserDto: CreateUserDto = {
+  nearWallet: generateRandomString(64),
   firstName: "Daena",
   lastName: "McClintock",
   email: generateRandomString(6) + "@gmail.com",
   // email: 'daena.mcclintock@gmail.com',
-  password: "ThriveIN1234",
   bio: "Software Engineer at ThriveIN",
-  status: "Employed",
-  magicAuthentication: false
+  profileImage: 'null',
 }
 
 const updateUserDto: UpdateUserDto = {}
@@ -46,62 +44,26 @@ const updateUserDto: UpdateUserDto = {}
 describe("UsersController", () => {
   let controller: UsersController;
 
-  const getUserFromEmail = async (email: string) => {
-    try {
-      const result = await prisma.user.findFirst({
-        where: {
-          email: email,
-        },
-      });
-      if (result) {
-        console.log("RESULT", result);
-  
-        return result;
-      } 
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  let mockPasswordService = {
-    hashPassword: jest.fn().mockImplementation(async (password: string) => {
-      return await bcrypt.hash(password, saltOrRounds);
-    }),
-
-    comparePassword: jest.fn().mockImplementation(async (password: string, hash: string) => {
-      const isMatch = await bcrypt.compare(password, hash);
-      return isMatch;
-    })
-  }
-
   let mockUsersService = {
     create: jest.fn().mockImplementation(async (data: any, token: string) => {
       try {
-        const user = await getUserFromEmail(data.email);
-        if (user) {
-          throw new BadRequestException("User already Exists");
-        } 
+        const userFromEmail = await mockUsersService.getUserFromEmail(data.email)
+        const UserFromNearWallet = await mockUsersService.getUserFromNearWallet(data.nearWallet)
+        if (userFromEmail || UserFromNearWallet) {
+          throw new BadRequestException("User already Exists")
+        }
         else {
-          //hashing new user password
-          const pass = await mockPasswordService.hashPassword(data.password);
-          //create new user account with hashed password
-          //hashed password in pass
-          data.password = pass;
           const result = await prisma.user.create({
             data: {
+              nearWallet: data.nearWallet,
               firstName: data.firstName,
               lastName: data.lastName,
               email: data.email,
-              password: data.password,
               jobProfile: data.jobProfile,
               location: data.location,
               bio: data.bio,
-              status: data.Status,
               profileImage: null,
               confirmationCode: token,
-              // magicAuth: false,
             },
           });
           if (result) {
@@ -118,15 +80,16 @@ describe("UsersController", () => {
     getUserFromEmail: jest.fn().mockImplementation(async (email: string) => {
       try {
         const result = await prisma.user.findFirst({
-          where: {
-            email: email,
-          },
-        });
-        if (result) {
-          console.log("RESULT", result);
-    
-          return result;
-        } 
+          where: {email: email},
+          include: { jobProfile: true, location: true, post: true, groups: true },
+        })
+        if (result) {  
+          return result
+        }
+        else {
+          console.log("Could not find user by email")
+          return
+        }
       } 
       catch (error) {
         console.log(error)
@@ -134,20 +97,18 @@ describe("UsersController", () => {
       }
     }),
 
-    verifyUserEmail: jest.fn().mockImplementation(async (email: string) => {
+    getUserFromNearWallet: jest.fn().mockImplementation(async (nearWallet: string) => {
       try {
-        const result = await prisma.user.update({
-          where: {
-            email: email,
-          },
-          data: {
-            status: "Active",
-          },
-        });
-        if (result) {
-          return { message: "Email verified" };
-        } else {
-          throw new BadRequestException("Unable to verify Email");
+        const result = await prisma.user.findFirst({
+          where: {nearWallet: nearWallet},
+          include: { jobProfile: true, location: true, post: true, groups: true },
+        })
+        if (result) {  
+          return result
+        }
+        else {
+          console.log("Could not find user by near wallet address")
+          return
         }
       } 
       catch (error) {
@@ -160,7 +121,7 @@ describe("UsersController", () => {
       try {
         const user = await prisma.user.findFirst({
           where: { id: _id },
-          include: { jobProfile: true, location: true },
+          include: { jobProfile: true, location: true, post: true, groups: true },
         });
         return user;
       } catch (error) {
@@ -171,73 +132,19 @@ describe("UsersController", () => {
     getAll: jest.fn().mockImplementation(async () => {
       try {
         const allUsers = await prisma.user.findMany({
-          //   select: {
-          //   id: true,
-          //   email: true,
-          //   firstName: true,
-          //   lastName: true,
-          //   jobProfile: true,
-          //   location: true,
-          //   bio: true,
-          //   profileImage: true,
-          // },
-        });
-        return allUsers;
+          include: { jobProfile: true, location: true, post: true, groups: true }
+        })
+        if (allUsers) {
+          return allUsers
+        }
+        else {
+          console.log("Could not get all users")
+          throw new Error("Could not get all users")
+        }
       } 
       catch (error) {
         console.log(`Error Occured, ${error}`);
         throw new Error("Error getting all users.")
-      }
-    }),
-
-    getUserFromConfirmationCode: jest.fn().mockImplementation(async (confirmationCode: string) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            confirmationCode: confirmationCode,
-          },
-        });
-        return user;
-      } 
-      catch (error) {
-        console.log(error)
-        throw new Error("An error occured. Please try again.")
-      }
-    }),
-
-    updateUserVerification: jest.fn().mockImplementation(async (data: any) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: { email: data.email },
-        });
-        if (user) {
-          const result = await prisma.user.update({
-            where: { email: data.email },
-            data: {
-              firstName: data.firstName,
-              lastName: data.lastName,
-              email: data.email,
-              password: data.password,
-              jobProfile: data.jobProfile,
-              location: data.location,
-              bio: data.bio,
-              status: data.Status,
-              profileImage: data.profileImage,
-              confirmationCode: data.confirmationCode,
-              // magicAuth: true,
-            },
-          });
-          if (result) {
-            return { message: "User magic verification updated successfully!" };
-          } 
-          else {
-            return { message: "Unable to update user magic verification." };
-          }
-        }
-      } 
-      catch (error) {
-        console.log(error)
-        throw new Error("Unable to update user magic verification. Please try again.")
       }
     }),
 
@@ -250,16 +157,14 @@ describe("UsersController", () => {
           const result = await prisma.user.update({
             where: { id: _id },
             data: {
+              nearWallet: data.nearWallet,
               firstName: data.firstName,
               lastName: data.lastName,
               email: data.email,
-              password: data.password,
               jobProfile: data.jobProfile,
               location: data.location,
               bio: data.bio,
-              status: data.Status,
               profileImage: data.profileImage,
-              confirmationCode: data.confirmationCode,
             },
           });
           console.log(result)
@@ -291,40 +196,6 @@ describe("UsersController", () => {
           } 
           else {
             return { message: "Something went wrong" };
-          }
-        }
-      } 
-      catch (error) {
-        console.log(error)
-        throw new Error("An error occured. Please try again.")
-      }
-    }),
-
-    validateUser: jest.fn().mockImplementation(async (email: string, pass: string) => {
-      try {
-        const user1 = await prisma.user.findFirst({
-          where: { email: email },
-        });
-        if (!user1) {
-          throw new UnauthorizedException("Email/password incorrect");
-        } else if (user1.status === "Pending") {
-          throw new UnauthorizedException({
-            message: "Pending Account. Please Verify Your Email!",
-          });
-        } else if (user1.status !== "Active") {
-          throw new UnauthorizedException({ message: "Unauthorized!" });
-        } else {
-          const isMatch = await mockPasswordService.comparePassword(
-            pass,
-            user1.password
-          );
-          if (!isMatch) {
-            throw new UnauthorizedException("Email/password incorrect");
-          } else {
-            const { password, ...user } = user1;
-            console.log("user", user);
-  
-            return user;
           }
         }
       } 
@@ -634,7 +505,13 @@ describe("UsersController", () => {
           })
           console.log('Added follower - updated user: ', updatedUser)
           console.log('Added following - updated user', updatedUserToFollow)
-          return { message: `Successfully followed ${userToFollow.firstName} ${userToFollow.lastName}` }
+          if (updatedUser && updatedUserToFollow) {
+            return { message: `${user.firstName} ${user.lastName} successfully followed ${userToFollow.firstName} ${userToFollow.lastName}` }
+          }
+          else {
+            console.log("Failed to update user or userToFollow")
+            throw new Error("Failed to update user or userToFollow")
+          }
         }
         else {
           console.log('Missing userId or userToFollowId')
@@ -927,9 +804,8 @@ describe("UsersController", () => {
       groupIDs: expect.any(Array),
       id: expect.any(String),
       lastName: expect.any(String),
-      password: expect.any(String),
       profileImage: null,
-      status: expect.any(String)
+      nearWallet: expect.any(String)
     })
   })
 
@@ -939,6 +815,7 @@ describe("UsersController", () => {
 
   it("should get a user from the email", async () => {
     const userFromEmail = await controller.getUserFromEmail(newUser.email)
+    expect(userFromEmail).toEqual(expect.any(Object))
     expect(userFromEmail).toEqual({
       bio: expect.any(String),
       confirmationCode: expect.any(String),
@@ -947,14 +824,46 @@ describe("UsersController", () => {
       createdAt: expect.any(Date),
       email: expect.any(String),
       firstName: expect.any(String),
-      followers: expect.any(Array),
-      following: expect.any(Array),
       groupIDs: expect.any(Array),
       id: expect.any(String),
+      jobProfile: expect.any(Array),
+      groups: expect.any(Array),
+      post: expect.any(Array),
       lastName: expect.any(String),
-      password: expect.any(String),
+      followers: expect.any(Array),
+      following: expect.any(Array),
+      location: expect.any(Array),
       profileImage: null,
-      status: expect.any(String)
+      nearWallet: expect.any(String)
+    })
+  })
+
+  it("should define a function to get a user from the near wallet address", () => {
+    expect(controller.getUserFromNearWallet).toBeDefined()
+  })
+
+  it("should get a user from the near wallet address", async () => {
+    const userFromNearWallet = await controller.getUserFromNearWallet(newUser.nearWallet)
+    expect(userFromNearWallet).toEqual(expect.any(Object))
+    expect(userFromNearWallet).toEqual({
+      bio: expect.any(String),
+      confirmationCode: expect.any(String),
+      connection_requests: expect.any(Array),
+      connections: expect.any(Array),
+      createdAt: expect.any(Date),
+      email: expect.any(String),
+      firstName: expect.any(String),
+      groupIDs: expect.any(Array),
+      id: expect.any(String),
+      jobProfile: expect.any(Array),
+      groups: expect.any(Array),
+      post: expect.any(Array),
+      lastName: expect.any(String),
+      followers: expect.any(Array),
+      following: expect.any(Array),
+      location: expect.any(Array),
+      profileImage: null,
+      nearWallet: expect.any(String)
     })
   })
 
@@ -964,6 +873,7 @@ describe("UsersController", () => {
 
   it("should get a user by id", async () => {
     const userById = await controller.getUserFromId(req)
+    expect(userById).toEqual(expect.any(Object))
     expect(userById).toEqual({
       bio: expect.any(String),
       confirmationCode: expect.any(String),
@@ -975,13 +885,14 @@ describe("UsersController", () => {
       groupIDs: expect.any(Array),
       id: expect.any(String),
       jobProfile: expect.any(Array),
+      groups: expect.any(Array),
+      post: expect.any(Array),
       lastName: expect.any(String),
       followers: expect.any(Array),
       following: expect.any(Array),
       location: expect.any(Array),
-      password: expect.any(String),
       profileImage: null,
-      status: expect.any(String)
+      nearWallet: expect.any(String)
     })
   })
 

@@ -3,7 +3,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { PasswordsService } from "src/utils/passwords/passwords.service";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -12,31 +11,27 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 export class UsersService {
   constructor(
     private prisma: PrismaService,
-    private passwordsService: PasswordsService
   ) {}
 
   async create(data: any, token: string) {
     try {
-      const user = await this.getUserFromEmail(data.email);
-      if (user) {
-        throw new BadRequestException("User already Exists");
-      } 
+      const userFromEmail = await this.getUserFromEmail(data.email)
+      const UserFromNearWallet = await this.getUserFromNearWallet(data.nearWallet)
+      if (userFromEmail || UserFromNearWallet) {
+        throw new BadRequestException("User already Exists")
+      }
       else {
-        const pass = await this.passwordsService.hashPassword(data.password);
-        data.password = pass;
         const result = await this.prisma.user.create({
           data: {
+            nearWallet: data.nearWallet,
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            password: data.password,
             jobProfile: data.jobProfile,
             location: data.location,
             bio: data.bio,
-            status: data.Status,
             profileImage: null,
             confirmationCode: token,
-            // magicAuth: false,
           },
         });
         if (result) {
@@ -52,72 +47,68 @@ export class UsersService {
 
   async getUserFromEmail(email: string) {
     try {
-      const result = await this.prisma.user.findFirst({
-        where: {
-          email: email,
-        },
-      });
-      if (result) {  
-        return result;
+        const result = await this.prisma.user.findFirst({
+          where: {email: email},
+          include: { jobProfile: true, location: true, post: true, groups: true },
+        })
+        if (result) {  
+          return result
+        }
+        else {
+          console.log("Could not find user by email")
+          return
+        }
       } 
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
   }
 
-  async verifyUserEmail(email: string) {
+  async getUserFromNearWallet(nearWallet: string) {
     try {
-      const result = await this.prisma.user.update({
-        where: {
-          email: email,
-        },
-        data: {
-          status: "Active",
-        },
-      });
-      if (result) {
-        return { message: "Email verified" };
-      } else {
-        throw new BadRequestException("Unable to verify Email");
+        const result = await this.prisma.user.findFirst({
+          where: {nearWallet: nearWallet},
+          include: { jobProfile: true, location: true, post: true, groups: true },
+        })
+        if (result) {  
+          return result
+        }
+        else {
+          console.log("Could not find user by near wallet address")
+          return
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
       }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
   }
 
   async getUserFromId(_id: string) {
     try {
-      const user = await this.prisma.user.findFirst({
-        where: { id: _id },
-        include: { jobProfile: true, location: true },
-      });
-      return user;
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
+        const user = await this.prisma.user.findFirst({
+          where: { id: _id },
+          include: { jobProfile: true, location: true, post: true, groups: true },
+        });
+        return user;
+      } catch (error) {
+        console.log(`Error Occured, ${error}`);
+      }
   }
 
   async getAll() {
     try {
       const allUsers = await this.prisma.user.findMany({
-        //   select: {
-        //   id: true,
-        //   email: true,
-        //   firstName: true,
-        //   lastName: true,
-        //   jobProfile: true,
-        //   location: true,
-        //   bio: true,
-        //   profileImage: true,
-        // },
-      });
-      return allUsers;
+        include: { jobProfile: true, location: true, post: true, groups: true }
+      })
+      if (allUsers) {
+        return allUsers
+      }
+      else {
+        console.log("Could not get all users")
+        throw new Error("Could not get all users")
+      }
     } 
     catch (error) {
       console.log(`Error Occured, ${error}`);
@@ -125,85 +116,38 @@ export class UsersService {
     }
   }
 
-  async getUserFromConfirmationCode(confirmationCode: string) {
-    try {
-      const user = await this.prisma.user.findFirst({
-        where: {
-          confirmationCode: confirmationCode,
-        },
-      });
-      return user;
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async updateUserVerification(data: any) {
-    try {
-      const user = await this.prisma.user.findFirst({
-        where: { email: data.email },
-      });
-      if (user) {
-        const result = await this.prisma.user.update({
-          where: { email: data.email },
-          data: {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            password: data.password,
-            jobProfile: data.jobProfile,
-            location: data.location,
-            bio: data.bio,
-            status: data.Status,
-            profileImage: data.profileImage,
-            confirmationCode: data.confirmationCode,
-            // magicAuth: true,
-          },
-        });
-        if (result) {
-          return { message: "User magic verification updated successfully!" };
-        } 
-        else {
-          return { message: "Unable to update user magic verification." };
-        }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("Unable to update user magic verification. Please try again.")
-    }
-  }
-
   async updateUserProfile(_id: string, data: any) {
     try {
-      const result = await this.prisma.user.update({
-        where: { id: _id },
-        data: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          password: data.password,
-          jobProfile: data.jobProfile,
-          location: data.location,
-          bio: data.bio,
-          status: data.Status,
-          profileImage: data.profileImage,
-          confirmationCode: data.confirmationCode,
-        },
-      });
-      if (result) {
-        return { message: "Update Successfully" };
+        const user = await this.prisma.user.findFirst({
+          where: { id: _id },
+        })
+        if (user) {
+          const result = await this.prisma.user.update({
+            where: { id: _id },
+            data: {
+              nearWallet: data.nearWallet,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              jobProfile: data.jobProfile,
+              location: data.location,
+              bio: data.bio,
+              profileImage: data.profileImage,
+            },
+          });
+          console.log(result)
+          if (result) {
+            return { message: "Update Successfully" };
+          } 
+          else {
+            return { message: "Something went wrong" };
+          }
+        }
       } 
-      else {
-        return { message: "Something went wrong" };
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
       }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
   }
 
   async delete(_id: string) {
@@ -212,42 +156,10 @@ export class UsersService {
         where: { id: _id },
       });
       if (result) {
-        return { message: "deleted Successfully" };
+        return { message: "Deleted Successfully" };
       } 
       else {
         return { message: "Something went wrong" };
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async validateUser(email: string, pass: string) {
-    try {
-      const user1 = await this.prisma.user.findFirst({
-        where: { email: email },
-      });
-      if (!user1) {
-        throw new UnauthorizedException("Email/password incorrect");
-      } else if (user1.status === "Pending") {
-        throw new UnauthorizedException({
-          message: "Pending Account. Please Verify Your Email!",
-        });
-      } else if (user1.status !== "Active") {
-        throw new UnauthorizedException({ message: "Unauthorized!" });
-      } else {
-        const isMatch = await this.passwordsService.comparePassword(
-          pass,
-          user1.password
-        );
-        if (!isMatch) {
-          throw new UnauthorizedException("Email/password incorrect");
-        } else {
-          const { password, ...user } = user1;
-          return user;
-        }
       }
     } 
     catch (error) {
@@ -258,218 +170,218 @@ export class UsersService {
 
   async addUserToGroup(userId: string, groupId: string) {
     try {
-      const user = await this.prisma.user.findFirst({
-        where: { id: userId },
-        include: { groups: true }
-      })
-      const group = await this.prisma.group.findFirst({
-        where: { id: groupId },
-        include: { members: true }
-      })
-      if(user && group) {
-        const updatedUser = await this.prisma.user.update({
+        const user = await this.prisma.user.findFirst({
           where: { id: userId },
-          data: { 
-            groupIDs: {
-              push: group.id
-            }
-          }
+          include: { groups: true }
         })
-        const updatedGroup = await this.prisma.group.update({
+        const group = await this.prisma.group.findFirst({
           where: { id: groupId },
-          data: { 
-            userIDs: {
-              push: user.id
-            }
-          }
+          include: { members: true }
         })
-        if (updatedUser && updatedGroup) {
-          return { message: "Successfully Added to Group!" }
+        if(user && group) {
+          const updatedUser = await this.prisma.user.update({
+            where: { id: userId },
+            data: { 
+              groupIDs: {
+                push: group.id
+              }
+            }
+          })
+          const updatedGroup = await this.prisma.group.update({
+            where: { id: groupId },
+            data: { 
+              userIDs: {
+                push: user.id
+              }
+            }
+          })
+          if (updatedUser && updatedGroup) {
+            return { message: "Successfully Added to Group!" }
+          }
+          else {
+            console.log("Could not update user or group arrays")
+            throw new Error("Could not update user or group arrays")
+          }
         }
         else {
-          console.log("Could not update user or group arrays")
-          throw new Error("Could not update user or group arrays")
+          console.log("Could not find user or group.")
+          throw new Error("Could not find user or group.")
         }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
       }
-      else {
-        console.log("Could not find user or group.")
-        throw new Error("Could not find user or group.")
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
   }
 
   async removeUserFromGroup(userId: string, groupId: string) {
     try {
-      const user = await this.prisma.user.findFirst({
-        where: { id: userId },
-        include: { groups: true }
-      })
-      const group = await this.prisma.group.findFirst({
-        where: { id: groupId },
-        include: { members: true }
-      })
-      if (user && group) {
-        // remove groupId from user groupIDs array
-        const groups = user.groupIDs
-        const index = groups.indexOf(groupId)
-        const updatedGroupsArray = groups.splice(index, 1)
-        const updatedUser = await this.prisma.user.update({
+        const user = await this.prisma.user.findFirst({
           where: { id: userId },
-          data: { 
-            groupIDs: updatedGroupsArray
-          }
+          include: { groups: true }
         })
-        // remove userId from group userIDs array
-        const users = group.userIDs
-        const _index = users.indexOf(userId)
-        const updatedUsersArray = users.splice(_index, 1)
-        const updatedGroup = await this.prisma.group.update({
+        const group = await this.prisma.group.findFirst({
           where: { id: groupId },
-          data: {
-            userIDs: updatedUsersArray
-          }
+          include: { members: true }
         })
-        
-        if (updatedUser && updatedGroup) {
-          return { message: `Successfully removed user: ${user.firstName} ${user.lastName} from group ${group.name}` }
+        if (user && group) {
+          // remove groupId from user groupIDs array
+          const groups = user.groupIDs
+          const index = groups.indexOf(groupId)
+          const updatedGroupsArray = groups.splice(index, 1)
+          const updatedUser = await this.prisma.user.update({
+            where: { id: userId },
+            data: { 
+              groupIDs: updatedGroupsArray
+            }
+          })
+          // remove userId from group userIDs array
+          const users = group.userIDs
+          const _index = users.indexOf(userId)
+          const updatedUsersArray = users.splice(_index, 1)
+          const updatedGroup = await this.prisma.group.update({
+            where: { id: groupId },
+            data: {
+              userIDs: updatedUsersArray
+            }
+          })
+          
+          if (updatedUser && updatedGroup) {
+            return { message: `Successfully removed user: ${user.firstName} ${user.lastName} from group ${group.name}` }
+          }
+          else {
+            console.log("Could not update user or group arrays")
+            throw new Error("Could not update user or group arrays")
+          }
         }
         else {
-          console.log("Could not update user or group arrays")
-          throw new Error("Could not update user or group arrays")
+          console.log("Could not find user or group.")
+          throw new Error("Could not find user or group.")
         }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
       }
-      else {
-        console.log("Could not find user or group.")
-        throw new Error("Could not find user or group.")
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
   }
 
   async addConnectionRequestToUser(userId: string, userToConnectWithId: string) {
     try {
-      if (userId && userToConnectWithId) {
-        const userToConnectWith = await this.prisma.user.findFirst({
-          where: { id: userId },
-        })
-        const connections = userToConnectWith.connections
-        const connection_requests = userToConnectWith.connection_requests
-        for (let i = 0; i < connections.length; i++) {
-          if (connections[i] == userToConnectWithId) {
-            console.log(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
-            throw new Error(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
-          }
-        }
-        for (let i = 0; i < connection_requests.length; i++) {
-          if (connection_requests[i] == userToConnectWithId) {
-            console.log(`User has already requested to connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
-            throw new Error(`User has already requested to connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
-          }
-        }
-        const updatedUser = await this.prisma.user.update({
-          where: { id: userId },
-          data: {
-            connection_requests: {
-              push: userToConnectWithId
+        if (userId && userToConnectWithId) {
+          const userToConnectWith = await this.prisma.user.findFirst({
+            where: { id: userId },
+          })
+          const connections = userToConnectWith.connections
+          const connection_requests = userToConnectWith.connection_requests
+          for (let i = 0; i < connections.length; i++) {
+            if (connections[i] == userToConnectWithId) {
+              console.log(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
+              throw new Error(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
             }
           }
-        })
-        if (updatedUser) {
-          return { message:  `Successfully sent connection request to ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
+          for (let i = 0; i < connection_requests.length; i++) {
+            if (connection_requests[i] == userToConnectWithId) {
+              console.log(`User has already requested to connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
+              throw new Error(`User has already requested to connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
+            }
+          }
+          const updatedUser = await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+              connection_requests: {
+                push: userToConnectWithId
+              }
+            }
+          })
+          console.log('Added connection - updated user: ', updatedUser)
+          if (updatedUser) {
+            return { message:  `Successfully sent connection request to ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
+          }
+          else {
+            return { message:  `Unable to send connection request to ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
+          }        
         }
         else {
-          return { message:  `Unable to send connection request to ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
-        }        
+          console.log("Missing userId or userToConnectWithId")
+          throw new Error(`Missing userId or userToConnectWithId - userId: ${userId}, userToConnectWithId: ${userToConnectWithId}`)
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Unable to send connection request to this user. Please try again.")
       }
-      else {
-        console.log("Missing userId or userToConnectWithId")
-        throw new Error(`Missing userId or userToConnectWithId - userId: ${userId}, userToConnectWithId: ${userToConnectWithId}`)
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("Unable to send connection request to this user. Please try again.")
-    }
   }
 
   async approveConnectionRequest(userId: string, userToConnectWithId: string) {
     try {
-      if (userId && userToConnectWithId) {
-        const user = await this.prisma.user.findFirst({
-          where: { id: userId }
-        })
-        const userToConnectWith = await this.prisma.user.findFirst({
-          where: { id: userToConnectWithId },
-        })
-        const connections = user.connections
-        console.log('user connections', connections)
-        const connection_requests = user.connection_requests
-        console.log('connection_requests', connection_requests)
-        for (let i = 0; i < connections.length; i++) {
-          if (connections[i] == userToConnectWithId) {
-            console.log(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
-            throw new Error(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
+        if (userId && userToConnectWithId) {
+          const user = await this.prisma.user.findFirst({
+            where: { id: userId }
+          })
+          const userToConnectWith = await this.prisma.user.findFirst({
+            where: { id: userToConnectWithId },
+          })
+          const connections = user.connections
+          console.log('user connections', connections)
+          const connection_requests = user.connection_requests
+          console.log('connection_requests', connection_requests)
+          for (let i = 0; i < connections.length; i++) {
+            if (connections[i] == userToConnectWithId) {
+              console.log(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
+              throw new Error(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
+            }
           }
-        }
-        for (let i = 0; i < connection_requests.length; i++) {
-          if (connection_requests[i] == userToConnectWithId) {
-            const updatedConnectionRequestsArray = connection_requests.splice(i, 1)
-            const updatedUserConnectionRequestsArray = await this.prisma.user.update({
-              where: {id: userId },
-              data: {
-                connection_requests: updatedConnectionRequestsArray
-              }
-            })
-            console.log('updatedUserConnectionRequestsArray', updatedUserConnectionRequestsArray)
-            const updatedUserConnectionsArray = await this.prisma.user.update({
-              where: { id: userId },
-              data: {
-                connections: {
-                  push: userToConnectWithId
+          for (let i = 0; i < connection_requests.length; i++) {
+            if (connection_requests[i] == userToConnectWithId) {
+              const updatedConnectionRequestsArray = connection_requests.splice(i, 1)
+              const updatedUserConnectionRequestsArray = await this.prisma.user.update({
+                where: {id: userId },
+                data: {
+                  connection_requests: updatedConnectionRequestsArray
                 }
-              }
-            })
-            console.log('updatedUserConnectionsArray', updatedUserConnectionsArray)
-            const updatedUserToConnectWithConnectionsArray = await this.prisma.user.update({
-              where: { id: userToConnectWithId },
-              data: {
-                connections: {
-                  push: userId
+              })
+              console.log('updatedUserConnectionRequestsArray', updatedUserConnectionRequestsArray)
+              const updatedUserConnectionsArray = await this.prisma.user.update({
+                where: { id: userId },
+                data: {
+                  connections: {
+                    push: userToConnectWithId
+                  }
                 }
+              })
+              console.log('updatedUserConnectionsArray', updatedUserConnectionsArray)
+              const updatedUserToConnectWithConnectionsArray = await this.prisma.user.update({
+                where: { id: userToConnectWithId },
+                data: {
+                  connections: {
+                    push: userId
+                  }
+                }
+              })
+              console.log('updatedUserToConnectWithConnectionsArray', updatedUserToConnectWithConnectionsArray)
+              if (updatedUserConnectionRequestsArray && updatedUserConnectionsArray && updatedUserToConnectWithConnectionsArray) {
+                return { message:  `Successfully connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
               }
-            })
-            console.log('updatedUserToConnectWithConnectionsArray', updatedUserToConnectWithConnectionsArray)
-            if (updatedUserConnectionRequestsArray && updatedUserConnectionsArray && updatedUserToConnectWithConnectionsArray) {
-              console.log('userToConnectWith', userToConnectWith)
-              return { message:  `Successfully connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
+              else {
+                return { message:  `Unable to connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
+              }
             }
             else {
-              return { message:  `Unable to connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
+              console.log(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
+              throw new Error(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
             }
           }
-          else {
-            console.log(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
-            throw new Error(`User is already connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`)
-          }
+          return `Successfully approved connection request to ${userToConnectWith.firstName} ${userToConnectWith.lastName}`
         }
-        return `Successfully approved connection request to ${userToConnectWith.firstName} ${userToConnectWith.lastName}`
+        else {
+          console.log('Missing userId or userToConnectWithId', `userId: ${userId}, userToConnectWithId: ${userToConnectWithId}`)
+              throw new Error("Missing userId or userToConnectWithId")
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Unable to connect with this user. Please try again.")
       }
-      else {
-        console.log('Missing userId or userToConnectWithId', `userId: ${userId}, userToConnectWithId: ${userToConnectWithId}`)
-            throw new Error("Missing userId or userToConnectWithId")
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("Unable to connect with this user. Please try again.")
-    }
   }
 
   async removeConnection(userId: string, userToUnconnectWithId: string) {
@@ -554,14 +466,14 @@ export class UsersService {
             }
           }
         })
+        console.log('Added follower - updated user: ', updatedUser)
+        console.log('Added following - updated user', updatedUserToFollow)
         if (updatedUser && updatedUserToFollow) {
-          console.log('Added follower - updated user: ', updatedUser)
-          console.log('Added following - updated user', updatedUserToFollow)
-          return { message: `Successfully followed ${userToFollow.firstName} ${userToFollow.lastName}` }
+          return { message: `${user.firstName} ${user.lastName} successfully followed ${userToFollow.firstName} ${userToFollow.lastName}` }
         }
         else {
-          console.log("Could not update user or userToFollow.")
-          throw new Error("Could not update user or userToFollow.")
+          console.log("Failed to update user or userToFollow")
+          throw new Error("Failed to update user or userToFollow")
         }
       }
       else {

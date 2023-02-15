@@ -35,29 +35,17 @@ export class AuthController {
     return await this.authService.register(data);
   }
 
-  @Public()
-  @Get("confirm/:confirmationCode")
-  async verifyUserEmail(@Param("confirmationCode") confirmationCode: string) {
-    return await this.authService.verifyUserEmail(confirmationCode);
-  }
-
-  @Public()
-  @Post("requestResetPassword/:email")
-  async requestResetPassword(@Param("email") email: string) {
-    return await this.authService.requestPasswordReset(email);
-  }
-
-  @Public()
-  @Get("resetPassword")
-  async resetPassword(
-    @Query("token") token: string,
-    @Query("userId") userId: string,
-    @Body() forgetPassword: ForgetPasswordDto
-  ) {
-    return await this.authService.resetPassword(
-      userId,
-      token,
-      forgetPassword.password
-    );
-  }
+  // @Public()
+  // @Get("resetPassword")
+  // async resetPassword(
+  //   @Query("token") token: string,
+  //   @Query("userId") userId: string,
+  //   @Body() forgetPassword: ForgetPasswordDto
+  // ) {
+  //   return await this.authService.resetPassword(
+  //     userId,
+  //     token,
+  //     forgetPassword.password
+  //   );
+  // }
 }

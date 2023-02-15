@@ -1,15 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import {BadRequestException, ConsoleLogger, UnauthorizedException} from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { PasswordsService } from "src/utils/passwords/passwords.service";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { Context, MockContext, createMockContext } from "../../../test/prisma/context"
 import { PrismaClient } from '@prisma/client'
-import * as bcrypt from "bcrypt";
-
-const saltOrRounds = 8
 
 const prisma = new PrismaClient()
 
@@ -18,51 +14,33 @@ let ctx: Context
 
 const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const generateRandomString = (length: number) => {
-  let result = ' ';
+  let result = '';
     const charactersLength = characters.length;
-    for ( let i = 0; i < length; i++ ) {
+    for (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
 
-    return result;
+    return result
 }
 
 const createUserDto: CreateUserDto = {
+  nearWallet: generateRandomString(64),
   firstName: "Daena",
   lastName: "McClintock",
   email: generateRandomString(6) + "@gmail.com",
   // email: 'daena.mcclintock@gmail.com',
-  password: "ThriveIN1234",
   bio: "Software Engineer at ThriveIN",
-  status: "Employed",
-  magicAuthentication: false
+  profileImage: 'null',
 }
 
-const updateUserDto: UpdateUserDto = {}
+const updateUserDto: UpdateUserDto = {
+  bio: "Software Developer at ThriveIN"
+}
 
 const groupId = "63d466d560f07622c546614f"
 
 describe("UsersService", () => {
   let service: UsersService;
-
-  const getUserFromEmail = async (email: string) => {
-    try {
-      const result = await prisma.user.findFirst({
-        where: {
-          email: email,
-        },
-      });
-      if (result) {
-        console.log("RESULT", result);
-  
-        return result;
-      } 
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
 
   let mockGroupsService = {
     create: jest.fn().mockImplementation(async (data: any, userId: string) => {
@@ -141,43 +119,26 @@ describe("UsersService", () => {
     }),
   }
 
-  let mockPasswordService = {
-    hashPassword: jest.fn().mockImplementation(async (password: string) => {
-      return await bcrypt.hash(password, saltOrRounds);
-    }),
-
-    comparePassword: jest.fn().mockImplementation(async (password: string, hash: string) => {
-      const isMatch = await bcrypt.compare(password, hash);
-      return isMatch;
-    })
-  }
-
   let mockUsersService = {
     create: jest.fn().mockImplementation(async (data: any, token: string) => {
       try {
-        const user = await getUserFromEmail(data.email);
-        if (user) {
-          throw new BadRequestException("User already Exists");
-        } 
+        const userFromEmail = await mockUsersService.getUserFromEmail(data.email)
+        const UserFromNearWallet = await mockUsersService.getUserFromNearWallet(data.nearWallet)
+        if (userFromEmail || UserFromNearWallet) {
+          throw new BadRequestException("User already Exists")
+        }
         else {
-          //hashing new user password
-          const pass = await mockPasswordService.hashPassword(data.password);
-          //create new user account with hashed password
-          //hashed password in pass
-          data.password = pass;
           const result = await prisma.user.create({
             data: {
+              nearWallet: data.nearWallet,
               firstName: data.firstName,
               lastName: data.lastName,
               email: data.email,
-              password: data.password,
               jobProfile: data.jobProfile,
               location: data.location,
               bio: data.bio,
-              status: data.Status,
               profileImage: null,
               confirmationCode: token,
-              // magicAuth: false,
             },
           });
           if (result) {
@@ -194,15 +155,16 @@ describe("UsersService", () => {
     getUserFromEmail: jest.fn().mockImplementation(async (email: string) => {
       try {
         const result = await prisma.user.findFirst({
-          where: {
-            email: email,
-          },
-        });
-        if (result) {
-          console.log("RESULT", result);
-    
-          return result;
-        } 
+          where: {email: email},
+          include: { jobProfile: true, location: true, post: true, groups: true },
+        })
+        if (result) {  
+          return result
+        }
+        else {
+          console.log("Could not find user by email")
+          return
+        }
       } 
       catch (error) {
         console.log(error)
@@ -210,20 +172,18 @@ describe("UsersService", () => {
       }
     }),
 
-    verifyUserEmail: jest.fn().mockImplementation(async (email: string) => {
+    getUserFromNearWallet: jest.fn().mockImplementation(async (nearWallet: string) => {
       try {
-        const result = await prisma.user.update({
-          where: {
-            email: email,
-          },
-          data: {
-            status: "Active",
-          },
-        });
-        if (result) {
-          return { message: "Email verified" };
-        } else {
-          throw new BadRequestException("Unable to verify Email");
+        const result = await prisma.user.findFirst({
+          where: {nearWallet: nearWallet},
+          include: { jobProfile: true, location: true, post: true, groups: true },
+        })
+        if (result) {  
+          return result
+        }
+        else {
+          console.log("Could not find user by near wallet address")
+          return
         }
       } 
       catch (error) {
@@ -236,7 +196,7 @@ describe("UsersService", () => {
       try {
         const user = await prisma.user.findFirst({
           where: { id: _id },
-          include: { jobProfile: true, location: true },
+          include: { jobProfile: true, location: true, post: true, groups: true },
         });
         return user;
       } catch (error) {
@@ -247,73 +207,19 @@ describe("UsersService", () => {
     getAll: jest.fn().mockImplementation(async () => {
       try {
         const allUsers = await prisma.user.findMany({
-          //   select: {
-          //   id: true,
-          //   email: true,
-          //   firstName: true,
-          //   lastName: true,
-          //   jobProfile: true,
-          //   location: true,
-          //   bio: true,
-          //   profileImage: true,
-          // },
-        });
-        return allUsers;
+          include: { jobProfile: true, location: true, post: true, groups: true }
+        })
+        if (allUsers) {
+          return allUsers
+        }
+        else {
+          console.log("Could not get all users")
+          throw new Error("Could not get all users")
+        }
       } 
       catch (error) {
         console.log(`Error Occured, ${error}`);
         throw new Error("Error getting all users.")
-      }
-    }),
-
-    getUserFromConfirmationCode: jest.fn().mockImplementation(async (confirmationCode: string) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            confirmationCode: confirmationCode,
-          },
-        });
-        return user;
-      } 
-      catch (error) {
-        console.log(error)
-        throw new Error("An error occured. Please try again.")
-      }
-    }),
-
-    updateUserVerification: jest.fn().mockImplementation(async (data: any) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: { email: data.email },
-        });
-        if (user) {
-          const result = await prisma.user.update({
-            where: { email: data.email },
-            data: {
-              firstName: data.firstName,
-              lastName: data.lastName,
-              email: data.email,
-              password: data.password,
-              jobProfile: data.jobProfile,
-              location: data.location,
-              bio: data.bio,
-              status: data.Status,
-              profileImage: data.profileImage,
-              confirmationCode: data.confirmationCode,
-              // magicAuth: true,
-            },
-          });
-          if (result) {
-            return { message: "User magic verification updated successfully!" };
-          } 
-          else {
-            return { message: "Unable to update user magic verification." };
-          }
-        }
-      } 
-      catch (error) {
-        console.log(error)
-        throw new Error("Unable to update user magic verification. Please try again.")
       }
     }),
 
@@ -326,16 +232,14 @@ describe("UsersService", () => {
           const result = await prisma.user.update({
             where: { id: _id },
             data: {
+              nearWallet: data.nearWallet,
               firstName: data.firstName,
               lastName: data.lastName,
               email: data.email,
-              password: data.password,
               jobProfile: data.jobProfile,
               location: data.location,
               bio: data.bio,
-              status: data.Status,
               profileImage: data.profileImage,
-              confirmationCode: data.confirmationCode,
             },
           });
           console.log(result)
@@ -367,40 +271,6 @@ describe("UsersService", () => {
           } 
           else {
             return { message: "Something went wrong" };
-          }
-        }
-      } 
-      catch (error) {
-        console.log(error)
-        throw new Error("An error occured. Please try again.")
-      }
-    }),
-
-    validateUser: jest.fn().mockImplementation(async (email: string, pass: string) => {
-      try {
-        const user1 = await prisma.user.findFirst({
-          where: { email: email },
-        });
-        if (!user1) {
-          throw new UnauthorizedException("Email/password incorrect");
-        } else if (user1.status === "Pending") {
-          throw new UnauthorizedException({
-            message: "Pending Account. Please Verify Your Email!",
-          });
-        } else if (user1.status !== "Active") {
-          throw new UnauthorizedException({ message: "Unauthorized!" });
-        } else {
-          const isMatch = await mockPasswordService.comparePassword(
-            pass,
-            user1.password
-          );
-          if (!isMatch) {
-            throw new UnauthorizedException("Email/password incorrect");
-          } else {
-            const { password, ...user } = user1;
-            console.log("user", user);
-  
-            return user;
           }
         }
       } 
@@ -710,7 +580,13 @@ describe("UsersService", () => {
           })
           console.log('Added follower - updated user: ', updatedUser)
           console.log('Added following - updated user', updatedUserToFollow)
-          return { message: `Successfully followed ${userToFollow.firstName} ${userToFollow.lastName}` }
+          if (updatedUser && updatedUserToFollow) {
+            return { message: `${user.firstName} ${user.lastName} successfully followed ${userToFollow.firstName} ${userToFollow.lastName}` }
+          }
+          else {
+            console.log("Failed to update user or userToFollow")
+            throw new Error("Failed to update user or userToFollow")
+          }
         }
         else {
           console.log('Missing userId or userToFollowId')
@@ -970,7 +846,7 @@ describe("UsersService", () => {
 
   it("should be defined", () => {
     expect(service).toBeDefined();
-  });
+  })
 
   it("should define a function to create a user", () => {
     expect(service.create).toBeDefined()
@@ -978,11 +854,12 @@ describe("UsersService", () => {
 
   let newUser: any
   it("should create a user", async () => {
-    const createdUser = await service.create(createUserDto, generateRandomString(7))
+    const createdUser = await service.create(createUserDto, generateRandomString(24))
     newUser = createdUser
     expect(createdUser).toEqual({
-      bio: expect.any(String),
+      nearWallet: expect.any(String),
       confirmationCode: expect.any(String),
+      bio: expect.any(String),
       connection_requests: expect.any(Array),
       connections: expect.any(Array),
       createdAt: expect.any(Date),
@@ -993,9 +870,7 @@ describe("UsersService", () => {
       groupIDs: expect.any(Array),
       id: expect.any(String),
       lastName: expect.any(String),
-      password: expect.any(String),
       profileImage: null,
-      status: expect.any(String)
     })
   })
 
@@ -1005,6 +880,7 @@ describe("UsersService", () => {
 
   it("should get a user from the email", async () => {
     const userFromEmail = await service.getUserFromEmail(newUser.email)
+    expect(service.getUserFromEmail).toBeCalled()
     expect(userFromEmail).toEqual({
       bio: expect.any(String),
       confirmationCode: expect.any(String),
@@ -1013,26 +889,48 @@ describe("UsersService", () => {
       createdAt: expect.any(Date),
       email: expect.any(String),
       firstName: expect.any(String),
-      followers: expect.any(Array),
-      following: expect.any(Array),
       groupIDs: expect.any(Array),
       id: expect.any(String),
+      jobProfile: expect.any(Array),
+      groups: expect.any(Array),
+      post: expect.any(Array),
       lastName: expect.any(String),
-      password: expect.any(String),
+      followers: expect.any(Array),
+      following: expect.any(Array),
+      location: expect.any(Array),
       profileImage: null,
-      status: expect.any(String)
+      nearWallet: expect.any(String)
     })
   })
 
-  it("should define a function to verify a user by the email", () => {
-    expect(service.verifyUserEmail).toBeDefined()
+  it("should define a function to get a user from the near wallet address", () => {
+    expect(service.getUserFromNearWallet).toBeDefined()
   })
 
-  it("should verify a user by the email", async () => {
-    const verifiedUserEmail = await service.verifyUserEmail(newUser.email)
-    expect(verifiedUserEmail).toEqual(
-      { message: "Email verified" }
-    )
+  it("should get a user from the near wallet address", async () => {
+    const userFromNearWallet = await service.getUserFromNearWallet(newUser.nearWallet)
+    expect(service.getUserFromNearWallet).toBeCalled()
+    expect(userFromNearWallet).toEqual(expect.any(Object))
+    expect(userFromNearWallet).toEqual({
+      bio: expect.any(String),
+      confirmationCode: expect.any(String),
+      connection_requests: expect.any(Array),
+      connections: expect.any(Array),
+      createdAt: expect.any(Date),
+      email: expect.any(String),
+      firstName: expect.any(String),
+      groupIDs: expect.any(Array),
+      id: expect.any(String),
+      jobProfile: expect.any(Array),
+      groups: expect.any(Array),
+      post: expect.any(Array),
+      lastName: expect.any(String),
+      followers: expect.any(Array),
+      following: expect.any(Array),
+      location: expect.any(Array),
+      profileImage: null,
+      nearWallet: expect.any(String)
+    })
   })
 
   it("should define a function to get a user by the id", () => {
@@ -1041,6 +939,7 @@ describe("UsersService", () => {
 
   it("should get a user by id", async () => {
     const userById = await service.getUserFromId(newUser.id)
+    expect(service.getUserFromId).toBeCalled()
     expect(userById).toEqual({
       bio: expect.any(String),
       confirmationCode: expect.any(String),
@@ -1052,13 +951,14 @@ describe("UsersService", () => {
       groupIDs: expect.any(Array),
       id: expect.any(String),
       jobProfile: expect.any(Array),
+      groups: expect.any(Array),
+      post: expect.any(Array),
       lastName: expect.any(String),
       followers: expect.any(Array),
       following: expect.any(Array),
       location: expect.any(Array),
-      password: expect.any(String),
       profileImage: null,
-      status: expect.any(String)
+      nearWallet: expect.any(String)
     })
   })
 
@@ -1068,57 +968,10 @@ describe("UsersService", () => {
 
   it("should get all the users", async () => {
     const allUsers = await service.getAll()
+    expect(service.getAll).toBeCalled()
     expect(allUsers).toEqual(
       expect.any(Array)
     )
-  })
-
-  it("should define a function to get a user from confirmation code", () => {
-    expect(service.getUserFromConfirmationCode).toBeDefined()
-  })
-
-  it("should get a user from confirmation code", async () => {
-    const userFromConfirmationCode = await service.getUserFromConfirmationCode(newUser.confirmationCode)
-    expect(userFromConfirmationCode).toEqual({
-      bio: expect.any(String),
-      confirmationCode: expect.any(String),
-      connection_requests: expect.any(Array),
-      connections: expect.any(Array),
-      createdAt: expect.any(Date),
-      email: expect.any(String),
-      firstName: expect.any(String),
-      followers: expect.any(Array),
-      following: expect.any(Array),
-      groupIDs: expect.any(Array),
-      id: expect.any(String),
-      lastName: expect.any(String),
-      password: expect.any(String),
-      profileImage: null,
-      status: expect.any(String)
-    })
-  })
-
-  it("should define a function to update the user magic verification", () => {
-    expect(service.getUserFromConfirmationCode).toBeDefined()
-  })
-
-  it("should update the user magic verification", async () => {
-    const updatedUserVerification =  await service.updateUserVerification(newUser)
-    expect(updatedUserVerification).toEqual(
-      { message: "User magic verification updated successfully!" }
-    )
-  })
-
-  it("should define a function to validate a user profile by id", () => {
-    expect(service.validateUser).toBeDefined()
-  })
-
-  it("should validate a user profile by id", async () => {
-    // const validatedUserProfile = await service.validateUser('daena@thrivein.io', "ThriveIN2023")
-    // console.log(validatedUserProfile)
-    // expect(validatedUserProfile).toEqual(
-    //   expect.any(Array)
-    // )
   })
 
   it("should define a function to add a user to a group", () => {
@@ -1156,21 +1009,11 @@ describe("UsersService", () => {
   })
 
   it("should update the user profile", async () => {
-    const updatedUserProfile = await service.updateUserProfile(newUser.id, newUser)
+    const updatedUserProfile = await service.updateUserProfile(newUser.id, updateUserDto)
+    expect(service.updateUserProfile).toBeCalled()
     expect(updatedUserProfile).toEqual(
       { message: "Update Successfully" }
     )
-  })
-
-  it("should define a function to delete a user profile by id", () => {
-    expect(service.delete).toBeDefined()
-  })
-
-  it("should delete a user profile by id", async () => {
-    // const deletedUserProfile = await service.delete(newUser.id)
-    // expect(deletedUserProfile).toEqual(
-    //   { message: "deleted Successfully" }
-    // )
   })
 
   it("should define a function to request a connection to a user", () => {
@@ -1179,16 +1022,17 @@ describe("UsersService", () => {
 
   let userToConnectWith: any
   it("should request a connection to a user", async () => {
-    userToConnectWith = await prisma.user.findFirst({})
-    console.log('userToConnectWith', userToConnectWith)
+    const allUsers = await service.getAll()
+    const randomIndex = Math.floor(allUsers.length * Math.random())
+    userToConnectWith = allUsers[randomIndex]
     const requestedConnection = await service.addConnectionRequestToUser(newUser.id, userToConnectWith.id)
     expect(service.addConnectionRequestToUser).toBeCalled()
     expect(requestedConnection).toEqual(
       expect.any(Object)
     )
-    // expect(requestedConnection).toEqual(
-    //   { message:  `Successfully sent connection request to ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
-    // )
+    expect(requestedConnection).toEqual(
+      { message:  `Successfully sent connection request to ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
+    )
   })
 
   it("should define a function to approve the connection request", () => {
@@ -1199,9 +1043,10 @@ describe("UsersService", () => {
     const approvedConnection = await service.approveConnectionRequest(newUser.id, userToConnectWith.id)
     console.log('approvedConnection', approvedConnection)
     expect(service.approveConnectionRequest).toBeCalled()
-    // expect(approvedConnection).toEqual({
-
-    // })
+    expect(approvedConnection).toEqual(expect.any(Object))
+    expect(approvedConnection).toEqual(
+      { message:  `Successfully connected with ${userToConnectWith.firstName} ${userToConnectWith.lastName}`}
+    )
   })
 
   it("should define a function to remove a connection", () => {
@@ -1216,9 +1061,9 @@ describe("UsersService", () => {
     expect(removedConnection).toEqual(
       expect.any(Object)
     )
-    expect(removedConnection).toEqual({
-      message: expect.any(String)
-    })
+    expect(removedConnection).toEqual(
+      { message: `Successfully removed connection between ${newUser.firstName} ${newUser.lastName} and ${userConnectedWith.firstName} ${userConnectedWith.lastName}` }
+    )
   })
 
   it("should define a function to add a follower to a user", () => {
@@ -1231,12 +1076,10 @@ describe("UsersService", () => {
     const addedFollower = await service.addFollowerToUser(newUser.id, userToFollow.id)
     console.log('addedFollower', addedFollower)
     expect(service.addFollowerToUser).toBeCalled()
+    expect(addedFollower).toEqual(expect.any(Object))
     expect(addedFollower).toEqual(
-      expect.any(Object)
+      { message: `${newUser.firstName} ${newUser.lastName} successfully followed ${userToFollow.firstName} ${userToFollow.lastName}` }
     )
-    expect(addedFollower).toEqual({
-      message: expect.any(String)
-    })
   })
 
   it("should define a function to remove a follower", () => {
@@ -1246,7 +1089,6 @@ describe("UsersService", () => {
   it("should remove a follower from user", async () => {
     const userToRemoveFollowFrom = userToFollow
     const removedFollower = await service.removeFollowerFromUser(newUser.id, userToRemoveFollowFrom.id)
-    console.log('removedFollower', removedFollower)
     expect(service.removeFollowerFromUser).toBeCalled()
     expect(removedFollower).toEqual(
       expect.any(Object)
@@ -1303,5 +1145,17 @@ describe("UsersService", () => {
     const getUserRecommendations = await service.userRecommendations('63954916dce005928e2d3ae2')
     expect(service.userRecommendations).toBeCalled()
     expect(getUserRecommendations).toEqual(expect.any(Object))
+  })
+
+  it("should define a function to delete a user profile by id", () => {
+    expect(service.delete).toBeDefined()
+  })
+
+  it("should delete a user profile by id", async () => {
+    const deletedUserProfile = await service.delete(newUser.id)
+    expect(service.delete).toBeCalled()
+    expect(deletedUserProfile).toEqual(
+      { message: "deleted Successfully" }
+    )
   })
 })

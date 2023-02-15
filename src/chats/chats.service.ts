@@ -22,8 +22,6 @@ export class ChatsService {
       else {
         throw new BadRequestException("result not found")
 
-      } else {
-        throw new BadRequestException("result not found");
       }
     } 
     catch (error) {
@@ -155,12 +153,11 @@ export class ChatsService {
       if (messages.length === 0 || messages.length > 0) {
         return messages
       }
-    const result = await this.prismaService.chat.delete({
-      where: { id: id },
-    })
-    if (result) {
-      return { message: "Deleted Successfully" };
-    } 
+      else {
+        console.log("Could not search messages")
+        return
+      }
+    }
     catch (error) {
       console.log(`Error Occured, ${error}`)
       throw new Error("Could not search chats")
