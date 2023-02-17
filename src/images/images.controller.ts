@@ -5,7 +5,7 @@ import {
   Param,
   UploadedFile,
   Request,
-  UseInterceptors,
+  // UseInterceptors,
 } from "@nestjs/common";
 import { ImagesService } from "./images.service";
 import { CreateImageDto } from "./dto/create-image.dto";
@@ -19,7 +19,7 @@ export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
   @Post("uploadProfileImage")
-  @UseInterceptors(FileInterceptor("file"))
+  // @UseInterceptors(FileInterceptor("file"))
   async uploadProfileImage(
     @UploadedFile() file: Express.Multer.File,
     @Request() req
@@ -29,7 +29,7 @@ export class ImagesController {
   }
 
   @Post("uploadGigImage")
-  @UseInterceptors(FileInterceptor("file"))
+  // @UseInterceptors(FileInterceptor("file"))
   async uploadGigImage(
     @UploadedFile() file: Express.Multer.File,
     @Request() req
@@ -39,7 +39,7 @@ export class ImagesController {
   }
 
   @Post("uploadEventImage")
-  @UseInterceptors(FileInterceptor("file"))
+  // @UseInterceptors(FileInterceptor("file"))
   async uploadEventImage(
     @UploadedFile() file: Express.Multer.File,
     @Request() req
