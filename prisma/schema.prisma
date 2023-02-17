@@ -70,7 +70,7 @@ model Event {
   id          String      @id @default(auto()) @map("_id") @db.ObjectId
   event_image String
   event_link  String
-  name String
+  name        String
   description String
   timezone    DateTime
   start_date  DateTime
