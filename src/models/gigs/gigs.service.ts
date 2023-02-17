@@ -14,14 +14,14 @@ export class GigsService {
 
   async create(data: CreateGigDto) {
     try {
-      const utcStartDate = this.timezonesService.convertToUtc(data.start_date);
-      const utcEndDate = this.timezonesService.convertToUtc(data.end_date);
+      // const utcStartDate = this.timezonesService.convertToUtc(data.start_date);
+      // const utcEndDate = this.timezonesService.convertToUtc(data.end_date);
       const result = await this.prismaService.gig.create({
         data: {
           postId: data.postId,
           timezone: data.timezone,
-          start_date: utcStartDate,
-          end_date: utcEndDate,
+          start_date: data.start_date,
+          end_date: data.end_date,
           title: data.title,
           description: data.description,
           gig_price_min: data.gig_price_min,
@@ -41,9 +41,16 @@ export class GigsService {
 
   async findAll() {
     try {
-      return await this.prismaService.gig.findMany({
+      const allGigs = await this.prismaService.gig.findMany({
         include: { location: true },
       })
+      if (allGigs) {
+        return allGigs
+      }
+      else {
+        console.log("Failed to find all gigs")
+        return { message: 'Failed to find all gigs' }
+      }
     } 
     catch (error) {
       console.log(error)
@@ -56,8 +63,8 @@ export class GigsService {
       const gig = await this.prismaService.gig.findFirst({
         where: { id: _id },
         include: { location: true },
-      });
-      return gig;
+      })
+      return gig
     } 
     catch (error) {
       console.log(error)
@@ -65,11 +72,42 @@ export class GigsService {
     }
   }
 
-  update(id: number, updateGigDto: UpdateGigDto) {
-    return `This action updates a #${id} gig`;
+  async update(id: string, updateGigDto: UpdateGigDto) {
+    try {
+      const updatedGig = await this.prismaService.gig.update({
+        where: { id: id },
+        data: updateGigDto
+      })
+      if (updatedGig) {
+        return { message: `Successfully updated gig` }
+      }
+      else {
+        console.log(`Failed to update gig ${id}`)
+        return { message: `Failed to update gig` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to update gig.")
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gig`;
+  async remove(id: string) {
+    try {
+      const removedGig = await this.prismaService.gig.delete({
+        where: { id: id },
+      })
+      if (removedGig) {
+        return { message: `Successfully removed gig` }
+      }
+      else {
+        console.log(`Failed to remove gig ${id}`)
+        return { message: `Failed to remove gig` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to remove event.")
+    }
   }
 }

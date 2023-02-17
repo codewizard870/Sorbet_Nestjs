@@ -15,7 +15,7 @@ model User {
   nearWallet            String?      @unique
   firstName             String?
   lastName              String?
-  email                 String       @unique
+  email                 String?      @unique
   bio                   String?
   confirmationCode      String?      @unique
   profileImage          String?

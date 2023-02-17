@@ -22,7 +22,9 @@ const createCollabDto: CreateCollabDto = {
   updatedAt: new Date(Date.now())
 }
 
-const updateCollabDto: UpdateCollabDto = {}
+const updateCollabDto: UpdateCollabDto = {
+  wallet_address: 'abcdefghijklmnopqrstuvwxyz'
+}
 
 describe("CollabService", () => {
   let service: CollabService;
@@ -55,7 +57,15 @@ describe("CollabService", () => {
 
     findAll: jest.fn().mockImplementation(async () => {
       try {
-        return await prisma.collab.findMany({})
+        const allCollabs = await prisma.collab.findMany({})
+        if (allCollabs) {
+          return allCollabs
+        }
+        else {
+          console.log("Failed to find all collabs")
+          return { message: 'Failed to find all collabs' }
+        }
+        
       } 
       catch (error) {
         console.log(error)
@@ -67,12 +77,13 @@ describe("CollabService", () => {
       try {
         const collab = await prisma.collab.findFirst({
           where: { id: _id },
-        });
+        })
         if (collab) {
           return collab
         }
         else {
-          throw BadRequestException
+          console.log("Failed to find collab")
+          return { message: 'Failed to find collab' }
         }
       } 
       catch (error) {
@@ -81,12 +92,100 @@ describe("CollabService", () => {
       }
     }),
 
-    update: jest.fn().mockImplementation(async (id: number, updateCollabDto: UpdateCollabDto) => {
-      return `This action updates a #${id} collab`;
+    findByUserId: jest.fn().mockImplementation(async (userId: string) => {
+      try {
+        const collab = await prisma.collab.findFirst({
+          where: { userId: userId},
+        })
+        if (collab) {
+          return collab
+        }
+        else {
+          console.log("Failed to find collab")
+          return { message: 'Failed to find collab' }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
     }),
 
-    remove: jest.fn().mockImplementation(async (id: number) => {
-      return `This action removes a #${id} collab`;
+    findByWalletAddress: jest.fn().mockImplementation(async (walletAddress: string) => {
+      try {
+        const collab = await prisma.collab.findFirst({
+          where: { wallet_address: walletAddress},
+        })
+        if (collab) {
+          return collab
+        }
+        else {
+          console.log("Failed to find collab")
+          return { message: 'Failed to find collab' }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }),
+
+    findByPublicKey: jest.fn().mockImplementation(async (publicKey: string) => {
+      try {
+        const collab = await prisma.collab.findFirst({
+          where: { public_key: publicKey},
+        })
+        if (collab) {
+          return collab
+        }
+        else {
+          console.log("Failed to find collab")
+          return { message: 'Failed to find collab' }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }),
+
+    update: jest.fn().mockImplementation(async (id: string, updateCollabDto: UpdateCollabDto) => {
+      try {
+        const updatedCollab = await prisma.collab.update({
+          where: { id: id },
+          data: updateCollabDto
+        })
+        if (updatedCollab) {
+          return { message: `Successfully updated collab` }
+        }
+        else {
+          console.log(`Failed to remove collab ${id}`)
+          return { message: `Failed to update collab` }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Failed to remove collab.")
+      }
+    }),
+
+    remove: jest.fn().mockImplementation(async (id: string) => {
+      try {
+        const removedCollab = await prisma.collab.delete({
+          where: { id: id },
+        })
+        if (removedCollab) {
+          return { message: `Successfully removed collab` }
+        }
+        else {
+          console.log(`Failed to remove collab ${id}`)
+          return { message: `Failed to remove collab` }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Failed to remove collab.")
+      }
     }),
   }
 
@@ -163,16 +262,83 @@ describe("CollabService", () => {
     })
   })
 
+  it("should define a function to get one collab by the userId", () => {
+    expect(service.findByUserId).toBeDefined()
+  })
+
+  it("should get one of the collabs by the userId and return it", async () => {
+    const collabByUserId = await service.findByUserId(collab.userId)
+    expect(service.findByUserId).toBeCalled()
+    expect(collabByUserId).toEqual({
+      id: expect.any(String),
+      collabId: expect.any(String),
+      userId: expect.any(String),
+      wallet_address: expect.any(String),
+      public_key: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
+  })
+
+  it("should define a function to get one collab by the wallet address", () => {
+    expect(service.findByWalletAddress).toBeDefined()
+  })
+
+  it("should get one of the collabs by the wallet address and return it", async () => {
+    const collabByWalletAddress = await service.findByWalletAddress(collab.wallet_address)
+    expect(service.findByWalletAddress).toBeCalled()
+    expect(collabByWalletAddress).toEqual({
+      id: expect.any(String),
+      collabId: expect.any(String),
+      userId: expect.any(String),
+      wallet_address: expect.any(String),
+      public_key: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
+  })
+
+  it("should define a function to get one collab by the public key", () => {
+    expect(service.findByPublicKey).toBeDefined()
+  })
+
+  it("should get one of the collabs by the public key and return it", async () => {
+    const collabByWalletAddress = await service.findByPublicKey(collab.public_key)
+    expect(service.findByPublicKey).toBeCalled()
+    expect(collabByWalletAddress).toEqual({
+      id: expect.any(String),
+      collabId: expect.any(String),
+      userId: expect.any(String),
+      wallet_address: expect.any(String),
+      public_key: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
+  })
+
   it("should define a function to update an collab by the id", () => {
     expect(service.update).toBeDefined()
   })
 
   it("should update an collab by the id", async () => {
-    const updatedcollab = await service.update(collab.id, updateCollabDto)
+    const updatedCollab = await service.update(collab.id, updateCollabDto)
     expect(service.update).toBeCalled()
-    expect(updatedcollab).toEqual(
-      `This action updates a #${collab.id} collab`
+    expect(updatedCollab).toEqual(expect.any(Object))
+    expect(updatedCollab).toEqual(
+      { message: `Successfully updated collab` }
     )
+    const findUpdatedCollab = await service.findOne(collab.id)
+    expect(service.findOne).toBeCalled()
+    expect(findUpdatedCollab).toEqual(expect.any(Object))
+    expect(findUpdatedCollab).toEqual({
+      id: expect.any(String),
+      collabId: expect.any(String),
+      userId: expect.any(String),
+      wallet_address: expect.any(String),
+      public_key: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
   })
 
   it("should define a function to remove an collab by the id", () => {
@@ -180,10 +346,17 @@ describe("CollabService", () => {
   })
 
   it("should remove an collab by the id", async () => {
-    const removedcollab = await service.remove(collab.id)
+    const removedCollab = await service.remove(collab.id)
     expect(service.remove).toBeCalled()
-    expect(removedcollab).toEqual(
-      `This action removes a #${collab.id} collab`
+    expect(removedCollab).toEqual(expect.any(Object))
+    expect(removedCollab).toEqual(
+      { message: `Successfully removed collab` }
+    )
+    const findDeletedPost = await service.findOne(collab.id)
+    expect(service.remove).toBeCalled()
+    expect(findDeletedPost).toEqual(expect.any(Object))
+    expect(findDeletedPost).toEqual(
+      { message: 'Failed to find collab' }
     )
   })
 })

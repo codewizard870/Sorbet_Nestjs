@@ -27,7 +27,9 @@ const createEventDto: CreateEventDto = {
   description: 'a very fun event!'
 }
 
-const updateEventDto: UpdateEventDto = {}
+const updateEventDto: UpdateEventDto = {
+  name: 'updated first event'
+}
 
 describe("EventsService", () => {
   let service: EventsService;
@@ -92,9 +94,19 @@ describe("EventsService", () => {
 
     findAll: jest.fn().mockImplementation(async () => {
       try {
-        return await prisma.event.findMany({
-          // include: { post: true, location: true },
+        const allEvents =  await prisma.event.findMany({
+          include: { 
+            post: true, 
+            location: true 
+          },
         })
+        if (allEvents) {
+          return allEvents
+        }
+        else {
+          console.log("Failed to find all events")
+          return { message: 'Failed to find all events' }
+        }
       } 
       catch (error) {
         console.log(error)
@@ -107,8 +119,14 @@ describe("EventsService", () => {
         const event = await prisma.event.findFirst({
           where: { id: _id },
           include: { location: true },
-        });
-        return event
+        })
+        if (event) {
+          return event
+        }
+        else {
+          console.log('Failed to find event.')
+          return { message: 'Failed to find event.' }
+        }
       } 
       catch (error) {
         console.log(error)
@@ -116,12 +134,43 @@ describe("EventsService", () => {
       }
     }),
 
-    update: jest.fn().mockImplementation(async (id: number, updateEventDto: UpdateEventDto) => {
-      return `This action updates a #${id} event`;
+    update: jest.fn().mockImplementation(async (id: string, updateEventDto: UpdateEventDto) => {
+      try {
+        const updatedEvent = await prisma.event.update({
+          where: { id: id },
+          data: updateEventDto
+        })
+        if (updatedEvent) {
+          return { message: `Successfully updated event` }
+        }
+        else {
+          console.log(`Failed to update event ${id}`)
+          return { message: `Failed to update event` }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Failed to update event.")
+      }
     }),
 
-    remove: jest.fn().mockImplementation(async (id: number) => {
-      return `This action removes a #${id} event`;
+    remove: jest.fn().mockImplementation(async (id: string) => {
+      try {
+        const removedEvent = await prisma.event.delete({
+          where: { id: id },
+        })
+        if (removedEvent) {
+          return { message: `Successfully removed event` }
+        }
+        else {
+          console.log(`Failed to remove event ${id}`)
+          return { message: `Failed to remove event` }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Failed to remove event.")
+      }
     }),
   }
 
@@ -170,8 +219,8 @@ describe("EventsService", () => {
 
   it("should get all of the events and return them", async () => {
     const allEvents = await service.findAll()
-    console.log('allEvents', allEvents)
     expect(service.findAll).toBeCalled()
+    expect(allEvents).toEqual(expect.any(Array))
     expect(allEvents[0]).toEqual({
         id: expect.any(String),
         event_image: expect.any(String),
@@ -182,15 +231,6 @@ describe("EventsService", () => {
         start_date: expect.any(Date),
         end_date: expect.any(Date),
         postId: expect.any(String),
-        // post: expect.any(Object),
-        // post: {
-        //   id: expect.any(String),
-        //   timestamp: expect.any(Date),
-        //   text: null,
-        //   content: expect.any(String),
-        //   userId: expect.any(String)
-        // },
-        // location: expect.any(Array)
     })
   })
 
@@ -222,9 +262,25 @@ describe("EventsService", () => {
   it("should update an event by the id", async () => {
     const updatedEvent = await service.update(event.id, updateEventDto)
     expect(service.update).toBeCalled()
+    expect(updatedEvent).toEqual(expect.any(Object))
     expect(updatedEvent).toEqual(
-      `This action updates a #${event.id} event`
+      { message: `Successfully updated event` }
     )
+    const findUpdatedEvent = await service.findOne(event.id)
+    expect(service.findOne).toBeCalled()
+    expect(findUpdatedEvent).toEqual(expect.any(Object))
+    expect(findUpdatedEvent).toEqual({
+      id: expect.any(String),
+      event_image: expect.any(String),
+      event_link: expect.any(String),
+      name: updateEventDto.name,
+      description: expect.any(String),
+      timezone: expect.any(Date),
+      start_date: expect.any(Date),
+      end_date: expect.any(Date),
+      postId: expect.any(String),
+      location: []
+    })
   })
 
   it("should define a function to remove an event by the id", () => {
@@ -234,8 +290,15 @@ describe("EventsService", () => {
   it("should remove an event by the id", async () => {
     const removedEvent = await service.remove(event.id)
     expect(service.remove).toBeCalled()
+    expect(removedEvent).toEqual(expect.any(Object))
     expect(removedEvent).toEqual(
-      `This action removes a #${event.id} event`
+      { message: `Successfully removed event` }
+    )
+    const findDeletedEvent = await service.findOne(event.id)
+    expect(service.remove).toBeCalled()
+    expect(findDeletedEvent).toEqual(expect.any(Object))
+    expect(findDeletedEvent).toEqual(
+      { message: 'Failed to find event.' }
     )
   })
 })

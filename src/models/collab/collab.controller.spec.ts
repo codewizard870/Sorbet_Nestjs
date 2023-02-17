@@ -30,6 +30,7 @@ describe("collabsController", () => {
   let mockCollabService = {
     create: jest.fn().mockImplementation(async (data: CreateCollabDto) => {
       try {
+    
         const result = await prisma.collab.create({
           data: {
             collabId: data.collabId,
@@ -54,8 +55,15 @@ describe("collabsController", () => {
 
     findAll: jest.fn().mockImplementation(async () => {
       try {
-        return await prisma.collab.findMany({
-        })
+        const allCollabs = await prisma.collab.findMany({})
+        if (allCollabs) {
+          return allCollabs
+        }
+        else {
+          console.log("Failed to find all collabs")
+          return { message: 'Failed to find all collabs' }
+        }
+        
       } 
       catch (error) {
         console.log(error)
@@ -67,8 +75,71 @@ describe("collabsController", () => {
       try {
         const collab = await prisma.collab.findFirst({
           where: { id: _id },
-        });
-        return collab
+        })
+        if (collab) {
+          return collab
+        }
+        else {
+          console.log("Failed to find collab")
+          return { message: 'Failed to find collab' }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }),
+
+    findByUserId: jest.fn().mockImplementation(async (userId: string) => {
+      try {
+        const collab = await prisma.collab.findFirst({
+          where: { userId: userId},
+        })
+        if (collab) {
+          return collab
+        }
+        else {
+          console.log("Failed to find collab")
+          return { message: 'Failed to find collab' }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }),
+
+    findByWalletAddress: jest.fn().mockImplementation(async (walletAddress: string) => {
+      try {
+        const collab = await prisma.collab.findFirst({
+          where: { wallet_address: walletAddress},
+        })
+        if (collab) {
+          return collab
+        }
+        else {
+          console.log("Failed to find collab")
+          return { message: 'Failed to find collab' }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }),
+
+    findByPublicKey: jest.fn().mockImplementation(async (publicKey: string) => {
+      try {
+        const collab = await prisma.collab.findFirst({
+          where: { public_key: publicKey},
+        })
+        if (collab) {
+          return collab
+        }
+        else {
+          console.log("Failed to find collab")
+          return { message: 'Failed to find collab' }
+        }
       } 
       catch (error) {
         console.log(error)
@@ -77,11 +148,42 @@ describe("collabsController", () => {
     }),
 
     update: jest.fn().mockImplementation(async (id: string, updateCollabDto: UpdateCollabDto) => {
-      return `This action updates a #${id} collab`;
+      try {
+        const updatedCollab = await prisma.collab.update({
+          where: { id: id },
+          data: updateCollabDto
+        })
+        if (updatedCollab) {
+          return { message: `Successfully updated collab` }
+        }
+        else {
+          console.log(`Failed to remove collab ${id}`)
+          return { message: `Failed to update collab` }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Failed to remove collab.")
+      }
     }),
 
     remove: jest.fn().mockImplementation(async (id: string) => {
-      return `This action removes a #${id} collab`;
+      try {
+        const removedCollab = await prisma.collab.delete({
+          where: { id: id },
+        })
+        if (removedCollab) {
+          return { message: `Successfully removed collab` }
+        }
+        else {
+          console.log(`Failed to remove collab ${id}`)
+          return { message: `Failed to remove collab` }
+        }
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("Failed to remove collab.")
+      }
     }),
   }
 
@@ -100,11 +202,7 @@ describe("collabsController", () => {
   });
 
   it("should be defined", () => {
-    expect(controller).toBeDefined()
-  })
-
-  it("should define a function to create an collab", () => {
-    expect(controller.create).toBeDefined()
+    expect(controller).toBeDefined();
   })
 
   it("should define a function to create an collab", () => {
@@ -112,9 +210,8 @@ describe("collabsController", () => {
   })
 
   it("should create an collab", async () => {
-    const createdCollab = await controller.create(createCollabDto)
-    console.log(createdCollab)
-    expect(createdCollab).toEqual({
+    const createdcollab = await controller.create(createCollabDto)
+    expect(createdcollab).toEqual({
       id: expect.any(String),
       collabId: expect.any(String),
       userId: expect.any(String),
@@ -131,9 +228,8 @@ describe("collabsController", () => {
 
   let collab: any
   it("should get all of the collabs and return them", async () => {
-    const allCollabs = await controller.findAll()
-    collab = allCollabs[0]
-    console.log(allCollabs)
+    const allcollabs = await controller.findAll()
+    collab = allcollabs[0]
     expect(collab).toEqual({
       id: expect.any(String),
       collabId: expect.any(String),
@@ -150,9 +246,59 @@ describe("collabsController", () => {
   })
 
   it("should get one of the collabs by the id and return it", async () => {
-    const oneCollab = await controller.findOne(collab.id)
-    console.log(oneCollab)
-    expect(oneCollab).toEqual({
+    const onecollab = await controller.findOne(collab.id)
+    expect(onecollab).toEqual({
+      id: expect.any(String),
+      collabId: expect.any(String),
+      userId: expect.any(String),
+      wallet_address: expect.any(String),
+      public_key: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
+  })
+
+  it("should define a function to get one collab by the userId", () => {
+    expect(controller.findByUserId).toBeDefined()
+  })
+
+  it("should get one of the collabs by the userId and return it", async () => {
+    const collabByUserId = await controller.findByUserId(collab.userId)
+    expect(collabByUserId).toEqual({
+      id: expect.any(String),
+      collabId: expect.any(String),
+      userId: expect.any(String),
+      wallet_address: expect.any(String),
+      public_key: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
+  })
+
+  it("should define a function to get one collab by the wallet address", () => {
+    expect(controller.findByWalletAddress).toBeDefined()
+  })
+
+  it("should get one of the collabs by the wallet address and return it", async () => {
+    const collabByWalletAddress = await controller.findByWalletAddress(collab.wallet_address)
+    expect(collabByWalletAddress).toEqual({
+      id: expect.any(String),
+      collabId: expect.any(String),
+      userId: expect.any(String),
+      wallet_address: expect.any(String),
+      public_key: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
+  })
+
+  it("should define a function to get one collab by the public key", () => {
+    expect(controller.findByPublicKey).toBeDefined()
+  })
+
+  it("should get one of the collabs by the public key and return it", async () => {
+    const collabByWalletAddress = await controller.findByPublicKey(collab.public_key)
+    expect(collabByWalletAddress).toEqual({
       id: expect.any(String),
       collabId: expect.any(String),
       userId: expect.any(String),
@@ -168,10 +314,22 @@ describe("collabsController", () => {
   })
 
   it("should update an collab by the id", async () => {
-    const updatedCollab = await controller.update(collab.collabId, updateCollabDto)
+    const updatedCollab = await controller.update(collab.id, updateCollabDto)
+    expect(updatedCollab).toEqual(expect.any(Object))
     expect(updatedCollab).toEqual(
-      `This action updates a #${collab.collabId} collab`
+      { message: `Successfully updated collab` }
     )
+    const findUpdatedCollab = await controller.findOne(collab.id)
+    expect(findUpdatedCollab).toEqual(expect.any(Object))
+    expect(findUpdatedCollab).toEqual({
+      id: expect.any(String),
+      collabId: expect.any(String),
+      userId: expect.any(String),
+      wallet_address: expect.any(String),
+      public_key: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
   })
 
   it("should define a function to remove an collab by the id", () => {
@@ -179,10 +337,15 @@ describe("collabsController", () => {
   })
 
   it("should remove an collab by the id", async () => {
-    console.log('collab', collab)
     const removedCollab = await controller.remove(collab.id)
+    expect(removedCollab).toEqual(expect.any(Object))
     expect(removedCollab).toEqual(
-      `This action removes a #${collab.id} collab`
+      { message: `Successfully removed collab` }
+    )
+    const findDeletedPost = await controller.findOne(collab.id)
+    expect(findDeletedPost).toEqual(expect.any(Object))
+    expect(findDeletedPost).toEqual(
+      { message: 'Failed to find collab' }
     )
   })
 })
