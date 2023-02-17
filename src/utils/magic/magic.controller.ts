@@ -21,12 +21,12 @@ import { MagicService } from "./magic.service";
   @Controller("/api/auth")
   export class MagicController {
     constructor(
-        private readonly magicAuthGuard: MagicAuthGuard,
+        // private readonly magicAuthGuard: MagicAuthGuard,
         private readonly magicService: MagicService
     ){}
 
     @Public()
-    @UseGuards(MagicAuthGuard)
+    // @UseGuards(MagicAuthGuard)
     @Post("login-magic")
     async login(@Request() req, @Response() res) {
         if (req.user) {

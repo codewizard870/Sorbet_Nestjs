@@ -13,7 +13,6 @@ import { ApiInternalServerErrorResponse } from "@nestjs/swagger";
 import { sendEmail } from "./constants";
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import * as dotenv from "dotenv";
-import { Token } from "aws-sdk";
 dotenv.config();
 
 const BaseUrl = process.env.BASEURL;

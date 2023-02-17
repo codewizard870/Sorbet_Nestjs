@@ -14,6 +14,7 @@ import { AuthService } from "./auth.service";
 import { Public } from "./constants";
 import { LoginUserDto } from "./dto/login-user.dto";
 import { userInfo } from "os";
+
 @ApiBearerAuth()
 @ApiTags("auth")
 @Controller("/api/auth")

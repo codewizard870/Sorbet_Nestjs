@@ -9,7 +9,7 @@ import { UsersService } from "src/models/users/users.service";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { jwtConstants } from "./constants";
-import { JwtStrategy } from "./Strategies/jwt.strategy";
+// import { JwtStrategy } from "./Strategies/jwt.strategy";
 import { LocalStrategy } from "./Strategies/local.strategy";
 
 @Module({
@@ -25,7 +25,7 @@ import { LocalStrategy } from "./Strategies/local.strategy";
   controllers: [AuthController],
   providers: [
     LocalStrategy,
-    JwtStrategy,
+    // JwtStrategy,
     AuthService,
     UsersService,
     PrismaService,
