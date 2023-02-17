@@ -46,9 +46,19 @@ export class EventsService {
 
   async findAll() {
     try {
-      return await this.prismaService.event.findMany({
-        include: { post: true, location: true },
+      const allEvents =  await this.prismaService.event.findMany({
+        include: { 
+          post: true, 
+          location: true 
+        },
       })
+      if (allEvents) {
+        return allEvents
+      }
+      else {
+        console.log("Failed to find all events")
+        return { message: 'Failed to find all events' }
+      }
     } 
     catch (error) {
       console.log(error)
@@ -61,8 +71,8 @@ export class EventsService {
       const event = await this.prismaService.event.findFirst({
         where: { id: _id },
         include: { location: true },
-      });
-      return event;
+      })
+      return event
     } 
     catch (error) {
       console.log(error)
@@ -70,11 +80,42 @@ export class EventsService {
     }
   }
 
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return `This action updates a #${id} event`;
+  async update(id: string, updateEventDto: UpdateEventDto) {
+    try {
+      const updatedEvent = await this.prismaService.event.update({
+        where: { id: id },
+        data: updateEventDto
+      })
+      if (updatedEvent) {
+        return { message: `Successfully updated event` }
+      }
+      else {
+        console.log(`Failed to remove event ${id}`)
+        return { message: `Failed to update event` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to remove event.")
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+  async remove(id: string) {
+    try {
+      const removedEvent = await this.prismaService.event.delete({
+        where: { id: id },
+      })
+      if (removedEvent) {
+        return { message: `Successfully removed event` }
+      }
+      else {
+        console.log(`Failed to remove event ${id}`)
+        return { message: `Failed to remove event` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to remove event.")
+    }
   }
 }

@@ -20,26 +20,41 @@ export class CollabController {
 
   @Post()
   async create(@Body() createCollabDto: CreateCollabDto) {
-    return await this.collabService.create(createCollabDto);
+    return await this.collabService.create(createCollabDto)
   }
 
   @Get()
   async findAll() {
-    return await this.collabService.findAll();
+    return await this.collabService.findAll()
   }
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.collabService.findOne(id);
+    return this.collabService.findOne(id)
+  }
+
+  @Get("findByUserId")
+  findByUserId(@Body() userId: string) {
+    return this.collabService.findByUserId(userId)
+  }
+
+  @Get("findByWalletAddress")
+  findByWalletAddress(@Body() walletAddress: string) {
+    return this.collabService.findByWalletAddress(walletAddress)
+  }
+
+  @Get("findByPublicKey")
+  findByPublicKey(@Body() publicKey: string) {
+    return this.collabService.findByPublicKey(publicKey)
   }
 
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateCollabDto: UpdateCollabDto) {
-    return this.collabService.update(id, updateCollabDto);
+    return this.collabService.update(id, updateCollabDto)
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.collabService.remove(id);
+    return this.collabService.remove(id)
   }
 }

@@ -21,7 +21,9 @@ const createPostDto: CreatePostDto = {
   content: 'Blob'
 }
 
-const updatePostDto: UpdatePostDto = {}
+const updatePostDto: UpdatePostDto = {
+  text: 'Newer Post'
+}
 
 const req = {user: {email: 'daena@thrivein.io'}}
 
@@ -108,8 +110,14 @@ let mockPostsService = {
           gig: true,
           event: true,
         },
-      });
-      return post;
+      })
+      if (post) {
+        return post
+      }
+      else {
+        console.log("Failed to find post.")
+        return { message: "Failed to find post." }
+      }
     } 
     catch (error) {
       console.log(error)
@@ -117,12 +125,68 @@ let mockPostsService = {
     }
   }),
 
-  update: jest.fn().mockImplementation(async (id: number, updatePostDto: UpdatePostDto) => {
-    return `This action updates a #${id} post`
+  findByUserId: jest.fn().mockImplementation(async (userId: string) => {
+    try {
+      const post = await prisma.post.findFirst({
+        where: { userId: userId },
+        include: {
+          blob: true,
+          location: true,
+          gig: true,
+          event: true,
+        },
+      })
+      if (post) {
+        return post
+      }
+      else {
+        console.log("Could not find post.")
+        throw new Error("Could not find post.")
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
   }),
 
-  remove: jest.fn().mockImplementation(async (id: number) => {
-    return `This action removes a #${id} post`
+  update: jest.fn().mockImplementation(async (id: string, updatePostDto: UpdatePostDto) => {
+    try {
+      const updatedPost = await prisma.post.update({
+        where: { id: id },
+        data: updatePostDto
+      })
+      if (updatedPost) {
+        return { message: `Successfully updated post` }
+      }
+      else {
+        console.log(`Failed to update post ${id}`)
+        return { message: `Failed to update post` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to remove post.")
+    }
+  }),
+
+  remove: jest.fn().mockImplementation(async (id: string) => {
+    try {
+      const removedPost = await prisma.post.delete({
+        where: { id: id },
+      })
+      if (removedPost) {
+        return { message: `Successfully removed post` }
+      }
+      else {
+        console.log(`Failed to remove post ${id}`)
+        return { message: `Failed to remove post` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to remove post.")
+    }
   }),
 }
 
@@ -215,7 +279,23 @@ describe("PostsController", () => {
 
   it("should update a post by id", async () => {
     const updatedPost = await controller.update(post.id, updatePostDto)
-    expect(updatedPost).toEqual("This action updates a #NaN post")
+    expect(updatedPost).toEqual(expect.any(Object))
+    expect(updatedPost).toEqual(
+      { message: `Successfully updated post` }
+    )
+    const findUpdatedPost = await controller.findOne(post.id)
+    expect(findUpdatedPost).toEqual(expect.any(Object))
+    expect(findUpdatedPost).toEqual({
+      id: expect.any(String),
+      timestamp: expect.any(Date),
+      text: updatePostDto.text,
+      content: expect.any(String),
+      userId: expect.any(String),
+      blob: expect.any(Array),
+      location: expect.any(Array),
+      gig: expect.any(Array),
+      event: expect.any(Array)
+    })
   })
 
   it("should define a function to remove a post by the id", () => {
@@ -224,6 +304,14 @@ describe("PostsController", () => {
 
   it("should remove a post by id", async () => {
     const removedPost = await controller.remove(post.id)
-    expect(removedPost).toEqual("This action removes a #NaN post")
+    expect(removedPost).toEqual(expect.any(Object))
+    expect(removedPost).toEqual(
+      { message: `Successfully removed post` }
+    )
+    const findDeletedPost = await controller.findOne(post.id)
+    expect(findDeletedPost).toEqual(expect.any(Object))
+    expect(findDeletedPost).toEqual(
+      { message: 'Failed to find post.' }
+    )
   })
 })

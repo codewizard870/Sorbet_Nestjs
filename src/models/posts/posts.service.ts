@@ -22,9 +22,9 @@ export class PostsService {
             content: data.content,
             userId: existingUser.id,
           },
-        });
+        })
         if (result) {
-          return result;
+          return result
         }
       } else {
         const result = await this.prismaService.post.create({
@@ -34,7 +34,7 @@ export class PostsService {
             content: data.content,
             userId: existingUser.id,
           },
-        });
+        })
         if (result) {
           return result;
         }
@@ -48,14 +48,21 @@ export class PostsService {
 
   async findAll() {
     try {
-      return await this.prismaService.post.findMany({
+      const posts = await this.prismaService.post.findMany({
         include: {
           blob: true,
           location: true,
           gig: true,
           event: true,
         },
-      });
+      })
+      if (posts) {
+        return posts
+      }
+      else {
+        console.log("Could not find posts")
+        throw new Error("Could not find posts")
+      }
     } 
     catch (error) {
       console.log(error)
@@ -73,8 +80,14 @@ export class PostsService {
           gig: true,
           event: true,
         },
-      });
-      return post;
+      })
+      if (post) {
+        return post
+      }
+      else {
+        console.log("Could not find post")
+        throw new Error("Could not find post")
+      }
     } 
     catch (error) {
       console.log(error)
@@ -82,11 +95,67 @@ export class PostsService {
     }
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async findByUserId(userId: string) {
+    try {
+      const post = await this.prismaService.post.findFirst({
+        where: { userId: userId },
+        include: {
+          blob: true,
+          location: true,
+          gig: true,
+          event: true,
+        },
+      })
+      if (post) {
+        return post
+      }
+      else {
+        console.log("Could not find post.")
+        throw new Error("Could not find post.")
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async update(id: string, updatePostDto: UpdatePostDto) {
+    try {
+      const updatedPost = await this.prismaService.post.update({
+        where: { id: id },
+        data: updatePostDto
+      })
+      if (updatedPost) {
+        return { message: `Successfully updated post` }
+      }
+      else {
+        console.log(`Failed to update post ${id}`)
+        return { message: `Failed to upate post` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to upate post.")
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      const removedPost = await this.prismaService.post.delete({
+        where: { id: id },
+      })
+      if (removedPost) {
+        return { message: `Successfully removed post` }
+      }
+      else {
+        console.log(`Failed to remove post ${id}`)
+        return { message: `Failed to remove post` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to remove post.")
+    }
   }
 }
