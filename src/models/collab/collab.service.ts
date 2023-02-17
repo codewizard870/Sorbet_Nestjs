@@ -21,12 +21,12 @@ export class CollabService {
           createdAt: new Date(Date.now()),
           updatedAt: new Date(Date.now())
         },
-      });
+      })
       if (result) {
-        return result;
+        return result
       } 
       else {
-        throw new BadRequestException();
+        throw new BadRequestException()
       } 
     } 
     catch (error) {
@@ -37,7 +37,15 @@ export class CollabService {
 
   async findAll() {
     try {
-        return await this.prismaService.collab.findMany({})
+      const allCollabs = await this.prismaService.collab.findMany({})
+      if (allCollabs) {
+        return allCollabs
+      }
+      else {
+        console.log("Failed to find all collabs")
+        return { message: 'Failed to find all collabs' }
+      }
+      
     } 
     catch (error) {
       console.log(error)
@@ -47,10 +55,16 @@ export class CollabService {
 
   async findOne(_id: string) {
     try {
-      const event = await this.prismaService.collab.findFirst({
+      const collab = await this.prismaService.collab.findFirst({
         where: { id: _id },
-      });
-      return event;
+      })
+      if (collab) {
+        return collab
+      }
+      else {
+        console.log("Failed to find collab")
+        return { message: 'Failed to find collab' }
+      }
     } 
     catch (error) {
       console.log(error)
@@ -58,11 +72,99 @@ export class CollabService {
     }
   }
 
-  update(id: string, updateCollabDto: UpdateCollabDto) {
-    return `This action updates a #${id} event`;
+  async findByUserId(userId: string) {
+    try {
+      const collab = await this.prismaService.collab.findFirst({
+        where: { userId: userId},
+      })
+      if (collab) {
+        return collab
+      }
+      else {
+        console.log("Failed to find collab")
+        return { message: 'Failed to find collab' }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} event`;
+  async findByWalletAddress(walletAddress: string) {
+    try {
+      const collab = await this.prismaService.collab.findFirst({
+        where: { wallet_address: walletAddress},
+      })
+      if (collab) {
+        return collab
+      }
+      else {
+        console.log("Failed to find collab")
+        return { message: 'Failed to find collab' }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async findByPublicKey(publicKey: string) {
+    try {
+      const collab = await this.prismaService.collab.findFirst({
+        where: { public_key: publicKey},
+      })
+      if (collab) {
+        return collab
+      }
+      else {
+        console.log("Failed to find collab")
+        return { message: 'Failed to find collab' }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async update(id: string, updateCollabDto: UpdateCollabDto) {
+    try {
+      const updatedCollab = await this.prismaService.collab.update({
+        where: { id: id },
+        data: updateCollabDto
+      })
+      if (updatedCollab) {
+        return { message: `Successfully updated collab` }
+      }
+      else {
+        console.log(`Failed to remove collab ${id}`)
+        return { message: `Failed to update collab` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to remove collab.")
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      const removedCollab = await this.prismaService.collab.delete({
+        where: { id: id },
+      })
+      if (removedCollab) {
+        return { message: `Successfully removed collab` }
+      }
+      else {
+        console.log(`Failed to remove collab ${id}`)
+        return { message: `Failed to remove collab` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("Failed to remove collab.")
+    }
   }
 }

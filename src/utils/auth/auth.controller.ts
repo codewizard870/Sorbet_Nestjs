@@ -21,31 +21,33 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Post("signin")
-  async Login(@Body() createAuthDto: LoginUserDto) {
-    return await this.authService.validateUser(
-      createAuthDto.email,
-      createAuthDto.password
-    );
+  @Post('sigUpWithWallet')
+  sigUpWithWallet(@Body() address:string) {
+    return this.authService.signUpWithWallet(address)
   }
 
-  @Public()
-  @Post("signup")
-  async signUp(@Body() data: CreateUserDto) {
-    return await this.authService.register(data);
+  @Post('signInWithWallet')
+  signInWithWallet(@Body() address:string) {
+    return this.authService.signInWithWallet(address)
   }
 
-  // @Public()
-  // @Get("resetPassword")
-  // async resetPassword(
-  //   @Query("token") token: string,
-  //   @Query("userId") userId: string,
-  //   @Body() forgetPassword: ForgetPasswordDto
-  // ) {
-  //   return await this.authService.resetPassword(
-  //     userId,
-  //     token,
-  //     forgetPassword.password
-  //   );
-  // }
+  @Post('signUpWithEmail')
+  signUpWithEmail(@Body() email:string) {
+    return this.authService.signUpWithEmail(email)
+  }
+
+  @Post('signInWithEmail')
+  signInWithEmail(@Body() email:string) {
+    return this.authService.signInWithEmail(email)
+  }
+
+  @Get('getUserById')
+  getUserById(@Body() id:string) {
+    return this.authService.getUserById(id)
+  }
+
+  @Get('getUserByWalletAddress')
+  getUserByWalletAddress(@Body() address:string) {
+    return this.authService.getUserByWalletAddress(address)
+  }
 }

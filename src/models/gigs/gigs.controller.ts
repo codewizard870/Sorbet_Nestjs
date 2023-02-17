@@ -20,26 +20,26 @@ export class GigsController {
 
   @Post()
   async create(@Body() createGigDto: CreateGigDto) {
-    return await this.gigsService.create(createGigDto);
+    return await this.gigsService.create(createGigDto)
   }
 
   @Get()
   async findAll() {
-    return await this.gigsService.findAll();
+    return await this.gigsService.findAll()
   }
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.gigsService.findOne(id);
+    return this.gigsService.findOne(id)
   }
 
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateGigDto: UpdateGigDto) {
-    return this.gigsService.update(+id, updateGigDto);
+    return this.gigsService.update(id, updateGigDto)
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.gigsService.remove(+id);
+    return this.gigsService.remove(id)
   }
 }
