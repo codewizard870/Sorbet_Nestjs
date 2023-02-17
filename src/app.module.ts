@@ -5,7 +5,7 @@ import { AppService } from "./app.service";
 import { AuthModule } from "./utils/auth/auth.module";
 import { MagicModule } from "./utils/magic/magic.module";
 // import { JwtAuthGuard } from "./utils/auth/guards/jwt-auth.guard";
-import { MagicAuthGuard } from "./utils/magic/guards/magic.guard";
+// import { MagicAuthGuard } from "./utils/magic/guards/magic.guard";
 import { UsersModule } from "./models/users/users.module";
 import { TokensModule } from "./utils/tokens/tokens.module";
 import { EventsModule } from "./models/events/events.module";
@@ -49,10 +49,10 @@ import { CollabModule } from "./models/collab/collab.module";
     //   provide: APP_GUARD,
     //   useClass: JwtAuthGuard,
     // },
-    {
-      provide: APP_GUARD,
-      useClass: MagicAuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: MagicAuthGuard,
+    // },
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
