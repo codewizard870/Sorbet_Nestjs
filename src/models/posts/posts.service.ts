@@ -86,6 +86,7 @@ export class PostsService {
         include: {
           blob: true,
           location: true,
+          user: true,
           gig: true,
           event: true,
           like: true,

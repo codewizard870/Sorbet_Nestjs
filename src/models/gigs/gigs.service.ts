@@ -69,7 +69,7 @@ export class GigsService {
     try {
       const gig = await this.prismaService.gig.findFirst({
         where: { id: _id },
-        include: { location: true },
+        include: { location: true, post: true, like: true, commment: true },
       })
       return gig
     } 

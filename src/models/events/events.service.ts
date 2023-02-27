@@ -71,7 +71,7 @@ export class EventsService {
     try {
       const event = await this.prismaService.event.findFirst({
         where: { id: _id },
-        include: { location: true, post: true, commment: true },
+        include: { location: true, post: true, like: true, commment: true },
       })
       return event
     } 
