@@ -9,4 +9,4 @@ services:
       - "3002:3002"
     volumes:
       - .:/usr/src/app
-      - ./usr/src/app/node_modules # This is the only change
+      - ./usr/src/app/node_modules # This is the only change for the apple silicon build
