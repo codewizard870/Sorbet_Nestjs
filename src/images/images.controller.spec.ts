@@ -16,6 +16,7 @@ let ctx: Context
 const AWS_S3_PROFILE_BUCKET = process.env.S3_AWS_PROFILE_BUCKET;
 const AWS_S3_GIG_BUCKET = process.env.S3_AWS_GIG_BUCKET;
 const AWS_S3_EVENT_BUCKET = process.env.S3_AWS_EVENT_BUCKET;
+const AWS_S3_WIDGET_BUCKET = process.env.S3_AWS_WIDGET_BUCKET;
 const s3 = new AWS.S3({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,
   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
@@ -164,6 +165,23 @@ describe("ImagesController", () => {
       }
     }),
 
+    uploadWidgetImage: jest.fn().mockImplementation(async (file: any, id: string) => {
+      try {
+        const name = id + ".png";
+        return await s3_upload(
+          file.buffer,
+          AWS_S3_WIDGET_BUCKET,
+          name,
+          file.mimetype,
+          id
+        ) 
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occurred. Please try again.")
+      }
+    }),
+
     downloadProfileImage: jest.fn().mockImplementation(async (Key: string, id: string) => {
       const name = id + ".png";
       return await s3_download(AWS_S3_PROFILE_BUCKET, Key)
@@ -177,6 +195,11 @@ describe("ImagesController", () => {
     downloadEventImage: jest.fn().mockImplementation(async (Key: string, id: string) => {
       const name = id + ".png";
       return await s3_download(AWS_S3_EVENT_BUCKET, Key);
+    }),
+
+    downloadWidgetImage: jest.fn().mockImplementation(async (Key: string, id: string) => {
+      const name = id + ".png";
+      return await s3_download(AWS_S3_WIDGET_BUCKET, Key);
     })
   }
 
@@ -226,11 +249,23 @@ describe("ImagesController", () => {
     expect(controller.uploadGigImage).toBeDefined()
   })
 
-  it("should upload a gig image", async () => {
+  it("should upload an event image", async () => {
     const imageBuffer = (await fileToBuffer(
       __dirname + '/mock-upload-image.png',
     )) as Express.Multer.File;
     // const uploadedImage = await controller.uploadEventImage(imageBuffer[0], req)
+    // console.log(uploadedImage)
+  })
+
+  it("should define an endpoint to upload a widget image", () => {
+    expect(controller.uploadWidgetImage).toBeDefined()
+  })
+
+  it("should upload a widget image", async () => {
+    const imageBuffer = (await fileToBuffer(
+      __dirname + '/mock-upload-image.png',
+    )) as Express.Multer.File;
+    // const uploadedImage = await controller.uploadWidgetImage(imageBuffer[0], req)
     // console.log(uploadedImage)
   })
 

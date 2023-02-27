@@ -13,6 +13,8 @@ import { TokensService } from "src/utils/tokens/tokens.service";
 import { TimezonesService } from "src/timezones/timezones.service";
 import { GoogleMapsService } from "src/google-maps/google-maps.service";
 import { ConfigService } from "@nestjs/config";
+import { LikeService } from "src/utils/like/like.service";
+import { CommentService } from "src/utils/comment/comment.service";
 
 @Module({
   controllers: [GlobalSearchController],
@@ -30,6 +32,8 @@ import { ConfigService } from "@nestjs/config";
     PostsService,
     GroupsService,
     LocationsService,
+    LikeService,
+    CommentService
   ],
 })
 export class GlobalSearchModule {}

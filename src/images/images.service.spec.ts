@@ -13,6 +13,7 @@ let ctx: Context
 const AWS_S3_PROFILE_BUCKET = process.env.S3_AWS_PROFILE_BUCKET;
 const AWS_S3_GIG_BUCKET = process.env.S3_AWS_GIG_BUCKET;
 const AWS_S3_EVENT_BUCKET = process.env.S3_AWS_EVENT_BUCKET;
+const AWS_S3_WIDGET_BUCKET = process.env.S3_AWS_WIDGET_BUCKET;
 const s3 = new AWS.S3({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,
   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
@@ -120,6 +121,23 @@ describe("ImagesService", () => {
       }
     }),
 
+    uploadWidgetImage: jest.fn().mockImplementation(async (file: any, id: string) => {
+      try {
+        const name = id + ".png";
+        return await s3_upload(
+          file.buffer,
+          AWS_S3_WIDGET_BUCKET,
+          name,
+          file.mimetype,
+          id
+        ) 
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occurred. Please try again.")
+      }
+    }),
+
     downloadProfileImage: jest.fn().mockImplementation(async (Key: string, id: string) => {
       const name = id + ".png";
       return await s3_download(AWS_S3_PROFILE_BUCKET, Key)
@@ -133,6 +151,11 @@ describe("ImagesService", () => {
     downloadEventImage: jest.fn().mockImplementation(async (Key: string, id: string) => {
       const name = id + ".png";
       return await s3_download(AWS_S3_EVENT_BUCKET, Key);
+    }),
+
+    downloadWidgetImage: jest.fn().mockImplementation(async (Key: string, id: string) => {
+      const name = id + ".png";
+      return await s3_download(AWS_S3_WIDGET_BUCKET, Key);
     })
   }
 
@@ -224,6 +247,19 @@ describe("ImagesService", () => {
 
   it("should download an event image", async () => {
     // const downloadedEventImage = await service.downloadEventImage("Key", "id")
+    // console.log(downloadedEventImage)
+    // expect(service.downloadEventImage).toBeCalled()
+    // expect(service.uploadProfileImage).toEqual({
+
+    // })
+  })
+
+  it("should define a function to download a widget image", () => {
+    expect(service.downloadWidgetImage).toBeDefined()
+  })
+
+  it("should download a widget image", async () => {
+    // const downloadedWidgetImage = await service.downloadWidgetImage("Key", "id")
     // console.log(downloadedEventImage)
     // expect(service.downloadEventImage).toBeCalled()
     // expect(service.uploadProfileImage).toEqual({

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UsersController } from "./users.controller";
 import { UsersService } from "./users.service";
-import {BadRequestException, UnauthorizedException} from "@nestjs/common";
+import { BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";

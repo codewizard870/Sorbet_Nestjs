@@ -21,6 +21,10 @@ import { JobProfileModule } from "./job-profile/job-profile.module";
 import { GoogleMapsModule } from "./google-maps/google-maps.module";
 import { GlobalSearchModule } from "./global-search/global-search.module";
 import { CollabModule } from "./models/collab/collab.module";
+import { GroupsModule } from "./models/groups/groups.module";
+import { WidgetsModule } from "./models/widgets/widgets.module";
+import { LikeModule } from "./utils/like/like.module";
+import { CommentModule } from "./utils/comment/comment.module";
 
 @Module({
   imports: [
@@ -40,6 +44,10 @@ import { CollabModule } from "./models/collab/collab.module";
     JobProfileModule,
     GlobalSearchModule,
     CollabModule,
+    GroupsModule,
+    WidgetsModule,
+    LikeModule,
+    CommentModule
   ],
   controllers: [AppController],
   providers: [

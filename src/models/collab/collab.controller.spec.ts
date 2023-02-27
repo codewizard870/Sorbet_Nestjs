@@ -15,7 +15,7 @@ let ctx: Context
 
 const createCollabDto: CreateCollabDto = {
   collabId: '000102030405060708090a0b',
-  userId: '000102030405060708090a0b',
+  userId: '000102030405060708090a0s',
   wallet_address: '000102030405060708090a0b',
   public_key: '000102030405060708090a0b',
   createdAt: new Date(Date.now()),
@@ -28,7 +28,7 @@ describe("collabsController", () => {
   let controller: CollabController
 
   let mockCollabService = {
-    create: jest.fn().mockImplementation(async (data: CreateCollabDto) => {
+    create: jest.fn().mockImplementation(async (data: any) => {
       try {
     
         const result = await prisma.collab.create({
@@ -147,7 +147,7 @@ describe("collabsController", () => {
       }
     }),
 
-    update: jest.fn().mockImplementation(async (id: string, updateCollabDto: UpdateCollabDto) => {
+    update: jest.fn().mockImplementation(async (id: string, updateCollabDto: any) => {
       try {
         const updatedCollab = await prisma.collab.update({
           where: { id: id },

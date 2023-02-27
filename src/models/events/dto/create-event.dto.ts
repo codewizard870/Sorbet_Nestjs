@@ -24,4 +24,7 @@ export class CreateEventDto {
 
   @ApiProperty()
   description: string;
+
+  @ApiProperty()
+  likes: string;
 }

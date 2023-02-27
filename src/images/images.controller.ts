@@ -48,6 +48,16 @@ export class ImagesController {
     return await this.imagesService.uploadEventImage(file, req.user.id);
   }
 
+  @Post("uploadWidgetImage")
+  // @UseInterceptors(FileInterceptor("file"))
+  async uploadWidgetImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req
+  ) {
+    console.log("req.user", req.user.id);
+    return await this.imagesService.uploadWidgetImage(file, req.user.id);
+  }
+
   @Get("download/:Key")
   async downloadImage(@Param("Key") Key: string, @Request() req) {
     console.log("req.user", req.user.id);

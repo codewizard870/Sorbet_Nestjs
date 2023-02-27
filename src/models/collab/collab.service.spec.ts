@@ -30,7 +30,7 @@ describe("CollabService", () => {
   let service: CollabService;
 
   let mockCollabService = {
-    create: jest.fn().mockImplementation(async (data: CreateCollabDto) => {
+    create: jest.fn().mockImplementation(async (data: any) => {
       try {
     
         const result = await prisma.collab.create({
@@ -149,7 +149,7 @@ describe("CollabService", () => {
       }
     }),
 
-    update: jest.fn().mockImplementation(async (id: string, updateCollabDto: UpdateCollabDto) => {
+    update: jest.fn().mockImplementation(async (id: string, updateCollabDto: any) => {
       try {
         const updatedCollab = await prisma.collab.update({
           where: { id: id },

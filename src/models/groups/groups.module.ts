@@ -9,4 +9,4 @@ import { TimezonesService } from "src/timezones/timezones.service";
   controllers: [GroupsController],
   providers: [GroupsService, PrismaService, TimezonesService],
 })
-export class GigsModule {}
+export class GroupsModule {}
