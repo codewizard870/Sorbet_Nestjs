@@ -9,7 +9,7 @@ env:
   PROJECT_ID: aerobic-badge-379110
   IMAGE_NAME: thrivein-api-dev
   REGISTRY_NAME: thrivein-dev-gcr-io-eu
-  TAG: latest
+  TAG: aerobic-badge-379110
 
 jobs:
   build-and-deploy:
