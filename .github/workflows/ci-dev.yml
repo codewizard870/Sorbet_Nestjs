@@ -48,7 +48,7 @@ jobs:
         run: |
           docker build \
             --build-arg NODE_ENV=production \
-            # --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -t ${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} \
             .
       - name: Push Docker Image to GCR
