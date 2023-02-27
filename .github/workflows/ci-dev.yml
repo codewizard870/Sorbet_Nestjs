@@ -7,39 +7,44 @@ on:
 
 env:
   PROJECT_ID: aerobic-badge-379110
-  IMAGE_NAME: thrivein-api-dev
+  SERVICE_NAME: thrivein-api-dev
   REGISTRY_NAME: thrivein-dev-gcr-io-eu
-  TAG: aerobic-badge-379110
 
 jobs:
-  build-and-deploy:
+  setup-build-deploy:
+    name: Setup, Build, and Deploy
     runs-on: ubuntu-latest
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+    # Configure Workload Identity Federation and generate an access token.
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: 'projects/351257798442/locations/global/workloadIdentityPools/github-wif-pool/providers/githubwif'
+        service_account: '${{ secrets.RUN_SA_EMAIL }}'
 
-      - name: Set up GCloud SDK
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          project_id: ${{ env.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-        #   export_default_credentials: true
+    # Alternative option - authentication via credentials json
+    # - id: 'auth'
+    #   uses: 'google-github-actions/auth@v1'
+    #   with:
+    #     credentials_json: '${{ secrets.RUN_SA_KEY }}'
 
-      - name: Configure access to Artifact Registry
-        run: |
-          gcloud auth configure-docker
-          gcloud auth activate-service-account --key-file=${{ secrets.GCP_SA_KEY }}
+    # Setup gcloud CLI
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
 
-      - name: Build and push Docker image
-        run: |
-          docker build -t gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }} .
-          docker push gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}
-
-
-
+    # Build and push image to Google Container Registry
+    - name: Build
+      run: |-
+        gcloud builds submit \
+          --quiet \
+          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
