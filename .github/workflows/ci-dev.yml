@@ -32,12 +32,6 @@ jobs:
         workload_identity_provider: 'projects/351257798442/locations/global/workloadIdentityPools/github-wif-pool/providers/githubwif'
         service_account: '${{ secrets.RUN_SA_EMAIL }}'
 
-    # Alternative option - authentication via credentials json
-    # - id: 'auth'
-    #   uses: 'google-github-actions/auth@v1'
-    #   with:
-    #     credentials_json: '${{ secrets.RUN_SA_KEY }}'
-
     # Setup gcloud CLI
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
