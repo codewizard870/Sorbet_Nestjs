@@ -1,6 +1,7 @@
 # Use the official Node.js runtime as a parent image
-FROM node:14-alpine
-
+FROM node:16-slim
+RUN apt-get update
+RUN apt-get install -y openssl
 # Set the working directory to /app
 WORKDIR /app
 
