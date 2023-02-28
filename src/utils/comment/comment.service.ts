@@ -12,7 +12,7 @@ export class CommentService {
       const newComment = await this.prismaService.comment.create({
         data: {
           createdAt: data.createdAt,
-          text: data.text,
+          content: data.content,
           userId: userId,
           postId: data.postId
         }
@@ -23,54 +23,6 @@ export class CommentService {
       else {
         console.log(`Error creating post comment for user: ${userId}.`)
         return { message: `Error creating post comment for user: ${userId}.`}
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async createEventComment(data: CreateCommentDto, userId: string) {
-    try {
-      const newComment = await this.prismaService.comment.create({
-        data: {
-          createdAt: data.createdAt,
-          text: data.text,
-          userId: userId,
-          eventId: data.eventId
-        }
-      })
-      if (newComment) {
-        return newComment
-      }
-      else {
-        console.log(`Error creating event comment for user: ${userId}.`)
-        return { message: `Error creating event comment for user: ${userId}.`}
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async createGigComment(data: CreateCommentDto, userId: string) {
-    try {
-      const newComment = await this.prismaService.comment.create({
-        data: {
-          createdAt: data.createdAt,
-          text: data.text,
-          userId: userId,
-          gigId: data.gigId
-        }
-      })
-      if (newComment) {
-        return newComment
-      }
-      else {
-        console.log(`Error creating gig comment for user: ${userId}.`)
-        return { message: `Error creating gig comment for user: ${userId}.`}
       }
     } 
     catch (error) {
@@ -99,51 +51,11 @@ export class CommentService {
     }
   }
 
-  async findAllCommentsForEvent(eventId: string) {
-    try {
-      const eventLikes = await this.prismaService.comment.findMany({
-        where: { eventId: eventId },
-        include: { event: true }
-      })
-      if (eventLikes) {
-        return eventLikes
-      }
-      else {
-        console.log(`Unable to get all comments for event: ${eventId}`)
-        return { message: `Unable to get post comments for event: ${eventId}` }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async findAllCommentsForGig(gigId: string) {
-    try {
-      const gigLikes = await this.prismaService.like.findMany({
-        where: { gigId: gigId },
-        include: { gig: true }
-      })
-      if (gigLikes) {
-        return gigLikes
-      }
-      else {
-        console.log(`Unable to get all comments for gig: ${gigId}`)
-        return { message: `Unable to get post comments for gig: ${gigId}` }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
   async findOne(id: string) {
     try {
       const comment = await this.prismaService.comment.findFirst({
         where: { id: id },
-        include: { user: true, event: true, gig: true, post: true },
+        include: { user: true,  post: true },
       })
       return comment
     } 

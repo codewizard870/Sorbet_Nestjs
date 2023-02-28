@@ -137,17 +137,14 @@ export class AuthService {
       const token = this.generateToken(user)
       const newUser = await this.usersService.create(address, token);
       if (newUser) {
-        console.log('User successfully signed in')
+        console.log('User successfully signed up')
         return { success: true }
       }
-      else {
-        console.log('User could not be signed in')
-        return { success: false }
-      }
+      else throw new Error('User could not be signed up');
     } 
     catch (error) {
       console.log(error)
-      throw new Error('Error signing user in')
+      throw new Error('Error signing user up')
     }
   }
 
@@ -160,15 +157,10 @@ export class AuthService {
           console.log('User successfully signed in')
           return token
         }
-        else {
-          console.log('User could not be signed in')
-          return { success: false }
-        } 
+        else throw new Error("Error signing user in")
       }
-      else {
-        console.log('Could not find user')
-        return { success: false }
-      }
+      else
+        throw new Error("Error signing user in")
     } 
     catch (error) {
       console.log(error)

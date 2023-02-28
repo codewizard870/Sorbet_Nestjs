@@ -23,12 +23,12 @@ export class AuthController {
 
   @Public()
   @Post('sigUpWithWallet')
-  sigUpWithWallet(@Body() address:string) {
+  sigUpWithWallet(@Body("address") address:string) {
     return this.authService.signUpWithWallet(address)
   }
 
   @Post('signInWithWallet')
-  signInWithWallet(@Body() address:string) {
+  signInWithWallet(@Body("address") address:string) {
     return this.authService.signInWithWallet(address)
   }
 

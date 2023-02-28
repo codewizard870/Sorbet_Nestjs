@@ -22,9 +22,9 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  async create(@Body() createPostDto: CreatePostDto, @Request() req) {
-    const email = req.user.email
-    return await this.postsService.create(createPostDto, email)
+  async create(@Body() createPostDto: CreatePostDto) {
+    console.log(createPostDto);
+    return await this.postsService.create(createPostDto)
   }
 
   @Get()

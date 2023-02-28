@@ -16,37 +16,37 @@ export class PostsService {
     private usersService: UsersService,
     private likeService: LikeService,
     private commentService: CommentService
-  ) {}
+  ) { }
 
-  async create(data: CreatePostDto, email: string) {
+  async create(data: CreatePostDto) {
     try {
-      const existingUser = await this.usersService.getUserFromEmail(email);
-      if (data.content === "Gig" || data.content === "Event") {
-        const result = await this.prismaService.post.create({
-          data: {
-            timestamp: data.timestamp,
-            content: data.content,
-            userId: existingUser.id,
-          },
-        })
-        if (result) {
-          return result
-        }
-      } 
-      else {
-        const result = await this.prismaService.post.create({
-          data: {
-            timestamp: data.timestamp,
-            text: data.text,
-            content: data.content,
-            userId: existingUser.id,
-          },
-        })
-        if (result) {
-          return result;
-        }
+      const existingUser = await this.usersService.getUserFromId(data.userId.toString());
+      const result = await this.prismaService.post.create({
+        data: {
+          title: data.title,
+          createdAt: new Date(Date.now()),
+          description: data.description,
+          imageUrl: data.imageUrl,
+          videoUrl: data.videoUrl,
+          serviceType: data.serviceType,
+          category: data.category,
+          subCategory: data.subCategory,
+          seachTags: data.seachTags,
+          salary: data.salary,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          venue: data.venue,
+          externalLink: data.externalLink,
+          postType: data.postType,
+          userId: existingUser.id
+        },
+      })
+      if (result) {
+        return result;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -57,10 +57,7 @@ export class PostsService {
     try {
       const posts = await this.prismaService.post.findMany({
         include: {
-          blob: true,
           location: true,
-          gig: true,
-          event: true,
           like: true,
           commment: true
         },
@@ -72,7 +69,7 @@ export class PostsService {
         console.log("Could not find posts")
         throw new Error("Could not find posts")
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -84,11 +81,8 @@ export class PostsService {
       const post = await this.prismaService.post.findFirst({
         where: { id: id },
         include: {
-          blob: true,
           location: true,
           user: true,
-          gig: true,
-          event: true,
           like: true,
           commment: true
         },
@@ -100,7 +94,7 @@ export class PostsService {
         console.log("Could not find post")
         throw new Error("Could not find post")
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -112,10 +106,7 @@ export class PostsService {
       const post = await this.prismaService.post.findFirst({
         where: { userId: userId },
         include: {
-          blob: true,
           location: true,
-          gig: true,
-          event: true,
         },
       })
       if (post) {
@@ -125,7 +116,7 @@ export class PostsService {
         console.log("Could not find post.")
         throw new Error("Could not find post.")
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -145,7 +136,7 @@ export class PostsService {
         console.log(`Failed to update post ${id}`)
         return { message: `Failed to upate post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to upate post.")
@@ -164,7 +155,7 @@ export class PostsService {
         console.log(`Failed to remove post ${id}`)
         return { message: `Failed to remove post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to remove post.")
@@ -187,7 +178,7 @@ export class PostsService {
         console.log(`Data missing postId`)
         throw new Error(`Data missing postId`)
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to like post.")
@@ -198,7 +189,7 @@ export class PostsService {
     try {
       const post = await this.prismaService.post.findFirst({
         where: { id: postId },
-        include: {like: true}
+        include: { like: true }
       })
       if (post) {
         for (let i = 0; i < post.like.length; i++) {
@@ -215,7 +206,7 @@ export class PostsService {
         console.log(`Unable to find post`)
         return { message: `Unable to find post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -238,7 +229,7 @@ export class PostsService {
         console.log(`Data missing postId`)
         throw new Error(`Data missing postId`)
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to comment on post.")
@@ -255,7 +246,7 @@ export class PostsService {
         console.log(`Unable to update comment: ${commentId}`)
         return { message: `Unable to update comment: ${commentId}` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -266,7 +257,7 @@ export class PostsService {
     try {
       const post = await this.prismaService.post.findFirst({
         where: { id: postId },
-        include: {commment: true}
+        include: { commment: true }
       })
       if (post) {
         for (let i = 0; i < post.commment.length; i++) {
@@ -283,7 +274,7 @@ export class PostsService {
         console.log(`Unable to find post`)
         return { message: `Unable to find post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")

@@ -42,76 +42,6 @@ export class LikeService {
     }
   }
 
-  async createEventLike(data: CreateLikeDto, userId: string) {
-    try {
-      const existingLike = await this.prismaService.like.findUnique({
-        where: {userId: userId, eventId: data.eventId},
-        include: { event: true }
-      })
-      if (existingLike) {
-        return {
-          message: `User: ${userId} has already liked event`,
-          existingLike
-        }
-      }
-      else {
-        const newLike = await this.prismaService.like.create({
-          data: {
-            createdAt: data.createdAt,
-            userId: userId,
-            eventId: data.eventId
-          }
-        })
-        if (newLike) {
-          return newLike
-        }
-        else {
-          console.log(`Error creating event like for user: ${userId}.`)
-          return { message: `Error creating event like for user: ${userId}.`}
-        }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async createGigLike(data: CreateLikeDto, userId: string) {
-    try {
-      const existingLike = await this.prismaService.like.findUnique({
-        where: {userId: userId, gigId: data.gigId},
-        include: { gig: true }
-      })
-      if (existingLike) {
-        return {
-          message: `User: ${userId} has already liked gig`,
-          existingLike
-        }
-      }
-      else {
-        const newLike = await this.prismaService.like.create({
-          data: {
-            createdAt: data.createdAt,
-            userId: userId,
-            gigId: data.gigId
-          }
-        })
-        if (newLike) {
-          return newLike
-        }
-        else {
-          console.log(`Error creating event like for user: ${userId}.`)
-          return { message: `Error creating event like for user: ${userId}.`}
-        }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
   async findAllLikesForPost(postId: string) {
     try {
       const postLikes =  await this.prismaService.like.findMany({
@@ -132,46 +62,6 @@ export class LikeService {
     }
   }
   
-  async findAllLikesForEvent(eventId: string) {
-    try {
-      const eventLikes = await this.prismaService.like.findMany({
-        where: { eventId: eventId },
-        include: { event: true }
-      })
-      if (eventLikes) {
-        return eventLikes
-      }
-      else {
-        console.log(`Unable to get all likes for event: ${eventId}`)
-        return { message: `Unable to get post likes for event: ${eventId}` }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async findAllLikesForGig(gigId: string) {
-    try {
-      const gigLikes = await this.prismaService.like.findMany({
-        where: { gigId: gigId },
-        include: { gig: true }
-      })
-      if (gigLikes) {
-        return gigLikes
-      }
-      else {
-        console.log(`Unable to get all likes for gig: ${gigId}`)
-        return { message: `Unable to get post likes for gig: ${gigId}` }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
   async findOne(id: string) {
     try {
       const like = await this.prismaService.like.findFirst({

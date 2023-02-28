@@ -3,7 +3,7 @@ import { IsOptional } from "class-validator";
 
 export class CreateCommentDto {
   @ApiProperty()
-  text: string
+  content: string
 
   @ApiProperty()
   createdAt: Date
@@ -11,14 +11,6 @@ export class CreateCommentDto {
   @IsOptional()
   @ApiProperty()
   updatedAt: Date
-
-  @IsOptional()
-  @ApiProperty()
-  eventId: string
-
-  @IsOptional()
-  @ApiProperty()
-  gigId: string
 
   @IsOptional()
   @ApiProperty()

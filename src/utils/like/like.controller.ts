@@ -25,29 +25,9 @@ import {
       return await this.likeService.createPostLike(createLikeDto, req.user.id)
     }
   
-    @Post('/event/createEventLike')
-    async createEventLike (@Request() req, @Body() createLikeDto: CreateLikeDto) {
-      return await this.likeService.createEventLike(createLikeDto, req.user.id)
-    }
-
-    @Post('/gig/createGigLike')
-    async createGigLike (@Request() req, @Body() createLikeDto: CreateLikeDto) {
-      return await this.likeService.createGigLike(createLikeDto, req.user.id)
-    }
-
     @Get('post/:postId/likes')
     async findAllLikesForPost (@Param() postId: string) {
       return await this.likeService.findAllLikesForPost(postId)
-    }
-
-    @Get('event/:eventId/likes')
-    async findAllLikesForEvent (@Param() eventId: string) {
-      return await this.likeService.findAllLikesForEvent(eventId)
-    }
-
-    @Get('gig/:gigId/likes')
-    async findAllLikesForGig (@Param() gigId: string) {
-      return await this.likeService.findAllLikesForGig(gigId)
     }
 
     @Get('like/:id')

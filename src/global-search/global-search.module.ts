@@ -3,8 +3,6 @@ import { GlobalSearchService } from "./global-search.service";
 import { GlobalSearchController } from "./global-search.controller";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { UsersService } from "src/models/users/users.service";
-import { EventsService } from "src/models/events/events.service";
-import { GigsService } from "src/models/gigs/gigs.service";
 import { PostsService } from "src/models/posts/posts.service";
 import { GroupsService } from "src/models/groups/groups.service";
 import { LocationsService } from "src/models/locations/locations.service";
@@ -27,8 +25,6 @@ import { CommentService } from "src/utils/comment/comment.service";
     ConfigService,
     PrismaService,
     UsersService,
-    EventsService,
-    GigsService,
     PostsService,
     GroupsService,
     LocationsService,

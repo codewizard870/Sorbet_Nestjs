@@ -10,7 +10,7 @@ export class LocationsService {
   constructor(
     private prismaService: PrismaService,
     private googleMapService: GoogleMapsService
-  ) {}
+  ) { }
 
   getDistanceUsingHaversine(user: any, saved: any) {
     try {
@@ -22,7 +22,7 @@ export class LocationsService {
       const distanceInkilometers = distanceInMeters / 1000;
       console.log("distance ", distanceInkilometers);
       return distanceInkilometers;
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -35,11 +35,9 @@ export class LocationsService {
         include: {
           post: true,
           user: true,
-          event: true,
-          gig: true,
         },
       });
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -53,12 +51,10 @@ export class LocationsService {
         include: {
           post: true,
           user: true,
-          event: true,
-          gig: true,
         },
       });
       return location;
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -108,48 +104,8 @@ export class LocationsService {
         data.country;
       const location = await this.googleMapService.getCoordinates(address);
       console.log("location", location);
-      if (data.gigId) {
-        const result = await this.prismaService.location.create({
-          data: {
-            country: data.country,
-            province: data.province,
-            district: data.district,
-            city: data.city,
-            gigId: data.gigId,
-  
-            location_type: data.location_type,
-  
-            Latitude: location.lat,
-  
-            Langitude: location.lng,
-          },
-        });
-        if (result) {
-          return result;
-        } else {
-          throw new BadRequestException("Please try again later");
-        }
-      } else if (data.eventId) {
-        const result = await this.prismaService.location.create({
-          data: {
-            eventId: data.eventId,
-            country: data.country,
-            province: data.province,
-            district: data.district,
-            city: data.city,
-            location_type: data.location_type,
-  
-            Latitude: location.lat,
-  
-            Langitude: location.lng,
-          },
-        });
-        if (result) {
-          return result;
-        } else {
-          throw new BadRequestException("Please try again later");
-        }
-      } else if (data.postId) {
+
+      if (data.postId) {
         const result = await this.prismaService.location.create({
           data: {
             postId: data.postId,
@@ -157,10 +113,10 @@ export class LocationsService {
             province: data.province,
             district: data.district,
             city: data.city,
-            location_type: data.location_type,
-  
+            location_type: data.locationType,
+
             Latitude: location.lat,
-  
+
             Langitude: location.lng,
           },
         });
@@ -172,7 +128,7 @@ export class LocationsService {
       } else {
         throw new BadRequestException("This id does not exists");
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")

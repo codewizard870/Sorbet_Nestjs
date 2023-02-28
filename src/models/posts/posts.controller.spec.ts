@@ -15,17 +15,35 @@ const prisma = new PrismaClient()
 let mockCtx: MockContext
 let ctx: Context
 
-const createPostDto: CreatePostDto = {
-  text: 'New Post',
-  timestamp: new Date(Date.now()),
-  content: 'Blob'
-}
+const data: any = {
+  title: "String",
+  description: "String",
+  imageUrl: "String",
+  videoUrl: "String",
+  serviceType: "Remote",
+  category: "String",
+  subCategory: "String",
+  seachTags: [],
+  salary: "String",
+  start_date: new Date(),
+  end_date: new Date(),
+  startDate: new Date(),
+  endDate: new Date(),
+  startTime: "String",
+  endTime: "String",
+  venue: "String",
+  externalLink: "String",
+  postType: "Post",
+  userId: "userId"
+};
+
+const createPostDto: CreatePostDto = data;
 
 const updatePostDto: UpdatePostDto = {
-  text: 'Newer Post'
+  title: 'Newer Post'
 }
 
-const req = {user: {email: 'daena@thrivein.io'}}
+const req = { user: { email: 'daena@thrivein.io' } }
 
 let mockUsersService = {
   getUserFromEmail: jest.fn().mockImplementation(async (data: CreatePostDto, email: string) => {
@@ -37,10 +55,10 @@ let mockUsersService = {
       });
       if (result) {
         console.log("RESULT", result);
-  
+
         return result;
-      } 
-    } 
+      }
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -49,34 +67,35 @@ let mockUsersService = {
 }
 
 let mockPostsService = {
-  create: jest.fn().mockImplementation(async (data: CreatePostDto, email: string) => {
+  create: jest.fn().mockImplementation(async (data: CreatePostDto, userId: string) => {
     try {
-      const existingUser = await mockUsersService.getUserFromEmail(email);
-      if (data.content === "Gig" || data.content === "Event") {
-        const result = await prisma.post.create({
-          data: {
-            timestamp: data.timestamp,
-            content: data.content,
-            userId: existingUser.id,
-          },
-        });
-        if (result) {
-          return result;
-        }
-      } else {
-        const result = await prisma.post.create({
-          data: {
-            timestamp: data.timestamp,
-            text: data.text,
-            content: data.content,
-            userId: existingUser.id,
-          },
-        });
-        if (result) {
-          return result;
-        }
+      const existingUser = await mockUsersService.getUserFromEmail(userId);
+      const result = await prisma.post.create({
+        data: {
+          title: data.title,
+          createdAt: new Date(Date.now()),
+          description: data.description,
+          imageUrl: data.imageUrl,
+          videoUrl: data.videoUrl,
+          serviceType: data.serviceType,
+          category: data.category,
+          subCategory: data.subCategory,
+          seachTags: data.seachTags,
+          salary: data.salary,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          venue: data.venue,
+          externalLink: data.externalLink,
+          postType: data.postType,
+          userId: existingUser.id
+        },
+      });
+      if (result) {
+        return result;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -87,13 +106,10 @@ let mockPostsService = {
     try {
       return await prisma.post.findMany({
         include: {
-          blob: true,
           location: true,
-          gig: true,
-          event: true,
         },
       });
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -105,10 +121,7 @@ let mockPostsService = {
       const post = await prisma.post.findFirst({
         where: { id: _id },
         include: {
-          blob: true,
           location: true,
-          gig: true,
-          event: true,
         },
       })
       if (post) {
@@ -118,7 +131,7 @@ let mockPostsService = {
         console.log("Failed to find post.")
         return { message: "Failed to find post." }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -130,10 +143,7 @@ let mockPostsService = {
       const post = await prisma.post.findFirst({
         where: { userId: userId },
         include: {
-          blob: true,
           location: true,
-          gig: true,
-          event: true,
         },
       })
       if (post) {
@@ -143,7 +153,7 @@ let mockPostsService = {
         console.log("Could not find post.")
         throw new Error("Could not find post.")
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -163,7 +173,7 @@ let mockPostsService = {
         console.log(`Failed to update post ${id}`)
         return { message: `Failed to update post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to remove post.")
@@ -182,7 +192,7 @@ let mockPostsService = {
         console.log(`Failed to remove post ${id}`)
         return { message: `Failed to remove post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to remove post.")
@@ -197,16 +207,16 @@ describe("PostsController", () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PostsController],
       providers: [
-        PostsService, 
-        PrismaService, 
-        UsersService, 
+        PostsService,
+        PrismaService,
+        UsersService,
         PasswordsService,
         TokensService
       ],
     })
-    .overrideProvider(PostsService)
-    .useValue(mockPostsService)
-    .compile()
+      .overrideProvider(PostsService)
+      .useValue(mockPostsService)
+      .compile()
 
     mockCtx = createMockContext()
     ctx = mockCtx as unknown as Context
@@ -223,26 +233,16 @@ describe("PostsController", () => {
 
   let post: any
   it("should create a post", async () => {
-    const createdPost = await controller.create(createPostDto, req)
-    post = createdPost
-    if(createPostDto.content == 'Gig' || createPostDto.content == 'Event') {
-      expect(createdPost).toEqual({
-        id: expect.any(String),
-        timestamp: expect.any(Date),
-        text: null,
-        content: expect.any(String),
-        userId: expect.any(String)
-      })
-    }
-    else {
-      expect(createdPost).toEqual({
-        id: expect.any(String),
-        timestamp: expect.any(Date),
-        text: expect.any(String),
-        content: expect.any(String),
-        userId: expect.any(String)
-      })
-    }
+    const createdPost = await controller.create(createPostDto)
+
+    expect(createdPost).toEqual({
+      id: expect.any(String),
+      timestamp: expect.any(Date),
+      text: expect.any(String),
+      content: expect.any(String),
+      userId: expect.any(String)
+    })
+
   })
 
   it("should define a function to find all of the posts", () => {
@@ -263,13 +263,10 @@ describe("PostsController", () => {
     expect(onePost).toEqual({
       id: expect.any(String),
       timestamp: expect.any(Date),
-      text: expect.any(String),
+      title: expect.any(String),
       content: expect.any(String),
       userId: expect.any(String),
-      blob: expect.any(Array),
       location: expect.any(Array),
-      gig: expect.any(Array),
-      event: expect.any(Array)
     })
   })
 
@@ -288,13 +285,10 @@ describe("PostsController", () => {
     expect(findUpdatedPost).toEqual({
       id: expect.any(String),
       timestamp: expect.any(Date),
-      text: updatePostDto.text,
+      title: expect.any(String),
       content: expect.any(String),
       userId: expect.any(String),
-      blob: expect.any(Array),
       location: expect.any(Array),
-      gig: expect.any(Array),
-      event: expect.any(Array)
     })
   })
 

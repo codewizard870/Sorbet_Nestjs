@@ -1,6 +1,4 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { EventsService } from "src/models/events/events.service";
-import { GigsService } from "src/models/gigs/gigs.service";
 import { LocationsService } from "src/models/locations/locations.service";
 import { PostsService } from "src/models/posts/posts.service";
 import { UsersService } from "src/models/users/users.service";
@@ -14,9 +12,7 @@ export class GlobalSearchService {
   constructor(
     private prismaService: PrismaService,
     private userService: UsersService,
-    private eventService: EventsService,
     private locationService: LocationsService,
-    private gigsService: GigsService,
     private postsService: PostsService,
     private groupsService: GroupsService
   ) {}
@@ -25,11 +21,9 @@ export class GlobalSearchService {
     try {
       const users = await this.findmatchingUser(text);
       const posts = await this.findmatchingPost(text);
-      const events = await this.findmatchingEvent(text);
-      const gigs = await this.findmatchingGig(text);
       const locations = await this.findmatchingLocation(text);
       const groups = await this.findmatchingGroup(text);
-      return { users, gigs, events, posts, locations, groups};
+      return { users, posts, locations, groups};
     } 
     catch (error) {
       console.log(error)
@@ -41,11 +35,9 @@ export class GlobalSearchService {
     try {
       const users = await this.globalSearchUserByDistance(userId, distance, text);
       const posts = await this.globalSearchPostByDistance(userId, distance, text);
-      const gigs = await this.globalSearchGigByDistance(userId, distance, text);
-      const events = await this.globalSearchEventByDistance(userId, distance, text);
       const locations = await this.globalSearchLocationByDistance(userId, distance, text);
       const groups = await this.globalSearchGroupByDistance(userId, distance, text)
-      return { users, posts, gigs, events, locations, groups };
+      return { users, posts, locations, groups };
     } 
     catch (error) {
       console.log(error)
@@ -101,62 +93,6 @@ export class GlobalSearchService {
         }
   
         return filteredLocation;
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }
-
-  async globalSearchGigByDistance(userId: string, distance: any, text: string) {
-    try {
-      const filteredGig = [];
-      const gigs = await this.findmatchingGig(text);
-      console.log("gigs", gigs);
-      if (gigs) {
-        for (let i = 0; i < gigs.length; i++) {
-          const element = gigs[i];
-          const gigId = element.id;
-          const data = { gigId, distance };
-          const result = await this.findGigDistance(userId, data);
-          console.log("gig", result);
-  
-          if (result) {
-            filteredGig.push(element);
-          }
-          console.log("filteredGig", filteredGig);
-        }
-  
-        return filteredGig;
-      } 
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }
-
-  async globalSearchEventByDistance(userId: string, distance: any, text: string) {
-    try {
-      const filteredEvent = [];
-      const events = await this.findmatchingEvent(text);
-      console.log("events", events);
-      if (events) {
-        for (let i = 0; i < events.length; i++) {
-          const element = events[i];
-          const eventId = element.id;
-          const data = { eventId, distance };
-          const result = await this.findEventDistance(userId, data);
-          console.log("post", result);
-  
-          if (result) {
-            filteredEvent.push(element);
-          }
-          console.log("filteredEvent", filteredEvent);
-        }
-  
-        return filteredEvent;
       }
     } 
     catch (error) {
@@ -271,8 +207,6 @@ export class GlobalSearchService {
         include: {
           post: true,
           user: true,
-          event: true,
-          gig: true,
         },
       });
   
@@ -321,7 +255,7 @@ export class GlobalSearchService {
   async findmatchingPost(text: string) {
     try {
       const post = await this.prismaService.post.findMany({
-        where: { text: text },
+        where: { title: text },
         include: { location: true },
       });
   
@@ -335,63 +269,6 @@ export class GlobalSearchService {
     }
   }
 
-  async findmatchingGig(text: string) {
-    try {
-      const gig = await this.prismaService.gig.findMany({
-        where: {
-          OR: [
-            {
-              title: text,
-            },
-            {
-              description: text,
-            },
-  
-            {
-              tags: {
-                has: text,
-              },
-            },
-          ],
-        },
-        include: { location: true },
-      });
-  
-      if (gig.length === 0 || gig.length > 0) {
-        return gig;
-      } 
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }
-
-  async findmatchingEvent(text: string) {
-    try {
-      const event = await this.prismaService.event.findMany({
-        where: {
-          OR: [
-            {
-              description: text,
-            },
-            {
-              name: text,
-            },
-          ],
-        },
-        include: { location: true },
-      });
-      console.log("event", event);
-      if (event.length === 0 || event.length > 0) {
-        return event;
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }
 
   async findmatchingGroup(text: string) {
     try {
@@ -469,85 +346,6 @@ export class GlobalSearchService {
     }
   }
 
-  async findEventDistance(userId: string, data: any) {
-    try {
-      const user = await this.userService.getUserFromId(userId);
-      const event = await this.eventService.findOne(data.eventId);
-      console.log("event", event);
-      if (!user || !event) {
-        return false
-      }
-      const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
-      };
-  
-      const b = {
-        latitude: event.location[0].Latitude,
-        longitude: event.location[0].Langitude,
-      };
-  
-      const calculatedDistance = this.locationService.getDistanceUsingHaversine(
-        a,
-        b
-      );
-      if (calculatedDistance === data.distance) {
-        const message = "event exists inside the distance";
-        return message;
-      } 
-      else if (data.distance > calculatedDistance) {
-        const message = "event exists inside the distance";
-        return message;
-      } 
-      else {
-        return false;
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }
-
-  async findGigDistance(userId: string, data: any) {
-    try {
-      const user = await this.userService.getUserFromId(userId);
-      const gig = await this.gigsService.findOne(data.gigId);
-      console.log("gig", gig);
-      if (!user || !gig) {
-        return false
-      }
-      const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
-      };
-  
-      const b = {
-        latitude: gig.location[0].Latitude,
-        longitude: gig.location[0].Langitude,
-      };
-  
-      const calculatedDistance = this.locationService.getDistanceUsingHaversine(
-        a,
-        b
-      );
-      if (calculatedDistance === data.distance) {
-        const message = "event exists inside the distance";
-        return message;
-      } 
-      else if (data.distance > calculatedDistance) {
-        const message = "event exists inside the distance";
-        return message
-      } 
-      else {
-        return false
-      } 
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }
 
   async findLocationDistance(userId: string, data: any) {
     try {

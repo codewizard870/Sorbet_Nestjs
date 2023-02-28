@@ -3,8 +3,6 @@ import { BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { GlobalSearchController } from "./global-search.controller";
 import { GlobalSearchService } from "./global-search.service";
 import { PrismaService } from "src/utils/prisma/prisma.service";
-import { EventsService } from "src/models/events/events.service";
-import { GigsService } from "src/models/gigs/gigs.service";
 import { LocationsService } from "src/models/locations/locations.service";
 import { PostsService } from "src/models/posts/posts.service";
 import { UsersService } from "src/models/users/users.service";
@@ -91,70 +89,12 @@ const findmatchingUser = async (text: string) => {
 const findmatchingPost = async (text: string) => {
   try {
     const post = await prisma.post.findMany({
-      where: { text: text },
+      where: { title: text },
       include: { location: true },
     });
 
     if (post.length === 0 || post.length > 0) {
       return post;
-    }
-  } 
-  catch (error) {
-    console.log(error)
-    throw new Error("An error occured, please try again.")
-  }
-}
-
-const findmatchingGig = async (text: string) => {
-  try {
-    const gig = await prisma.gig.findMany({
-      where: {
-        OR: [
-          {
-            title: text,
-          },
-          {
-            description: text,
-          },
-
-          {
-            tags: {
-              has: text,
-            },
-          },
-        ],
-      },
-      include: { location: true },
-    });
-
-    if (gig.length === 0 || gig.length > 0) {
-      return gig;
-    } 
-  } 
-  catch (error) {
-    console.log(error)
-    throw new Error("An error occured, please try again.")
-  }
-}
-
-const findmatchingEvent = async (text: string) => {
-  try {
-    const event = await prisma.event.findMany({
-      where: {
-        OR: [
-          {
-            description: text,
-          },
-          {
-            name: text,
-          },
-        ],
-      },
-      include: { location: true },
-    });
-    console.log("event", event);
-    if (event.length === 0 || event.length > 0) {
-      return event;
     }
   } 
   catch (error) {
@@ -185,8 +125,6 @@ const findmatchingLocation = async (text: string) => {
       include: {
         post: true,
         user: true,
-        event: true,
-        gig: true,
       },
     });
 
@@ -236,76 +174,6 @@ const findUserDistance = async (myuserId: string, data: any) => {
         return false;
       }
     }
-  } 
-  catch (error) {
-    console.log(error)
-    throw new Error("An error occured, please try again.")
-  }
-}
-
-const findEventDistance = async (userId: string, data: any) => {
-  try {
-    const user = await mockUsersService.getUserFromId(userId);
-    const event = await mockEventsService.findOne(data.eventId);
-    console.log("event", event);
-    const a = {
-      latitude: user.location[0].Latitude,
-      longitude: user.location[0].Langitude,
-    };
-
-    const b = {
-      latitude: event.location[0].Latitude,
-      longitude: event.location[0].Langitude,
-    };
-
-    const calculatedDistance = mockLocationService.getDistanceUsingHaversine(
-      a,
-      b
-    );
-    if (calculatedDistance === data.distance) {
-      const message = "event exists inside the distance";
-      return message;
-    } else if (data.distance > calculatedDistance) {
-      const message = "event exists inside the distance";
-      return message;
-    } else {
-      return false;
-    }
-  } 
-  catch (error) {
-    console.log(error)
-    throw new Error("An error occured, please try again.")
-  }
-}
-
-const findGigDistance = async (userId: string, data: any) => {
-  try {
-    const user = await mockUsersService.getUserFromId(userId);
-    const gig = await mockGigsService.findOne(data.gigId);
-    console.log("gig", gig);
-    const a = {
-      latitude: user.location[0].Latitude,
-      longitude: user.location[0].Langitude,
-    };
-
-    const b = {
-      latitude: gig.location[0].Latitude,
-      longitude: gig.location[0].Langitude,
-    };
-
-    const calculatedDistance = mockLocationService.getDistanceUsingHaversine(
-      a,
-      b
-    );
-    if (calculatedDistance === data.distance) {
-      const message = "event exists inside the distance";
-      return message;
-    } else if (data.distance > calculatedDistance) {
-      const message = "event exists inside the distance";
-      return message;
-    } else {
-      return false;
-    } 
   } 
   catch (error) {
     console.log(error)
@@ -439,62 +307,6 @@ const globalSearchLocationByDistanceWithoutText = async (userId: string, distanc
   }
 }
 
-const globalSearchGigByDistance = async (userId: string, distance: any, text: string) => {
-  try {
-    const filteredGig = [];
-    const gigs = await findmatchingGig(text);
-    console.log("gigs", gigs);
-    if (gigs) {
-      for (let i = 0; i < gigs.length; i++) {
-        const element = gigs[i];
-        const gigId = element.id;
-        const data = { gigId, distance };
-        const result = await findGigDistance(userId, data);
-        console.log("gig", result);
-
-        if (result) {
-          filteredGig.push(element);
-        }
-        console.log("filteredGig", filteredGig);
-      }
-
-      return filteredGig;
-    } 
-  } 
-  catch (error) {
-    console.log(error)
-    throw new Error("An error occured, please try again.")
-  }
-}
-
-const globalSearchEventByDistance = async (userId: string, distance: any, text: string) => {
-  try {
-    const filteredEvent = [];
-    const events = await findmatchingEvent(text);
-    console.log("events", events);
-    if (events) {
-      for (let i = 0; i < events.length; i++) {
-        const element = events[i];
-        const eventId = element.id;
-        const data = { eventId, distance };
-        const result = await findEventDistance(userId, data);
-        console.log("post", result);
-
-        if (result) {
-          filteredEvent.push(element);
-        }
-        console.log("filteredEvent", filteredEvent);
-      }
-
-      return filteredEvent;
-    }
-  } 
-  catch (error) {
-    console.log(error)
-    throw new Error("An error occured, please try again.")
-  }
-}
-
 const globalSearchPostByDistance = async (userId: string, distance: any, text: string) => {
   try {
     const filteredPost = [];
@@ -553,45 +365,10 @@ let mockPostsService = {
       const post = await prisma.post.findFirst({
         where: { id: _id },
         include: {
-          blob: true,
           location: true,
-          gig: true,
-          event: true,
         },
       });
       return post;
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }),
-}
-
-let mockGigsService = {
-  findOne: jest.fn().mockImplementation(async (_id: string) => {
-    try {
-      const gig = await prisma.gig.findFirst({
-        where: { id: _id },
-        include: { location: true },
-      });
-      return gig;
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }),
-}
-
-let mockEventsService = {
-  findOne: jest.fn().mockImplementation(async (_id: string) => {
-    try {
-      const event = await prisma.event.findFirst({
-        where: { id: _id },
-        include: { location: true },
-      });
-      return event
     } 
     catch (error) {
       console.log(error)
@@ -679,8 +456,6 @@ let mockLocationService = {
         include: {
           post: true,
           user: true,
-          event: true,
-          gig: true,
         },
       });
     } 
@@ -697,8 +472,6 @@ let mockLocationService = {
         include: {
           post: true,
           user: true,
-          event: true,
-          gig: true,
         },
       });
       return location;
@@ -752,48 +525,7 @@ let mockLocationService = {
         data.country;
       const location = await mockGoogleMapsService.getCoordinates(address);
       console.log("location", location);
-      if (data.gigId) {
-        const result = await prisma.location.create({
-          data: {
-            country: data.country,
-            province: data.province,
-            district: data.district,
-            city: data.city,
-            gigId: data.gigId,
-  
-            location_type: data.location_type,
-  
-            Latitude: location.lat,
-  
-            Langitude: location.lng,
-          },
-        });
-        if (result) {
-          return result;
-        } else {
-          throw new BadRequestException("Please try again later");
-        }
-      } else if (data.eventId) {
-        const result = await prisma.location.create({
-          data: {
-            eventId: data.eventId,
-            country: data.country,
-            province: data.province,
-            district: data.district,
-            city: data.city,
-            location_type: data.location_type,
-  
-            Latitude: location.lat,
-  
-            Langitude: location.lng,
-          },
-        });
-        if (result) {
-          return result;
-        } else {
-          throw new BadRequestException("Please try again later");
-        }
-      } else if (data.postId) {
+      if (data.postId) {
         const result = await prisma.location.create({
           data: {
             postId: data.postId,
@@ -801,7 +533,7 @@ let mockLocationService = {
             province: data.province,
             district: data.district,
             city: data.city,
-            location_type: data.location_type,
+            location_type: data.locationType,
   
             Latitude: location.lat,
   
@@ -830,13 +562,9 @@ let mockGlobalSearchService = {
       
       const users = await findmatchingUser(text);
       const posts = await findmatchingPost(text);
-      const events = await findmatchingEvent(text);
-      const gigs = await findmatchingGig(text);
       const locations = await findmatchingLocation(text);
       return {
         users,
-        gigs,
-        events,
         posts,
         locations,
       }; 
@@ -851,10 +579,8 @@ let mockGlobalSearchService = {
     try {
       const users = await globalSearchUserByDistance(userId, distance, text)
       const posts = await globalSearchPostByDistance(userId, distance, text)
-      const gigs = await globalSearchGigByDistance(userId, distance, text)
-      const events = await globalSearchEventByDistance(userId, distance, text)
       const locations = await globalSearchLocationByDistance(userId, distance,text)
-      return { users, posts, gigs, events, locations }
+      return { users, posts, locations }
     } 
     catch (error) {
       console.log(error)
@@ -910,62 +636,6 @@ let mockGlobalSearchService = {
         }
   
         return filteredLocation;
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }),
-
-  globalSearchGigByDistance: jest.fn().mockImplementation(async (userId: string, distance: any, text: string) => {
-    try {
-      const filteredGig = [];
-      const gigs = await findmatchingGig(text);
-      console.log("gigs", gigs);
-      if (gigs) {
-        for (let i = 0; i < gigs.length; i++) {
-          const element = gigs[i];
-          const gigId = element.id;
-          const data = { gigId, distance };
-          const result = await findGigDistance(userId, data);
-          console.log("gig", result);
-  
-          if (result) {
-            filteredGig.push(element);
-          }
-          console.log("filteredGig", filteredGig);
-        }
-  
-        return filteredGig;
-      } 
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }),
-
-  globalSearchEventByDistance: jest.fn().mockImplementation(async (userId: string, distance: any, text: string) => {
-    try {
-      const filteredEvent = [];
-      const events = await findmatchingEvent(text);
-      console.log("events", events);
-      if (events) {
-        for (let i = 0; i < events.length; i++) {
-          const element = events[i];
-          const eventId = element.id;
-          const data = { eventId, distance };
-          const result = await findEventDistance(userId, data);
-          console.log("post", result);
-  
-          if (result) {
-            filteredEvent.push(element);
-          }
-          console.log("filteredEvent", filteredEvent);
-        }
-  
-        return filteredEvent;
       }
     } 
     catch (error) {
@@ -1076,45 +746,6 @@ let mockGlobalSearchService = {
     }
   }),
 
-  findEventDistance: jest.fn().mockImplementation(async (userId: string, data: any) => {
-    try {
-      const user = await mockUsersService.getUserFromId(userId)
-      const event = await mockEventsService.findOne(data.eventId)
-      if (!event || ! user) {
-        return false
-      }
-      const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
-      };
-  
-      const b = {
-        latitude: event.location[0].Latitude,
-        longitude: event.location[0].Langitude,
-      };
-  
-      const calculatedDistance = mockLocationService.getDistanceUsingHaversine(
-        a,
-        b
-      );
-      if (calculatedDistance === data.distance) {
-        const message = "event exists inside the distance";
-        return message;
-      } 
-      else if (data.distance > calculatedDistance) {
-        const message = "event exists inside the distance";
-        return message;
-      } 
-      else {
-        return false;
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }),
-
   findLocationDistance: jest.fn().mockImplementation(async (userId: string, data: any) => {
     try {
       const user = await mockUsersService.getUserFromId(userId);
@@ -1190,44 +821,6 @@ let mockGlobalSearchService = {
       throw new Error("An error occured, please try again.")
     }
   }),
-
-  findGigDistance: jest.fn().mockImplementation(async (userId: string, data: any) => {
-    try {
-      const user = await mockUsersService.getUserFromId(userId);
-      const gig = await mockGigsService.findOne(data.gigId);
-      console.log("gig", gig);
-      if (!gig || !user) {
-        return false
-      }
-      const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
-      };
-  
-      const b = {
-        latitude: gig.location[0].Latitude,
-        longitude: gig.location[0].Langitude,
-      };
-  
-      const calculatedDistance = mockLocationService.getDistanceUsingHaversine(
-        a,
-        b
-      );
-      if (calculatedDistance === data.distance) {
-        const message = "event exists inside the distance";
-        return message;
-      } else if (data.distance > calculatedDistance) {
-        const message = "event exists inside the distance";
-        return message;
-      } else {
-        return false;
-      } 
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }),
 }
 
 describe("GlobalSearchController", () => {
@@ -1239,8 +832,6 @@ describe("GlobalSearchController", () => {
       providers: [
         GlobalSearchService, 
         PrismaService, 
-        EventsService,
-        GigsService,
         LocationsService,
         PostsService,
         UsersService,
@@ -1300,24 +891,6 @@ describe("GlobalSearchController", () => {
     })
   })
 
-  it("should define a function for global search of event by distance", () => {
-    expect(controller.globalSearchEventByDistance).toBeDefined()
-  })
-
-  it("should search event by distance", async () => {
-    const globalSearchEventByDistanceReturn = await controller.globalSearchEventByDistance(req || manualReq, '50', "Daena")
-    expect(globalSearchEventByDistanceReturn).toEqual(expect.any(Array))
-  })
-
-  it("should define a function for global search of gig by distance", () => {
-    expect(controller.globalSearchGigByDistance).toBeDefined()
-  })
-
-  it("should search gig by distance", async () => {
-    const globalSearchGigByDistanceReturn = await controller.globalSearchGigByDistance(req || manualReq, '50', "Daena")
-    expect(globalSearchGigByDistanceReturn).toEqual(expect.any(Array))
-  })
-
   it("should define a function for global search of location by distance", () => {
     expect(controller.globalSearchLocationByDistance).toBeDefined()
   })
@@ -1365,20 +938,6 @@ describe("GlobalSearchController", () => {
 
   it("should define a function for finding the event in distance", () => {
     expect(controller.findUserInDistance).toBeDefined()
-  })
-
-  it("should find the event in distance", async () => {
-    const findEventInDistanceReturn = await controller.findEventInDistance(req || manualReq, findEventDistanceDto)
-    expect(findEventInDistanceReturn).toEqual(expect.any(Boolean))
-  })
-
-  it("should define a function for finding the gig in distance", () => {
-    expect(controller.findGigInDistance).toBeDefined()
-  })
-
-  it("should find the gig in distance", async () => {
-    const findGigInDistanceReturn = await controller.findGigInDistance(req || manualReq, findGigDistanceDto)
-    expect(findGigInDistanceReturn).toEqual(expect.any(Boolean))
   })
 
   it("should define a function for finding the post in distance", () => {
