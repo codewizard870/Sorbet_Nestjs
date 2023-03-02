@@ -19,13 +19,11 @@ let mockCtx: MockContext
 let ctx: Context
 
 const createLocationDto: CreateLocationDto = {
-  location_type: "Remote",
+  locationType: "Remote",
   country: 'United States',
   province: 'Massachusetts',
   district: 'Suffolk County',
   city: 'Boston',
-  eventId: '000102030405060708090a0b',
-  gigId: '000102030405060708090a0b',
   postId: '000102030405060708090a0b'
 }
 
@@ -90,8 +88,6 @@ describe("LocationsService", () => {
           include: {
             post: true,
             user: true,
-            event: true,
-            gig: true,
           },
         });
       } 
@@ -108,8 +104,6 @@ describe("LocationsService", () => {
           include: {
             post: true,
             user: true,
-            event: true,
-            gig: true,
           },
         });
         return location;
@@ -163,48 +157,7 @@ describe("LocationsService", () => {
           data.country;
         const location = await mockGoogleMapsService.getCoordinates(address);
         console.log("location", location);
-        if (data.gigId) {
-          const result = await prisma.location.create({
-            data: {
-              country: data.country,
-              province: data.province,
-              district: data.district,
-              city: data.city,
-              gigId: data.gigId,
-    
-              location_type: data.location_type,
-    
-              Latitude: location.lat,
-    
-              Langitude: location.lng,
-            },
-          });
-          if (result) {
-            return result;
-          } else {
-            throw new BadRequestException("Please try again later");
-          }
-        } else if (data.eventId) {
-          const result = await prisma.location.create({
-            data: {
-              eventId: data.eventId,
-              country: data.country,
-              province: data.province,
-              district: data.district,
-              city: data.city,
-              location_type: data.location_type,
-    
-              Latitude: location.lat,
-    
-              Langitude: location.lng,
-            },
-          });
-          if (result) {
-            return result;
-          } else {
-            throw new BadRequestException("Please try again later");
-          }
-        } else if (data.postId) {
+        if (data.postId) {
           const result = await prisma.location.create({
             data: {
               postId: data.postId,
@@ -212,7 +165,7 @@ describe("LocationsService", () => {
               province: data.province,
               district: data.district,
               city: data.city,
-              location_type: data.location_type,
+              location_type: data.locationType,
     
               Latitude: location.lat,
     

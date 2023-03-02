@@ -22,9 +22,9 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  async create(@Body() createPostDto: CreatePostDto, @Request() req) {
-    const email = req.user.email
-    return await this.postsService.create(createPostDto, email)
+  async create(@Body() createPostDto: CreatePostDto) {
+    console.log(createPostDto);
+    return await this.postsService.create(createPostDto)
   }
 
   @Get()
@@ -48,18 +48,18 @@ export class PostsController {
   }
 
   @Post('likePost')
-  likePost(@Body() data: CreateLikeDto, @Body() userId: string) {
-    return this.postsService.likePost(data, userId)
+  likePost(@Body() data: CreateLikeDto) {
+    return this.postsService.likePost(data)
   }
 
-  @Delete('removeLikeFromPost')
-  removeLikeFromPost(@Body() postId: string, likeId: string) {
-    return this.postsService.removeLikeFromPost(postId, likeId)
+  @Post('removeLikePost')
+  removeLikePost(@Body("postId") postId: string, @Body("userId") userId: string) {
+    return this.postsService.removeLikeFromPost(postId, userId)
   }
 
   @Post('commentOnPost')
-  commentOnPost(@Body() data: CreateCommentDto, commentId: string) {
-    return this.postsService.commentOnPost(data, commentId)
+  commentOnPost(@Body() data: CreateCommentDto) {
+    return this.postsService.commentOnPost(data)
   }
 
   @Patch('updatePostComment')
@@ -68,7 +68,7 @@ export class PostsController {
   }
 
   @Delete('removeCommentFromPost')
-  removeCommentFromPost(@Body() postId: string, commentId: string) {
+  removeCommentFromPost(@Body("postId") postId: string, @Body("commentId") commentId: string) {
     return this.postsService.removeCommentFromPost(postId, commentId)
   }
 }

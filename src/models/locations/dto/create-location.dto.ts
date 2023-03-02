@@ -7,7 +7,7 @@ export class CreateLocationDto {
     description: "description of the Location Type ",
     enum: LocationType,
   })
-  location_type: LocationType;
+  locationType: LocationType;
 
   @ApiProperty()
   country: string;
@@ -20,14 +20,6 @@ export class CreateLocationDto {
 
   @ApiProperty()
   city: string;
-
-  @ApiProperty()
-  @IsOptional()
-  eventId: string;
-
-  @ApiProperty()
-  @IsOptional()
-  gigId: string;
 
   @ApiProperty()
   @IsOptional()

@@ -8,8 +8,6 @@ import { MagicModule } from "./utils/magic/magic.module";
 // import { MagicAuthGuard } from "./utils/magic/guards/magic.guard";
 import { UsersModule } from "./models/users/users.module";
 import { TokensModule } from "./utils/tokens/tokens.module";
-import { EventsModule } from "./models/events/events.module";
-import { GigsModule } from "./models/gigs/gigs.module";
 import { PostsModule } from "./models/posts/posts.module";
 import { LocationsModule } from "./models/locations/locations.module";
 import { ImagesModule } from "./images/images.module";
@@ -33,8 +31,6 @@ import { CommentModule } from "./utils/comment/comment.module";
     UsersModule,
     TokensModule,
     GoogleMapsModule,
-    EventsModule,
-    GigsModule,
     PostsModule,
     LocationsModule,
     ImagesModule,

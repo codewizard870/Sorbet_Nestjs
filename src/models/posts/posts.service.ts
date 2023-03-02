@@ -16,37 +16,37 @@ export class PostsService {
     private usersService: UsersService,
     private likeService: LikeService,
     private commentService: CommentService
-  ) {}
+  ) { }
 
-  async create(data: CreatePostDto, email: string) {
+  async create(data: CreatePostDto) {
     try {
-      const existingUser = await this.usersService.getUserFromEmail(email);
-      if (data.content === "Gig" || data.content === "Event") {
-        const result = await this.prismaService.post.create({
-          data: {
-            timestamp: data.timestamp,
-            content: data.content,
-            userId: existingUser.id,
-          },
-        })
-        if (result) {
-          return result
-        }
-      } 
-      else {
-        const result = await this.prismaService.post.create({
-          data: {
-            timestamp: data.timestamp,
-            text: data.text,
-            content: data.content,
-            userId: existingUser.id,
-          },
-        })
-        if (result) {
-          return result;
-        }
+      const existingUser = await this.usersService.getUserFromId(data.userId.toString());
+      const result = await this.prismaService.post.create({
+        data: {
+          title: data.title,
+          createdAt: new Date(Date.now()),
+          description: data.description,
+          imageUrl: data.imageUrl,
+          videoUrl: data.videoUrl,
+          serviceType: data.serviceType,
+          category: data.category,
+          subCategory: data.subCategory,
+          seachTags: data.seachTags,
+          salary: data.salary,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          venue: data.venue,
+          externalLink: data.externalLink,
+          postType: data.postType,
+          userId: existingUser.id
+        },
+      })
+      if (result) {
+        return result;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -57,10 +57,7 @@ export class PostsService {
     try {
       const posts = await this.prismaService.post.findMany({
         include: {
-          blob: true,
           location: true,
-          gig: true,
-          event: true,
           like: true,
           commment: true
         },
@@ -72,7 +69,7 @@ export class PostsService {
         console.log("Could not find posts")
         throw new Error("Could not find posts")
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -84,11 +81,8 @@ export class PostsService {
       const post = await this.prismaService.post.findFirst({
         where: { id: id },
         include: {
-          blob: true,
           location: true,
           user: true,
-          gig: true,
-          event: true,
           like: true,
           commment: true
         },
@@ -100,7 +94,7 @@ export class PostsService {
         console.log("Could not find post")
         throw new Error("Could not find post")
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -112,10 +106,7 @@ export class PostsService {
       const post = await this.prismaService.post.findFirst({
         where: { userId: userId },
         include: {
-          blob: true,
           location: true,
-          gig: true,
-          event: true,
         },
       })
       if (post) {
@@ -125,7 +116,7 @@ export class PostsService {
         console.log("Could not find post.")
         throw new Error("Could not find post.")
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -145,7 +136,7 @@ export class PostsService {
         console.log(`Failed to update post ${id}`)
         return { message: `Failed to upate post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to upate post.")
@@ -164,81 +155,56 @@ export class PostsService {
         console.log(`Failed to remove post ${id}`)
         return { message: `Failed to remove post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to remove post.")
     }
   }
 
-  async likePost(data: CreateLikeDto, userId: string) {
+  async likePost(data: CreateLikeDto) {
     try {
-      if (data.postId) {
-        const createdLike = await this.likeService.createPostLike(data, userId)
-        if (createdLike) {
-          return { message: `User: ${userId} successfully liked post: ${data.postId}` }
-        }
-        else {
-          console.log(`User: ${userId} failed to like post: ${data.postId}`)
-          return { message: `User: ${userId} failed to like post: ${data.postId}` }
-        }
+      const createdLike = await this.likeService.createPostLike(data)
+      if (createdLike) {
+        return { message: `User: ${data.userId} successfully liked post: ${data.postId}` }
       }
       else {
-        console.log(`Data missing postId`)
-        throw new Error(`Data missing postId`)
+        console.log(`User: ${data.userId} failed to like post: ${data.postId}`)
+        return { message: `User: ${data.userId} failed to like post: ${data.postId}` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to like post.")
     }
   }
 
-  async removeLikeFromPost(postId: string, likeId: string) {
+  async removeLikeFromPost(postId: string, userId: string) {
     try {
-      const post = await this.prismaService.post.findFirst({
-        where: { id: postId },
-        include: {like: true}
-      })
-      if (post) {
-        for (let i = 0; i < post.like.length; i++) {
-          if (post.like[i].id == likeId) {
-            return await this.likeService.removeLike(likeId)
-          }
-          else {
-            console.log(`Post: ${postId} does not have like: ${likeId}`)
-            return { message: `Post: ${postId} does not have like: ${likeId}` }
-          }
-        }
-      }
-      else {
-        console.log(`Unable to find post`)
-        return { message: `Unable to find post` }
-      }
-    } 
+      return await this.likeService.removePostLike(postId, userId)
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
     }
   }
 
-  async commentOnPost(data: CreateCommentDto, userId: string) {
+  async commentOnPost(data: CreateCommentDto) {
     try {
       if (data.postId) {
-        const createdComment = await this.commentService.createPostComment(data, userId)
-        if (createdComment) {
+        const createdComment = await this.commentService.createPostComment(data)
+        if (createdComment) 
           return createdComment
-        }
         else {
-          console.log(`User: ${userId} failed to comment on post: ${data.postId}`)
-          return { message: `User: ${userId} failed to comment on post: ${data.postId}` }
+          console.log(`User: ${data.userId} failed to comment on post: ${data.postId}`)
+          return { message: `User: ${data.userId} failed to comment on post: ${data.postId}` }
         }
       }
       else {
         console.log(`Data missing postId`)
         throw new Error(`Data missing postId`)
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("Failed to comment on post.")
@@ -248,14 +214,13 @@ export class PostsService {
   async updatePostComment(updateCommentDto: UpdateCommentDto, commentId: string) {
     try {
       const updatedPost = await this.commentService.updateComment(updateCommentDto, commentId)
-      if (updatedPost) {
+      if (updatedPost) 
         return updatedPost
-      }
       else {
         console.log(`Unable to update comment: ${commentId}`)
         return { message: `Unable to update comment: ${commentId}` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -266,29 +231,25 @@ export class PostsService {
     try {
       const post = await this.prismaService.post.findFirst({
         where: { id: postId },
-        include: {commment: true}
+        include: { commment: true }
       })
       if (post) {
         for (let i = 0; i < post.commment.length; i++) {
-          if (post.commment[i].id == commentId) {
-            return await this.likeService.removeLike(commentId)
-          }
-          else {
-            console.log(`Post: ${postId} does not have comment: ${commentId}`)
-            return { message: `Post: ${postId} does not have comment: ${commentId}` }
-          }
+          if (post.commment[i].id == commentId)
+            return await this.commentService.removeComment(commentId)
         }
+
+        console.log(`Post: ${postId} does not have comment: ${commentId}`)
+        return { message: `Post: ${postId} does not have comment: ${commentId}` }
       }
       else {
         console.log(`Unable to find post`)
         return { message: `Unable to find post` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
     }
   }
 }
-
-
