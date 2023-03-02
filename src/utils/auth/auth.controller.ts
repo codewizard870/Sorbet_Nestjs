@@ -22,8 +22,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Post('sigUpWithWallet')
-  sigUpWithWallet(@Body("address") address:string) {
+  @Post('signUpWithWallet')
+  signUpWithWallet(@Body("address") address:string) {
     return this.authService.signUpWithWallet(address)
   }
 
