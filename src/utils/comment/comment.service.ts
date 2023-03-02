@@ -7,13 +7,13 @@ import { UpdateCommentDto } from "./dto/update-comment-dto";
 export class CommentService {
   constructor(private prismaService: PrismaService) {}
 
-  async createPostComment(data: CreateCommentDto, userId: string) {
+  async createPostComment(data: CreateCommentDto) {
     try {
       const newComment = await this.prismaService.comment.create({
         data: {
-          createdAt: data.createdAt,
+          createdAt: new Date(Date.now()),
           content: data.content,
-          userId: userId,
+          userId: data.userId,
           postId: data.postId
         }
       })
@@ -21,8 +21,8 @@ export class CommentService {
         return newComment
       }
       else {
-        console.log(`Error creating post comment for user: ${userId}.`)
-        return { message: `Error creating post comment for user: ${userId}.`}
+        console.log(`Error creating post comment for user: ${data.userId}.`)
+        return { message: `Error creating post comment for user: ${data.userId}.`}
       }
     } 
     catch (error) {
@@ -33,12 +33,12 @@ export class CommentService {
 
   async findAllCommentsForPost(postId: string) {
     try {
-      const postLikes =  await this.prismaService.comment.findMany({
+      const postComments =  await this.prismaService.comment.findMany({
         where: { postId: postId },
         include: { post: true }
       })
-      if (postLikes) {
-        return postLikes
+      if (postComments) {
+        return postComments
       }
       else {
         console.log(`Unable to get all comments for post: ${postId}`)

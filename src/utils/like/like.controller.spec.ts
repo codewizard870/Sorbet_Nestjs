@@ -14,11 +14,11 @@ let mockCtx: MockContext
 let ctx: Context
 
 const createdLikeDto: CreateLikeDto = {
-    createdAt: new Date(Date.now()),
+    postId: "",
+    userId: ""
 }
 
 const updatedLikeDto: UpdateLikeDto = {
-    createdAt: new Date(Date.now())
 }
 
 const userId = '000102030405060708090a0b'
@@ -48,7 +48,7 @@ describe("LikeController", () => {
     findAll: jest.fn().mockImplementation(async () => {
         try {
             return await prisma.like.findMany({
-              include: { user: true, event: true, gig: true, post: true },
+              include: { user: true, post: true },
             })
           } 
           catch (error) {
@@ -61,7 +61,7 @@ describe("LikeController", () => {
         try {
             const like = await prisma.like.findFirst({
               where: { id: id },
-              include: { user: true, event: true, gig: true, post: true },
+              include: { user: true, post: true },
             })
             return like
           } 

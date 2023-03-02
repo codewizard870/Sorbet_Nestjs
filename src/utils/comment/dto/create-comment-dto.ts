@@ -6,13 +6,8 @@ export class CreateCommentDto {
   content: string
 
   @ApiProperty()
-  createdAt: Date
-
-  @IsOptional()
-  @ApiProperty()
-  updatedAt: Date
-
-  @IsOptional()
-  @ApiProperty()
   postId: string
+
+  @ApiProperty()
+  userId: string
 }

@@ -21,8 +21,8 @@ import {
     constructor(private readonly commentService: CommentService) {}
   
     @Post('/post/createPostComment')
-    async createPostComment(@Request() req, @Body() createCommentDto: CreateCommentDto) {
-      return await this.commentService.createPostComment(createCommentDto, req.user.id)
+    async createPostComment(@Body() createCommentDto: CreateCommentDto) {
+      return await this.commentService.createPostComment(createCommentDto)
     }
   
     @Get('post/:postId/commments')

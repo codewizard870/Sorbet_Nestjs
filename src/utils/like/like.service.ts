@@ -5,25 +5,25 @@ import { UpdateLikeDto } from "./dto/update-like-dto";
 
 @Injectable()
 export class LikeService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
-  async createPostLike(data: CreateLikeDto, userId: string) {
+  async createPostLike(data: CreateLikeDto) {
     try {
       const existingLike = await this.prismaService.like.findUnique({
-        where: {userId: userId, postId: data.postId},
+        where: { userId_postId: { userId: data.userId, postId: data.postId } },
         include: { post: true }
       })
       if (existingLike) {
         return {
-          message: `User: ${userId} has already liked post`,
+          message: `User: ${data.userId} has already liked post`,
           existingLike
         }
       }
       else {
         const newLike = await this.prismaService.like.create({
           data: {
-            createdAt: data.createdAt,
-            userId: userId,
+            createdAt: new Date(Date.now()),
+            userId: data.userId,
             postId: data.postId
           }
         })
@@ -31,11 +31,35 @@ export class LikeService {
           return newLike
         }
         else {
-          console.log(`Error creating post like for user: ${userId}.`)
-          return { message: `Error creating post like for user: ${userId}.`}
+          console.log(`Error creating post like for user: ${data.userId}.`)
+          return { message: `Error creating post like for user: ${data.userId}.` }
         }
       }
-    } 
+    }
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+  async removePostLike(postId: string, userId: string) {
+    try {
+      const existingLike = await this.prismaService.like.findUnique({
+        where: { userId_postId: { userId, postId } },
+        include: { post: true }
+      })
+      if (existingLike) {
+        this.prismaService.like.delete({
+          where: { userId_postId: { userId, postId } },
+        })
+        return {
+          message: `User: ${userId} has removed liked post`
+        }
+      }
+      else {
+        console.log(`Error remov post like for user: ${userId}.`)
+        return { message: `Error remov post like for user: ${userId}.` }
+      }
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
@@ -44,7 +68,7 @@ export class LikeService {
 
   async findAllLikesForPost(postId: string) {
     try {
-      const postLikes =  await this.prismaService.like.findMany({
+      const postLikes = await this.prismaService.like.findMany({
         where: { postId: postId },
         include: { post: true }
       })
@@ -55,13 +79,13 @@ export class LikeService {
         console.log(`Unable to get all likes for post: ${postId}`)
         return { message: `Unable to get all likes for post: ${postId}` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
     }
   }
-  
+
   async findOne(id: string) {
     try {
       const like = await this.prismaService.like.findFirst({
@@ -74,25 +98,23 @@ export class LikeService {
         console.log(`Could not find like by id: ${id}`)
         return { message: `Could not find like by id: ${id}` }
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")
     }
   }
-  
+
   async removeLike(id: string) {
     try {
       const result = await this.prismaService.like.delete({
         where: { id: id },
       })
-      if (result) {
+      if (result)
         return { message: "Deleted Successfully" };
-      } 
-      else {
+      else
         return { message: "Something went wrong" };
-      }  
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured. Please try again.")

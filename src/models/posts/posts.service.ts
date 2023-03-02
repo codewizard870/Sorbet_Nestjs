@@ -162,21 +162,15 @@ export class PostsService {
     }
   }
 
-  async likePost(data: CreateLikeDto, userId: string) {
+  async likePost(data: CreateLikeDto) {
     try {
-      if (data.postId) {
-        const createdLike = await this.likeService.createPostLike(data, userId)
-        if (createdLike) {
-          return { message: `User: ${userId} successfully liked post: ${data.postId}` }
-        }
-        else {
-          console.log(`User: ${userId} failed to like post: ${data.postId}`)
-          return { message: `User: ${userId} failed to like post: ${data.postId}` }
-        }
+      const createdLike = await this.likeService.createPostLike(data)
+      if (createdLike) {
+        return { message: `User: ${data.userId} successfully liked post: ${data.postId}` }
       }
       else {
-        console.log(`Data missing postId`)
-        throw new Error(`Data missing postId`)
+        console.log(`User: ${data.userId} failed to like post: ${data.postId}`)
+        return { message: `User: ${data.userId} failed to like post: ${data.postId}` }
       }
     }
     catch (error) {
@@ -185,27 +179,9 @@ export class PostsService {
     }
   }
 
-  async removeLikeFromPost(postId: string, likeId: string) {
+  async removeLikeFromPost(postId: string, userId: string) {
     try {
-      const post = await this.prismaService.post.findFirst({
-        where: { id: postId },
-        include: { like: true }
-      })
-      if (post) {
-        for (let i = 0; i < post.like.length; i++) {
-          if (post.like[i].id == likeId) {
-            return await this.likeService.removeLike(likeId)
-          }
-          else {
-            console.log(`Post: ${postId} does not have like: ${likeId}`)
-            return { message: `Post: ${postId} does not have like: ${likeId}` }
-          }
-        }
-      }
-      else {
-        console.log(`Unable to find post`)
-        return { message: `Unable to find post` }
-      }
+      return await this.likeService.removePostLike(postId, userId)
     }
     catch (error) {
       console.log(error)
@@ -213,16 +189,15 @@ export class PostsService {
     }
   }
 
-  async commentOnPost(data: CreateCommentDto, userId: string) {
+  async commentOnPost(data: CreateCommentDto) {
     try {
       if (data.postId) {
-        const createdComment = await this.commentService.createPostComment(data, userId)
-        if (createdComment) {
+        const createdComment = await this.commentService.createPostComment(data)
+        if (createdComment) 
           return createdComment
-        }
         else {
-          console.log(`User: ${userId} failed to comment on post: ${data.postId}`)
-          return { message: `User: ${userId} failed to comment on post: ${data.postId}` }
+          console.log(`User: ${data.userId} failed to comment on post: ${data.postId}`)
+          return { message: `User: ${data.userId} failed to comment on post: ${data.postId}` }
         }
       }
       else {
@@ -239,9 +214,8 @@ export class PostsService {
   async updatePostComment(updateCommentDto: UpdateCommentDto, commentId: string) {
     try {
       const updatedPost = await this.commentService.updateComment(updateCommentDto, commentId)
-      if (updatedPost) {
+      if (updatedPost) 
         return updatedPost
-      }
       else {
         console.log(`Unable to update comment: ${commentId}`)
         return { message: `Unable to update comment: ${commentId}` }
@@ -261,14 +235,12 @@ export class PostsService {
       })
       if (post) {
         for (let i = 0; i < post.commment.length; i++) {
-          if (post.commment[i].id == commentId) {
-            return await this.likeService.removeLike(commentId)
-          }
-          else {
-            console.log(`Post: ${postId} does not have comment: ${commentId}`)
-            return { message: `Post: ${postId} does not have comment: ${commentId}` }
-          }
+          if (post.commment[i].id == commentId)
+            return await this.commentService.removeComment(commentId)
         }
+
+        console.log(`Post: ${postId} does not have comment: ${commentId}`)
+        return { message: `Post: ${postId} does not have comment: ${commentId}` }
       }
       else {
         console.log(`Unable to find post`)
@@ -281,5 +253,3 @@ export class PostsService {
     }
   }
 }
-
-

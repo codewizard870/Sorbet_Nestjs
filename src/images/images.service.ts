@@ -7,7 +7,7 @@ export class ImagesService {
   constructor(private prismaService: PrismaService) {}
 
   AWS_S3_PROFILE_BUCKET = process.env.S3_AWS_PROFILE_BUCKET;
-  AWS_S3_GIG_BUCKET = process.env.S3_AWS_GIG_BUCKET;
+  AWS_S3_GIG_BUCKET = process.env.S3_AWS_POST_BUCKET;
   AWS_S3_EVENT_BUCKET = process.env.S3_AWS_EVENT_BUCKET;
   AWS_S3_WIDGET_BUCKET = process.env.S3_AWS_WIDGET_BUCKET;
   s3 = new AWS.S3({
@@ -20,14 +20,12 @@ export class ImagesService {
   async uploadProfileImage(file: any, id: string) {
     //   const { originalname } = file;
     try {
-      const name = id + ".png";
       return await this.s3_upload(
         file.buffer,
         this.AWS_S3_PROFILE_BUCKET,
-        name,
+        id,
         file.mimetype,
-        id
-      )
+      );
     } 
     catch (error) {
       console.log(error)
@@ -35,35 +33,14 @@ export class ImagesService {
     }
   }
 
-  async uploadGigImage(file: any, id: string) {
-    //   const { originalname } = file;
+  async uploadPostImage(file: any, id: string) {
     try {
-      const name = id + ".png";
       return await this.s3_upload(
         file.buffer,
         this.AWS_S3_GIG_BUCKET,
-        name,
+        id,
         file.mimetype,
-        id
       )
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occurred. Please try again.")
-    }
-  }
-
-  async uploadEventImage(file: any, id: string) {
-    //   const { originalname } = file;
-    try {
-      const name = id + ".png";
-      return await this.s3_upload(
-        file.buffer,
-        this.AWS_S3_EVENT_BUCKET,
-        name,
-        file.mimetype,
-        id
-      ) 
     } 
     catch (error) {
       console.log(error)
@@ -73,13 +50,11 @@ export class ImagesService {
 
   async uploadWidgetImage(file: any, id: string) {
     try {
-      const name = id + ".png";
       return await this.s3_upload(
         file.buffer,
         this.AWS_S3_WIDGET_BUCKET,
-        name,
+        id,
         file.mimetype,
-        id
       ) 
     } 
     catch (error) {
@@ -88,10 +63,10 @@ export class ImagesService {
     }
   }
 
-  async s3_upload(file: any, bucket: string, name: string, mimetype: string, userId: string) {
+  async s3_upload(file: any, bucket: string, id: string, mimetype: string) {
     const params = {
       Bucket: bucket,
-      Key: String(name),
+      Key: id,
       Body: file,
       ACL: "public-read",
       ContentType: mimetype,
@@ -100,16 +75,10 @@ export class ImagesService {
         LocationConstraint: "eu-west-1",
       },
     };
-
-    console.log("params", params);
-
+    console.log(params)
     try {
-      let s3Response = await this.s3.upload(params).promise();
-      const updatedUserImage = await this.prismaService.user.update({
-        where: { id: userId },
-        data: { profileImage: s3Response.Key },
-      });
-      return s3Response;
+      await this.s3.upload(params).promise();
+      return await this.s3.getSignedUrlPromise('getObject', {Bucket: bucket, Key: id});
     } catch (error) {
         console.log(error)
         throw new Error("There was an error uploading. Please try again.")

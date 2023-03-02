@@ -11,7 +11,7 @@ let mockCtx: MockContext
 let ctx: Context
 
 const AWS_S3_PROFILE_BUCKET = process.env.S3_AWS_PROFILE_BUCKET;
-const AWS_S3_GIG_BUCKET = process.env.S3_AWS_GIG_BUCKET;
+const AWS_S3_GIG_BUCKET = process.env.S3_AWS_POST_BUCKET;
 const AWS_S3_EVENT_BUCKET = process.env.S3_AWS_EVENT_BUCKET;
 const AWS_S3_WIDGET_BUCKET = process.env.S3_AWS_WIDGET_BUCKET;
 const s3 = new AWS.S3({
@@ -190,7 +190,7 @@ describe("ImagesService", () => {
   })
 
   it("should define a function to upload a gig image", () => {
-    expect(service.uploadGigImage).toBeDefined()
+    expect(service.uploadPostImage).toBeDefined()
   })
 
   it("should upload a gig image", async () => {

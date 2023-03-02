@@ -80,7 +80,7 @@ export class LocationsService {
         province: data.province,
         district: data.district,
         city: data.city,
-        location_type: data.location_type,
+        locationType: data.location_type,
 
         Latitude: location.lat,
 
@@ -113,7 +113,7 @@ export class LocationsService {
             province: data.province,
             district: data.district,
             city: data.city,
-            location_type: data.locationType,
+            locationType: data.locationType,
 
             Latitude: location.lat,
 

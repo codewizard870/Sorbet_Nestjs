@@ -75,11 +75,13 @@ model Like {
 
   // relation with user
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique @db.ObjectId
+  userId String @db.ObjectId
 
   // relation with Post
   post   Post?   @relation(fields: [postId], references: [id])
-  postId String? @unique @db.ObjectId
+  postId String @db.ObjectId
+
+  @@unique([userId, postId])
 }
 
 model Comment {
@@ -90,10 +92,10 @@ model Comment {
 
   // relation with user
   user   User    @relation(fields: [userId], references: [id])
-  userId String  @unique @db.ObjectId
+  userId String  @db.ObjectId
   // realtion with Post
   post   Post?   @relation(fields: [postId], references: [id])
-  postId String? @unique @db.ObjectId
+  postId String? @db.ObjectId
 }
 
 model Post {
