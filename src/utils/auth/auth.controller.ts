@@ -32,16 +32,6 @@ export class AuthController {
     return this.authService.signInWithWallet(address)
   }
 
-  @Post('signUpWithEmail')
-  signUpWithEmail(@Body() email:string) {
-    return this.authService.signUpWithEmail(email)
-  }
-
-  @Post('signInWithEmail')
-  signInWithEmail(@Body() email:string) {
-    return this.authService.signInWithEmail(email)
-  }
-
   @Get('getUserById')
   getUserById(@Body() id:string) {
     return this.authService.getUserById(id)

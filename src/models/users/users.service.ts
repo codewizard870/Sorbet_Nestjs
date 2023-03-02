@@ -13,23 +13,20 @@ export class UsersService {
     private prisma: PrismaService,
   ) {}
 
-  async create(data: any, token: string) {
+  async create(address: string, token: string) {
     try {
-      const userFromEmail = await this.getUserFromEmail(data.email)
-      const UserFromNearWallet = await this.getUserFromNearWallet(data.nearWallet)
-      if (userFromEmail || UserFromNearWallet) {
+      const UserFromNearWallet = await this.getUserFromNearWallet(address)
+      if (UserFromNearWallet) {
         throw new BadRequestException("User already Exists")
       }
       else {
         const result = await this.prisma.user.create({
           data: {
-            nearWallet: data.nearWallet,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            jobProfile: data.jobProfile,
-            location: data.location,
-            bio: data.bio,
+            nearWallet: address,
+            firstName: null,
+            lastName: null,
+            email: null,
+            bio: null,
             profileImage: null,
             confirmationCode: token,
           },
