@@ -14,8 +14,6 @@ export class LocationsService {
 
   getDistanceUsingHaversine(user: any, saved: any) {
     try {
-      // latitude:31.5203696,longitude:74.35874729999999 lahore
-      // latitude:33.2615676,longitude:73.3057508 gujar khan
       const a = { latitude: 33.5651107, longitude: 73.0169135 };
       const b = { latitude: 33.2615676, longitude: 73.3057508 };
       const distanceInMeters = haversine(user, saved);
@@ -61,72 +59,21 @@ export class LocationsService {
     }
   }
 
-  async createMyLocation(data: any, userId: string) {
-    const address =
-      data.city +
-      " " +
-      data.district +
-      " " +
-      data.province +
-      " " +
-      data.country;
-    const location = await this.googleMapService.getCoordinates(address);
-    console.log("location", location);
-
-    const result = await this.prismaService.location.create({
-      data: {
-        userId: userId,
-        country: data.country,
-        province: data.province,
-        district: data.district,
-        city: data.city,
-        locationType: data.location_type,
-
-        Latitude: location.lat,
-
-        Langitude: location.lng,
-      },
-    });
-    if (result) {
-      return result;
-    }
-  }
-
   async create(data: CreateLocationDto) {
     try {
-      const address =
-        data.city +
-        " " +
-        data.district +
-        " " +
-        data.province +
-        " " +
-        data.country;
-      const location = await this.googleMapService.getCoordinates(address);
-      console.log("location", location);
-
-      if (data.postId) {
-        const result = await this.prismaService.location.create({
-          data: {
-            postId: data.postId,
-            country: data.country,
-            province: data.province,
-            district: data.district,
-            city: data.city,
-            locationType: data.locationType,
-
-            Latitude: location.lat,
-
-            Langitude: location.lng,
-          },
-        });
-        if (result) {
-          return result;
-        } else {
-          throw new BadRequestException("Please try again later");
-        }
+      const result = await this.prismaService.location.create({
+        data: {
+          postId: data.postId,
+          address: data.address,
+          locationType: data.locationType,
+          latitude: data.latitude,
+          langitude: data.langitude,
+        },
+      });
+      if (result) {
+        return result;
       } else {
-        throw new BadRequestException("This id does not exists");
+        throw new BadRequestException("Please try again later");
       }
     }
     catch (error) {

@@ -18,10 +18,22 @@ export class CreatePostDto {
   @IsOptional()
   videoUrl: string;
 
+  @ApiProperty()
+  @IsOptional()
+  address: string;
+
+  @ApiProperty()
+  @IsOptional()
+  latitude: number;
+
+  @ApiProperty()
+  @IsOptional()
+  langitude: number;
+  
   //Gig only
   @ApiProperty()
   @IsOptional()
-  serviceType: LocationType;
+  locationType: LocationType;
 
   @ApiProperty()
   @IsOptional()

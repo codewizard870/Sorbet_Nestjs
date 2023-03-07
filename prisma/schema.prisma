@@ -160,12 +160,9 @@ model Post {
 model Location {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   locationType LocationType
-  country      String
-  province     String
-  district     String
-  city         String
-  Latitude     Float
-  Langitude    Float
+  address      String
+  latitude     Float
+  langitude    Float
 
   // relation with post
   post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
@@ -193,8 +190,8 @@ enum PostType {
 }
 
 enum LocationType {
-  Remote @map("remote")
-  OnSite @map("onSite")
+  Remote @map("Remote")
+  OnSite @map("OnSite")
 
   @@map("LocationType")
 }

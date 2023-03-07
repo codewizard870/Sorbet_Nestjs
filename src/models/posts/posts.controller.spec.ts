@@ -77,7 +77,7 @@ let mockPostsService = {
           description: data.description,
           imageUrl: data.imageUrl,
           videoUrl: data.videoUrl,
-          serviceType: data.serviceType,
+          serviceType: data.locationType,
           category: data.category,
           subCategory: data.subCategory,
           seachTags: data.seachTags,

@@ -189,20 +189,7 @@ export class GlobalSearchService {
     try {
       const location = await this.prismaService.location.findMany({
         where: {
-          OR: [
-            {
-              country: text,
-            },
-            {
-              province: text,
-            },
-            {
-              district: text,
-            },
-            {
-              city: text,
-            },
-          ],
+          address: {contains: text}
         },
         include: {
           post: true,
@@ -309,13 +296,13 @@ export class GlobalSearchService {
         return false;
 
       const a = {
-        latitude: myUser.location.Latitude,
-        longitude: myUser.location.Langitude,
+        latitude: myUser.location.latitude,
+        longitude: myUser.location.langitude,
       };
 
       const b = {
-        latitude: otherUser.location.Latitude,
-        longitude: otherUser.location.Langitude,
+        latitude: otherUser.location.latitude,
+        longitude: otherUser.location.langitude,
       };
 
       const calculatedDistance =
@@ -342,13 +329,13 @@ export class GlobalSearchService {
         return false
       }
       const a = {
-        latitude: user.location.Latitude,
-        longitude: user.location.Langitude,
+        latitude: user.location.latitude,
+        longitude: user.location.langitude,
       };
 
       const b = {
-        latitude: location.Latitude,
-        longitude: location.Langitude,
+        latitude: location.latitude,
+        longitude: location.langitude,
       };
 
       const calculatedDistance = this.locationService.getDistanceUsingHaversine(
@@ -382,13 +369,13 @@ export class GlobalSearchService {
         return false
       }
       const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
+        latitude: user.location[0].latitude,
+        longitude: user.location[0].langitude,
       };
 
       const b = {
-        latitude: post.location[0].Latitude,
-        longitude: post.location[0].Langitude,
+        latitude: post.location[0].latitude,
+        longitude: post.location[0].langitude,
       };
 
       const calculatedDistance = this.locationService.getDistanceUsingHaversine(
@@ -422,15 +409,15 @@ export class GlobalSearchService {
         return false
       }
       const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
+        latitude: user.location[0].latitude,
+        longitude: user.location[0].langitude,
       };
 
       const b = {
         // @ts-ignore
-        latitude: group.location[0].Latitude,
+        latitude: group.location[0].latitude,
         // @ts-ignore
-        longitude: group.location[0].Langitude,
+        longitude: group.location[0].langitude,
       };
 
       const calculatedDistance = this.locationService.getDistanceUsingHaversine(

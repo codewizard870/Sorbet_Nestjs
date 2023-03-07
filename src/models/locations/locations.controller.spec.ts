@@ -28,7 +28,7 @@ const createLocationDto: CreateLocationDto = {
 }
 
 const createMyLocationDto: CreateMyLocationDto = {
-  location_type: 'OnSite',
+  locationType: 'OnSite',
   country: 'United States',
   province: 'Massachusetts',
   district: 'Suffolk County',
