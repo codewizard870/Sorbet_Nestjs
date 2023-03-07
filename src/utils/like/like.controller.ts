@@ -20,34 +20,15 @@ import {
   export class LikeController {
     constructor(private readonly likeService: LikeService) {}
   
-    @Post('/post/createPostLike')
-    async createPostLike(@Request() req, @Body() createLikeDto: CreateLikeDto) {
-      return await this.likeService.createPostLike(createLikeDto, req.user.id)
+    @Post('like/createPostLike')
+    async createPostLike(@Body() createLikeDto: CreateLikeDto) {
+      console.log(CreateLikeDto)
+      return await this.likeService.createPostLike(createLikeDto)
     }
   
-    @Post('/event/createEventLike')
-    async createEventLike (@Request() req, @Body() createLikeDto: CreateLikeDto) {
-      return await this.likeService.createEventLike(createLikeDto, req.user.id)
-    }
-
-    @Post('/gig/createGigLike')
-    async createGigLike (@Request() req, @Body() createLikeDto: CreateLikeDto) {
-      return await this.likeService.createGigLike(createLikeDto, req.user.id)
-    }
-
-    @Get('post/:postId/likes')
+    @Get('like/:postId/likes')
     async findAllLikesForPost (@Param() postId: string) {
       return await this.likeService.findAllLikesForPost(postId)
-    }
-
-    @Get('event/:eventId/likes')
-    async findAllLikesForEvent (@Param() eventId: string) {
-      return await this.likeService.findAllLikesForEvent(eventId)
-    }
-
-    @Get('gig/:gigId/likes')
-    async findAllLikesForGig (@Param() gigId: string) {
-      return await this.likeService.findAllLikesForGig(gigId)
     }
 
     @Get('like/:id')
@@ -55,7 +36,7 @@ import {
       return await this.likeService.findOne(id)
     }
 
-    @Delete('like/delete')
+    @Delete('like/remove')
     async removeLike (@Param() id: string) {
       return await this.likeService.removeLike(id)
     }

@@ -13,8 +13,6 @@ export class AppService {
 
   async resetDatabase() {
     this.prismaService.location.deleteMany();
-    await this.prismaService.event.deleteMany();
-    await this.prismaService.gig.deleteMany();
     await this.prismaService.user.deleteMany();
     await this.prismaService.post.deleteMany();
     return { message: "database reset successfully" };

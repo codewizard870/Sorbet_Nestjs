@@ -21,33 +21,13 @@ import {
     constructor(private readonly commentService: CommentService) {}
   
     @Post('/post/createPostComment')
-    async createPostComment(@Request() req, @Body() createCommentDto: CreateCommentDto) {
-      return await this.commentService.createPostComment(createCommentDto, req.user.id)
+    async createPostComment(@Body() createCommentDto: CreateCommentDto) {
+      return await this.commentService.createPostComment(createCommentDto)
     }
   
-    @Post('/event/createEventComment')
-    async createEventComment (@Request() req, @Body() createCommentDto: CreateCommentDto) {
-      return await this.commentService.createEventComment(createCommentDto, req.user.id)
-    }
-
-    @Post('/gig/createGigComment')
-    async createGigLike (@Request() req, @Body() createCommentDto: CreateCommentDto) {
-      return await this.commentService.createGigComment(createCommentDto, req.user.id)
-    }
-
     @Get('post/:postId/commments')
     async findAllCommentsForPost (@Param() postId: string) {
       return await this.commentService.findAllCommentsForPost(postId)
-    }
-
-    @Get('event/:eventId/comments')
-    async findAllCommentsForEvent (@Param() eventId: string) {
-      return await this.commentService.findAllCommentsForEvent(eventId)
-    }
-
-    @Get('gig/:gigId/commments')
-    async findAllCommentsForGig (@Param() gigId: string) {
-      return await this.commentService.findAllCommentsForGig(gigId)
     }
 
     @Get('comment/:id')

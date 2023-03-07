@@ -5,7 +5,8 @@ import {
   Param,
   UploadedFile,
   Request,
-  // UseInterceptors,
+  Body,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ImagesService } from "./images.service";
 import { CreateImageDto } from "./dto/create-image.dto";
@@ -28,24 +29,13 @@ export class ImagesController {
     return await this.imagesService.uploadProfileImage(file, req.user.id);
   }
 
-  @Post("uploadGigImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadGigImage(
+  @Post("uploadPostImage")
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadPostImage(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req
+    @Body() body
   ) {
-    console.log("req.user", req.user.id);
-    return await this.imagesService.uploadGigImage(file, req.user.id);
-  }
-
-  @Post("uploadEventImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadEventImage(
-    @UploadedFile() file: Express.Multer.File,
-    @Request() req
-  ) {
-    console.log("req.user", req.user.id);
-    return await this.imagesService.uploadEventImage(file, req.user.id);
+    return await this.imagesService.uploadPostImage(file, body.userId);
   }
 
   @Post("uploadWidgetImage")

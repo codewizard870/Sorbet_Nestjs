@@ -22,24 +22,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Post('sigUpWithWallet')
-  sigUpWithWallet(@Body() address:string) {
+  @Post('signUpWithWallet')
+  signUpWithWallet(@Body("address") address:string) {
     return this.authService.signUpWithWallet(address)
   }
 
   @Post('signInWithWallet')
-  signInWithWallet(@Body() address:string) {
+  signInWithWallet(@Body("address") address:string) {
     return this.authService.signInWithWallet(address)
-  }
-
-  @Post('signUpWithEmail')
-  signUpWithEmail(@Body() email:string) {
-    return this.authService.signUpWithEmail(email)
-  }
-
-  @Post('signInWithEmail')
-  signInWithEmail(@Body() email:string) {
-    return this.authService.signInWithEmail(email)
   }
 
   @Get('getUserById')

@@ -6,6 +6,7 @@ import {
   Patch,
   Delete,
   Post,
+  Query,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -16,7 +17,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 @Controller("/api/user")
 @ApiBearerAuth()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post("createUser")
   async create(@Request() req, @Body() token: string) {
@@ -29,14 +30,14 @@ export class UsersController {
   }
 
   @Get("getUserFromEmail")
-  async getUserFromEmail(@Body() email: string) {
+  async getUserFromEmail(@Query("email") email: string) {
     return await this.usersService.getUserFromEmail(
       email
     )
   }
 
   @Get("getUserFromNearWallet")
-  async getUserFromNearWallet(@Body() nearWallet: string) {
+  async getUserFromNearWallet(@Query("nearWallet") nearWallet: string) {
     return await this.usersService.getUserFromNearWallet(
       nearWallet
     )
@@ -102,18 +103,18 @@ export class UsersController {
     )
   }
 
-  @Patch("addFollowerToUser")
-  async addFollowerToUser(@Request() req, @Body() userToFollowId: string) {
+  @Post("addFollowerToUser")
+  async addFollowerToUser(@Body("userId") userId: string, @Body("userToFollowId") userToFollowId: string) {
     return await this.usersService.addFollowerToUser(
-      req.user.id,
+      userId,
       userToFollowId
     )
   }
 
-  @Patch("removeFollowerFromUser")
-  async removeFollowerFromUser(@Request() req, @Body() userToUnfollowId: string) {
+  @Post("removeFollowerFromUser")
+  async removeFollowerFromUser(@Body("userId") userId: string, @Body("userToUnfollowId") userToUnfollowId: string) {
     return await this.usersService.removeFollowerFromUser(
-      req.user.id,
+      userId,
       userToUnfollowId
     )
   }
@@ -135,16 +136,16 @@ export class UsersController {
   }
 
   @Get("userRandomRecommendations")
-  async userRandomRecommendations(@Request() req) {
+  async userRandomRecommendations(@Query("userId") userId: string) {
     return await this.usersService.userRandomRecommendations(
-      req.user.id
+      userId
     )
   }
 
   @Get("userRecommendations")
-  async userRecommendations(@Request() req) {
+  async userRecommendations(@Query("userId") userId: string) {
     return await this.usersService.userRecommendations(
-      req.user.id
+      userId
     )
   }
 }

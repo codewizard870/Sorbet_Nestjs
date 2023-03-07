@@ -26,10 +26,9 @@ export class AuthService {
     private readonly passwordsService: PasswordsService
   ) {}
 
-  generateToken(user: any) {
+  generateToken(address: string) {
     const payload = {
-      email: user.email,
-      id: user.id,
+      address
     };
 
     const token = this.jwtService.sign(payload);
@@ -130,24 +129,22 @@ export class AuthService {
   async signUpWithWallet(address: string) {
     try {
       const user = await this.usersService.getUserFromNearWallet(address)
+console.log(address, user)
       if (user) {
         console.log('User already exists')
         return { message: 'User already exists' }
       }
-      const token = this.generateToken(user)
+      const token = this.generateToken(address)
       const newUser = await this.usersService.create(address, token);
       if (newUser) {
-        console.log('User successfully signed in')
+        console.log('User successfully signed up')
         return { success: true }
       }
-      else {
-        console.log('User could not be signed in')
-        return { success: false }
-      }
+      else throw new Error('User could not be signed up');
     } 
     catch (error) {
       console.log(error)
-      throw new Error('Error signing user in')
+      throw new Error('Error signing user up')
     }
   }
 
@@ -155,69 +152,15 @@ export class AuthService {
     try {
       const user = await this.usersService.getUserFromNearWallet(address)
       if (user) {
-        const token = this.generateToken(user)
+        const token = this.generateToken(address)
         if (token) {
           console.log('User successfully signed in')
           return token
         }
-        else {
-          console.log('User could not be signed in')
-          return { success: false }
-        } 
+        else throw new Error("Error signing user in")
       }
-      else {
-        console.log('Could not find user')
-        return { success: false }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error('Error signing user in')
-    }
-  }
-
-  async signUpWithEmail(email: string) {
-    try {
-      const user = await this.usersService.getUserFromEmail(email)
-      if (user) {
-        console.log('User already exists')
-        return { message: 'User already exists' }
-      }
-      const token = this.generateToken(user)
-      const newUser = await this.usersService.create(email, token);
-      if (newUser) {
-        console.log('User successfully signed in')
-        return { success: true }
-      }
-      else {
-        console.log('User could not be signed in')
-        return { success: false }
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error('Error signing user in')
-    }
-  }
-
-  async signInWithEmail(email: string) {
-    try {
-      const user = await this.usersService.getUserFromEmail(email)
-      if (user) {
-        const token = this.generateToken(user)
-        if (token) {
-          console.log('User successfully signed in')
-          return token
-        }
-        else {
-          console.log('User could not be signed in')
-          return { success: false }
-        } 
-      }
-      else {
-        console.log('Could not find user')
-        return { success: false }
-      }
+      else
+        throw new Error("Error signing user in")
     } 
     catch (error) {
       console.log(error)

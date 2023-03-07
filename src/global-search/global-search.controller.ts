@@ -42,31 +42,6 @@ export class GlobalSearchController {
     );
   }
 
-  @Post("globalSearchEventByDistance/:text/:distance")
-  async globalSearchEventByDistance(
-    @Request() req,
-    @Param("text") text: string,
-    @Param("distance") distance: string
-  ) {
-    return await this.globalSearchService.globalSearchEventByDistance(
-      req.user.id,
-      distance,
-      text
-    );
-  }
-
-  @Post("globalSearchGigByDistance/:text/:distance")
-  async globalSearchGigByDistance(
-    @Request() req,
-    @Param("text") text: string,
-    @Param("distance") distance: string
-  ) {
-    return await this.globalSearchService.globalSearchGigByDistance(
-      req.user.id,
-      distance,
-      text
-    );
-  }
   
   @Post("globalSearchLocationByDistance/:text/:distance")
   async globalSearchLocationByDistance(
@@ -123,19 +98,6 @@ export class GlobalSearchController {
   @Post("findUserInDistance")
   async findUserInDistance(@Request() req, @Body() data: FindUserDistanceDto) {
     return await this.globalSearchService.findUserDistance(req.user.id, data);
-  }
-
-  @Post("findEventInDistance")
-  async findEventInDistance(
-    @Request() req,
-    @Body() data: FindEventDistanceDto
-  ) {
-    return await this.globalSearchService.findEventDistance(req.user.id, data);
-  }
-
-  @Post("findGigInDistance")
-  async findGigInDistance(@Request() req, @Body() data: FindGigDistanceDto) {
-    return await this.globalSearchService.findGigDistance(req.user.id, data);
   }
 
   @Post("findPostInDistance")

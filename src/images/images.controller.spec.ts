@@ -14,7 +14,7 @@ let ctx: Context
 
 
 const AWS_S3_PROFILE_BUCKET = process.env.S3_AWS_PROFILE_BUCKET;
-const AWS_S3_GIG_BUCKET = process.env.S3_AWS_GIG_BUCKET;
+const AWS_S3_GIG_BUCKET = process.env.S3_AWS_POST_BUCKET;
 const AWS_S3_EVENT_BUCKET = process.env.S3_AWS_EVENT_BUCKET;
 const AWS_S3_WIDGET_BUCKET = process.env.S3_AWS_WIDGET_BUCKET;
 const s3 = new AWS.S3({
@@ -234,7 +234,7 @@ describe("ImagesController", () => {
   })
 
   it("should define an endpoint to upload a gig image", () => {
-    expect(controller.uploadGigImage).toBeDefined()
+    expect(controller.uploadPostImage).toBeDefined()
   })
 
   it("should upload a gig image", async () => {
@@ -246,7 +246,7 @@ describe("ImagesController", () => {
   })
 
   it("should define an endpoint to upload an event image", () => {
-    expect(controller.uploadGigImage).toBeDefined()
+    expect(controller.uploadPostImage).toBeDefined()
   })
 
   it("should upload an event image", async () => {
