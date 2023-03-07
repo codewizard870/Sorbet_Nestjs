@@ -3,45 +3,19 @@ import { LocationType } from "@prisma/client";
 import { IsOptional } from "class-validator";
 
 export class CreateLocationDto {
-  @ApiProperty({
-    description: "description of the Location Type ",
-    enum: LocationType,
-  })
+  @ApiProperty()
   locationType: LocationType;
 
   @ApiProperty()
-  country: string;
+  address: string;
 
   @ApiProperty()
-  province: string;
+  latitude: number;
 
   @ApiProperty()
-  district: string;
-
-  @ApiProperty()
-  city: string;
-
+  langitude: number;
+  
   @ApiProperty()
   @IsOptional()
   postId: string;
-}
-
-export class CreateMyLocationDto {
-  @ApiProperty({
-    description: "description of the Location Type ",
-    enum: LocationType,
-  })
-  location_type: LocationType;
-
-  @ApiProperty()
-  country: string;
-
-  @ApiProperty()
-  province: string;
-
-  @ApiProperty()
-  district: string;
-
-  @ApiProperty()
-  city: string;
 }

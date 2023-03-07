@@ -8,6 +8,7 @@ import { PrismaService } from "src/utils/prisma/prisma.service";
 import { UsersService } from "../users/users.service";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
+import { LocationsService } from "../locations/locations.service";
 
 @Injectable()
 export class PostsService {
@@ -15,8 +16,8 @@ export class PostsService {
     private prismaService: PrismaService,
     private usersService: UsersService,
     private likeService: LikeService,
-    private commentService: CommentService
-  ) { }
+    private commentService: CommentService,
+  ) { };
 
   async create(data: CreatePostDto) {
     try {
@@ -28,7 +29,7 @@ export class PostsService {
           description: data.description,
           imageUrl: data.imageUrl,
           videoUrl: data.videoUrl,
-          serviceType: data.serviceType,
+          serviceType: data.locationType,
           category: data.category,
           subCategory: data.subCategory,
           seachTags: data.seachTags,
@@ -44,6 +45,21 @@ export class PostsService {
         },
       })
       if (result) {
+        if (data.address) {
+          try {
+            const res = await this.prismaService.location.create({
+              data: {
+                locationType: data.locationType,
+                address: data.address,
+                langitude: data.langitude,
+                latitude: data.latitude,
+                postId: result.id,
+              }
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
         return result;
       }
     }
@@ -193,7 +209,7 @@ export class PostsService {
     try {
       if (data.postId) {
         const createdComment = await this.commentService.createPostComment(data)
-        if (createdComment) 
+        if (createdComment)
           return createdComment
         else {
           console.log(`User: ${data.userId} failed to comment on post: ${data.postId}`)
@@ -214,7 +230,7 @@ export class PostsService {
   async updatePostComment(updateCommentDto: UpdateCommentDto, commentId: string) {
     try {
       const updatedPost = await this.commentService.updateComment(updateCommentDto, commentId)
-      if (updatedPost) 
+      if (updatedPost)
         return updatedPost
       else {
         console.log(`Unable to update comment: ${commentId}`)

@@ -15,7 +15,7 @@ export class GlobalSearchService {
     private locationService: LocationsService,
     private postsService: PostsService,
     private groupsService: GroupsService
-  ) {}
+  ) { }
 
   async globalSearch(text: string) {
     try {
@@ -23,8 +23,8 @@ export class GlobalSearchService {
       const posts = await this.findmatchingPost(text);
       const locations = await this.findmatchingLocation(text);
       const groups = await this.findmatchingGroup(text);
-      return { users, posts, locations, groups};
-    } 
+      return { users, posts, locations, groups };
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -38,7 +38,7 @@ export class GlobalSearchService {
       const locations = await this.globalSearchLocationByDistance(userId, distance, text);
       const groups = await this.globalSearchGroupByDistance(userId, distance, text)
       return { users, posts, locations, groups };
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -57,16 +57,16 @@ export class GlobalSearchService {
           const data = { locationId, distance };
           const result = await this.findLocationDistance(userId, data);
           console.log("location", result);
-  
+
           if (result) {
             filteredLocation.push(element);
           }
           console.log("filteredLocation", filteredLocation);
         }
-  
+
         return filteredLocation;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -85,16 +85,16 @@ export class GlobalSearchService {
           const data = { locationId, distance };
           const result = await this.findLocationDistance(userId, data);
           console.log("location", result);
-  
+
           if (result) {
             filteredLocation.push(element);
           }
           console.log("filteredLocation", filteredLocation);
         }
-  
+
         return filteredLocation;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -113,16 +113,16 @@ export class GlobalSearchService {
           const data = { postId, distance };
           const result = await this.findPostDistance(userId, data);
           console.log("post", result);
-  
+
           if (result) {
             filteredPost.push(element);
           }
           console.log("filteredPost", filteredPost);
         }
-  
+
         return filteredPost;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -141,16 +141,16 @@ export class GlobalSearchService {
           const data = { newUserId, distance };
           const result = await this.findUserDistance(userId, data);
           console.log("result", result);
-  
+
           if (result) {
             filteredUser.push(element);
           }
           console.log("filteredUser", filteredUser);
         }
-  
+
         return filteredUser;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -169,16 +169,16 @@ export class GlobalSearchService {
           const data = { newUserId, distance };
           const result = await this.findUserDistance(userId, data);
           console.log("result", result);
-  
+
           if (result) {
             filteredGroup.push(element);
           }
           console.log("filteredGroup", filteredGroup);
         }
-  
+
         return filteredGroup;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -189,31 +189,18 @@ export class GlobalSearchService {
     try {
       const location = await this.prismaService.location.findMany({
         where: {
-          OR: [
-            {
-              country: text,
-            },
-            {
-              province: text,
-            },
-            {
-              district: text,
-            },
-            {
-              city: text,
-            },
-          ],
+          address: {contains: text}
         },
         include: {
           post: true,
           user: true,
         },
       });
-  
+
       if (location.length === 0 || location.length > 0) {
         return location;
-      } 
-    } 
+      }
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -241,11 +228,11 @@ export class GlobalSearchService {
         },
         include: { location: true },
       });
-  
+
       if (user.length === 0 || user.length > 0) {
         return user;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -258,11 +245,11 @@ export class GlobalSearchService {
         where: { title: text },
         include: { location: true },
       });
-  
+
       if (post.length === 0 || post.length > 0) {
         return post;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -289,7 +276,7 @@ export class GlobalSearchService {
       if (group.length === 0 || group.length > 0) {
         return group;
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -305,41 +292,27 @@ export class GlobalSearchService {
       if (!myUser || !otherUser) {
         return false
       }
-      if (myUser.location.length === 0) {
+      if (!myUser.location || !otherUser.location)
         return false;
-      } 
-      else if (otherUser.location.length === 0) {
-        return false;
-      } 
-      else {
-        const a = {
-          latitude: myUser.location[0].Latitude,
-          longitude: myUser.location[0].Langitude,
-        };
-  
-        const b = {
-          latitude: otherUser.location[0].Latitude,
-          longitude: otherUser.location[0].Langitude,
-        };
-  
-        const calculatedDistance =
-          this.locationService.getDistanceUsingHaversine(a, b);
-        console.log("calculatedDistance", calculatedDistance);
-  
-        if (calculatedDistance === 0) {
-          return true;
-        }
-        if (calculatedDistance === data.distance) {
-          return true;
-        } 
-        else if (calculatedDistance < data.distance) {
-          return true;
-        } 
-        else {
-          return false;
-        }
-      }
-    } 
+
+      const a = {
+        latitude: myUser.location.latitude,
+        longitude: myUser.location.langitude,
+      };
+
+      const b = {
+        latitude: otherUser.location.latitude,
+        longitude: otherUser.location.langitude,
+      };
+
+      const calculatedDistance =
+        this.locationService.getDistanceUsingHaversine(a, b);
+      console.log("calculatedDistance", calculatedDistance);
+
+      if (calculatedDistance === 0 || calculatedDistance === data.distance || calculatedDistance < data.distance)
+        return true;
+      return false;
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -356,15 +329,15 @@ export class GlobalSearchService {
         return false
       }
       const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
+        latitude: user.location.latitude,
+        longitude: user.location.langitude,
       };
-  
+
       const b = {
-        latitude: location.Latitude,
-        longitude: location.Langitude,
+        latitude: location.latitude,
+        longitude: location.langitude,
       };
-  
+
       const calculatedDistance = this.locationService.getDistanceUsingHaversine(
         a,
         b
@@ -372,15 +345,15 @@ export class GlobalSearchService {
       if (calculatedDistance === data.distance) {
         const message = "location exists inside the distance";
         return message;
-      } 
+      }
       else if (data.distance > calculatedDistance) {
         const message = "location exists inside the distance";
         return message;
-      } 
+      }
       else {
         return false;
-      } 
-    } 
+      }
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -396,15 +369,15 @@ export class GlobalSearchService {
         return false
       }
       const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
+        latitude: user.location[0].latitude,
+        longitude: user.location[0].langitude,
       };
-  
+
       const b = {
-        latitude: post.location[0].Latitude,
-        longitude: post.location[0].Langitude,
+        latitude: post.location[0].latitude,
+        longitude: post.location[0].langitude,
       };
-  
+
       const calculatedDistance = this.locationService.getDistanceUsingHaversine(
         a,
         b
@@ -412,15 +385,15 @@ export class GlobalSearchService {
       if (calculatedDistance === data.distance) {
         const message = "post exists inside the distance";
         return message;
-      } 
+      }
       else if (data.distance > calculatedDistance) {
         const message = "post exists inside the distance";
         return message;
-      } 
+      }
       else {
         return false;
-      } 
-    } 
+      }
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")
@@ -436,17 +409,17 @@ export class GlobalSearchService {
         return false
       }
       const a = {
-        latitude: user.location[0].Latitude,
-        longitude: user.location[0].Langitude,
+        latitude: user.location[0].latitude,
+        longitude: user.location[0].langitude,
       };
-  
+
       const b = {
         // @ts-ignore
-        latitude: group.location[0].Latitude,
-         // @ts-ignore
-        longitude: group.location[0].Langitude,
+        latitude: group.location[0].latitude,
+        // @ts-ignore
+        longitude: group.location[0].langitude,
       };
-  
+
       const calculatedDistance = this.locationService.getDistanceUsingHaversine(
         a,
         b
@@ -454,15 +427,15 @@ export class GlobalSearchService {
       if (calculatedDistance === data.distance) {
         const message = "group exists inside the distance";
         return message;
-      } 
+      }
       else if (data.distance > calculatedDistance) {
         const message = "group exists inside the distance";
         return message;
-      } 
+      }
       else {
         return false;
-      } 
-    } 
+      }
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")

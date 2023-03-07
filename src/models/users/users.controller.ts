@@ -103,18 +103,18 @@ export class UsersController {
     )
   }
 
-  @Patch("addFollowerToUser")
-  async addFollowerToUser(@Request() req, @Body() userToFollowId: string) {
+  @Post("addFollowerToUser")
+  async addFollowerToUser(@Body("userId") userId: string, @Body("userToFollowId") userToFollowId: string) {
     return await this.usersService.addFollowerToUser(
-      req.user.id,
+      userId,
       userToFollowId
     )
   }
 
-  @Patch("removeFollowerFromUser")
-  async removeFollowerFromUser(@Request() req, @Body() userToUnfollowId: string) {
+  @Post("removeFollowerFromUser")
+  async removeFollowerFromUser(@Body("userId") userId: string, @Body("userToUnfollowId") userToUnfollowId: string) {
     return await this.usersService.removeFollowerFromUser(
-      req.user.id,
+      userId,
       userToUnfollowId
     )
   }
