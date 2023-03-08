@@ -15,16 +15,16 @@ import { UpdateChatDto } from "./dto/update-chat.dto";
 
 @ApiBearerAuth()
 @ApiTags("Chats")
-@Controller("/swagger/chats")
+@Controller("/chats")
 export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
-  @Post()
+  @Post("create")
   async create(@Body() createChatDto: CreateChatDto, @Request() req) {
     return await this.chatsService.create(createChatDto, req.user.id);
   }
 
-  @Get()
+  @Get("findAll")
   async findAll() {
     return await this.chatsService.getAll();
   }
@@ -44,7 +44,7 @@ export class ChatsController {
     return await this.chatsService.getChatByUserId(userId);
   }
 
-  @Patch(":id")
+  @Patch(":id/update")
   update(@Param("id") id: string, @Body() updateChatsDto: UpdateChatDto) {
     return this.chatsService.update(id, updateChatsDto);
   }

@@ -92,12 +92,12 @@ let mockPasswordsService = {
                 <h2>Hello ${user.fullName}</h2>
                 <p>You requested to reset your password.</p>
                 <p> Please, click the link below to reset your password</p>
-                <a href=${BaseUrl}/api/auth/resetPassword?token=${resetToken}&userId=${user.id}> Click here to reset password!</a>
+                <a href=${BaseUrl}/swagger/auth/resetPassword?token=${resetToken}&userId=${user.id}> Click here to reset password!</a>
                 </div>`,
       };
-      //localhost:3000/api/auth/resetPassword?token=81129669e5f97486d8de5e5178b9e352105e1c4e252ea11a4188d578a977ce4b&userId=63581447075b294c2885502f
+      //localhost:3000/swagger/auth/resetPassword?token=81129669e5f97486d8de5e5178b9e352105e1c4e252ea11a4188d578a977ce4b&userId=63581447075b294c2885502f
       http: console.log(
-        `link,${BaseUrl}/api/auth/resetPassword?token=${resetToken}&userId=${user.id}`
+        `link,${BaseUrl}/swagger/auth/resetPassword?token=${resetToken}&userId=${user.id}`
       );
 
       // sendEmail(user.fullName, user.email, content);
@@ -107,43 +107,6 @@ let mockPasswordsService = {
       throw new BadRequestException();
     }
   }),
-
-  resetPassword: jest.fn().mockImplementation(async (userId: string, token: string, password: string) => {
-    const passwordResetToken = await mockTokensService.getTokenByUserId(
-      userId
-    );
-
-    if (!passwordResetToken) {
-      throw new BadRequestException("Invalid or expired password reset token");
-    }
-
-    const isValid = await mockPasswordsService.comparePassword(token, passwordResetToken.token);
-
-    if (!isValid) {
-      throw new BadRequestException("Invalid or expired password reset token");
-    }
-
-    const hash = await mockPasswordsService.hashPassword(password);
-
-    const user = await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: { password: hash },
-    });
-    if (user) {
-      const content = {
-        subject: "Password Reset Successfully",
-        html: `<h1>Password Reset Successfully</h1>
-                <h2>Hello ${user.firstName}</h2>
-                <p>Your password has been changed successfully</p>`,
-      };
-
-      sendEmail(user.firstName, user.email, content);
-      await mockTokensService.deleteToken(passwordResetToken.id);
-      return { message: "Password Reset Successfully" };
-    }
-  })
 }
 
 describe("PasswordsController", () => {

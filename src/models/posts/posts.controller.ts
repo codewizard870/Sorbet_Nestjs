@@ -17,17 +17,17 @@ import { CreateCommentDto } from "src/utils/comment/dto/create-comment-dto";
 import { UpdateCommentDto } from "src/utils/comment/dto/update-comment-dto";
 @ApiBearerAuth()
 @ApiTags("posts")
-@Controller("/swagger/posts")
+@Controller("/posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Post()
+  @Post("create")
   async create(@Body() createPostDto: CreatePostDto) {
     console.log(createPostDto);
     return await this.postsService.create(createPostDto)
   }
 
-  @Get()
+  @Get("getAll")
   findAll() {
     return this.postsService.findAll()
   }

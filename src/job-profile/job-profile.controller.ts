@@ -14,7 +14,7 @@ import { UpdateJobProfileDto } from "./dto/update-job-profile.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 @ApiTags("Job Profile")
 @ApiBearerAuth()
-@Controller("/swagger/job-profile")
+@Controller("/job-profile")
 export class JobProfileController {
   constructor(private readonly jobProfileService: JobProfileService) {}
 

@@ -6,10 +6,10 @@ import * as session from 'express-session'
 import * as passport from 'passport';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule)
   // controller validation
-  app.useGlobalPipes(new ValidationPipe());
-  app.enableCors();
+  app.useGlobalPipes(new ValidationPipe())
+  app.enableCors()
   // passport initialization
   app.use(session({
     secret: 'thesecret',
@@ -17,8 +17,8 @@ async function bootstrap() {
     saveUninitialized: false,
     cookie: { maxAge: 3600000 }
   }))
-  app.use(passport.initialize());
-  app.use(passport.session());
+  app.use(passport.initialize())
+  app.use(passport.session())
   // openapi
   const config = new DocumentBuilder()
     .setTitle("Conversion App")
@@ -27,13 +27,13 @@ async function bootstrap() {
     .addBearerAuth()
     // .addTag('main-tag')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  const document = SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup("swagger", app, document)
 
-  const port = process.env.PORT || 8000;
+  const port = process.env.PORT || 8000
 
   await app.listen(port, "0.0.0.0", function () {
-    console.log(`Server started on port: ${port}`);
-  });
+    console.log(`Server started on port: ${port}`)
+  })
 }
-bootstrap();
+bootstrap()

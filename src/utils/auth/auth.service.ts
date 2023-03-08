@@ -55,11 +55,11 @@ export class AuthService {
   //         html: `<h1>Email Confirmation</h1>
   //           <h2>Hello ${user.firstName}</h2>
   //           <p>Thank you for signing up. Please confirm your email by clicking on the following link</p>
-  //           <a href=${BaseUrl}/api/auth/confirm/${user.confirmationCode}> Click here</a>
+  //           <a href=${BaseUrl}/swagger/auth/confirm/${user.confirmationCode}> Click here</a>
   //           </div>`,
   //       };
   //       console.log(
-  //         `link,${BaseUrl}/api/auth/confirm/${user.confirmationCode}`
+  //         `link,${BaseUrl}/swagger/auth/confirm/${user.confirmationCode}`
   //       );
   //       // sendEmail(user.firstName, user.email, content);
   //       console.log("token", confirmationCode);

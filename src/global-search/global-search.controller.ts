@@ -20,7 +20,7 @@ import {
 } from "./dto/find-distance.dto";
 @ApiTags("Global Search")
 @ApiBearerAuth()
-@Controller("swagger/global-search")
+@Controller("global-search")
 export class GlobalSearchController {
   constructor(private readonly globalSearchService: GlobalSearchService) {}
 

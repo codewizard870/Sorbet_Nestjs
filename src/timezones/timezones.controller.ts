@@ -15,7 +15,7 @@ import { Public } from "src/utils/auth/constants";
 
 @ApiBearerAuth()
 @ApiTags("timezones")
-@Controller("/swagger/timezones")
+@Controller("/timezones")
 export class TimezonesController {
   constructor(private readonly timezonesService: TimezonesService) {}
 
