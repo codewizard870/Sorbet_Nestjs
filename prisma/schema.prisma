@@ -101,18 +101,18 @@ model Comment {
 }
 
 model Follow {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
 
   // relation with user
   fromUser   User   @relation(name: "following", fields: [fromUserId], references: [id])
   fromUserId String @db.ObjectId
 
-  toUser   User?   @relation(name: "followers", fields: [toUserId], references: [id])
-  toUserId String? @db.ObjectId
+  toUser     User?   @relation(name: "followers", fields: [toUserId], references: [id])
+  toUserId   String? @db.ObjectId
 
   // relation with Post
-  toPost   Post?   @relation(fields: [toPostId], references: [id])
-  toPostId String? @db.ObjectId
+  toPost     Post?   @relation(fields: [toPostId], references: [id])
+  toPostId   String? @db.ObjectId
 
   @@unique([fromUserId, toUserId, toPostId])
 }

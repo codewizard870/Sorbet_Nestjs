@@ -14,7 +14,7 @@ import { CreateContactDto } from "./dto/create-contact.dto";
 import { UpdateContactDto } from "./dto/update-contact.dto";
 @ApiBearerAuth()
 @ApiTags("Contacts")
-@Controller("/api/contacts")
+@Controller("/contacts")
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 

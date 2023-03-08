@@ -43,12 +43,12 @@ export class PasswordsService {
                 <h2>Hello ${user.fullName}</h2>
                 <p>You requested to reset your password.</p>
                 <p> Please, click the link below to reset your password</p>
-                <a href=${BaseUrl}/api/auth/resetPassword?token=${resetToken}&userId=${user.id}> Click here to reset password!</a>
+                <a href=${BaseUrl}/swagger/auth/resetPassword?token=${resetToken}&userId=${user.id}> Click here to reset password!</a>
                 </div>`,
       };
-      //localhost:3000/api/auth/resetPassword?token=81129669e5f97486d8de5e5178b9e352105e1c4e252ea11a4188d578a977ce4b&userId=63581447075b294c2885502f
+      //localhost:3000/swagger/auth/resetPassword?token=81129669e5f97486d8de5e5178b9e352105e1c4e252ea11a4188d578a977ce4b&userId=63581447075b294c2885502f
       http: console.log(
-        `link,${BaseUrl}/api/auth/resetPassword?token=${resetToken}&userId=${user.id}`
+        `link,${BaseUrl}/swagger/auth/resetPassword?token=${resetToken}&userId=${user.id}`
       );
 
       // sendEmail(user.fullName, user.email, content);

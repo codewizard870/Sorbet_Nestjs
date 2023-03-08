@@ -14,7 +14,7 @@ import {
   import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
   @ApiTags("users")
-    @Controller("/swagger/widgets")
+    @Controller("/widgets")
     @ApiBearerAuth()
     export class WidgetsController {
     constructor(private readonly widgetsService: WidgetsService) {}

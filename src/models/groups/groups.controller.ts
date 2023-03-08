@@ -15,7 +15,7 @@ import { Public } from "src/utils/auth/constants";
 
 @ApiBearerAuth()
 @ApiTags("Gigs")
-@Controller("/swagger/groups")
+@Controller("/groups")
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
