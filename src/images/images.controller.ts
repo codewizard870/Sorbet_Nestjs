@@ -15,7 +15,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 @ApiBearerAuth()
 @ApiTags("images")
-@Controller("/api/images")
+@Controller("/images")
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
@@ -25,7 +25,6 @@ export class ImagesController {
     @UploadedFile() file: Express.Multer.File,
     @Request() req
   ) {
-    console.log("req.user", req.user.id);
     return await this.imagesService.uploadProfileImage(file, req.user.id);
   }
 

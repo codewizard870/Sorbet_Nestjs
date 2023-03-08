@@ -6,6 +6,7 @@ import {
     Patch,
     Delete,
     Post,
+    Response
   } from "@nestjs/common";
   import { WidgetsService } from "./widgets.service";
   import { CreateWidgetDto } from "./dto/create-widgets-dto";
@@ -13,7 +14,7 @@ import {
   import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
   @ApiTags("users")
-    @Controller("/api/widgets")
+    @Controller("/widgets")
     @ApiBearerAuth()
     export class WidgetsController {
     constructor(private readonly widgetsService: WidgetsService) {}
@@ -63,5 +64,10 @@ import {
         @Delete("delete")
         delete(@Request() req) {
             return this.widgetsService.delete(req.user.id);
+        }
+
+        @Post('createDribbleAccessToken')
+        async createDribbleAccessToken(@Body() dribbbleCode: string) {
+            return await this.widgetsService.createDribbleAccessToken(dribbbleCode)
         }
     }

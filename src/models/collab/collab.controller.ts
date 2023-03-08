@@ -14,7 +14,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiBearerAuth()
 @ApiTags("events")
-@Controller("/api/collab")
+@Controller("/collab")
 export class CollabController {
   constructor(private readonly collabService: CollabService) {}
 

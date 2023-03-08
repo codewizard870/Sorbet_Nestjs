@@ -16,11 +16,11 @@ import {
   
   @ApiBearerAuth()
   @ApiTags("Comment")
-  @Controller("/api")
+  @Controller("/comment")
   export class CommentController {
     constructor(private readonly commentService: CommentService) {}
   
-    @Post('/post/createPostComment')
+    @Post('createPostComment')
     async createPostComment(@Body() createCommentDto: CreateCommentDto) {
       return await this.commentService.createPostComment(createCommentDto)
     }
@@ -30,17 +30,17 @@ import {
       return await this.commentService.findAllCommentsForPost(postId)
     }
 
-    @Get('comment/:id')
+    @Get(':id')
     async findOne (@Param() id: string) {
       return await this.commentService.findOne(id)
     }
 
-    @Patch('comment/:id/updateComment')
+    @Patch(':id/updateComment')
     async updateComment (@Param() id: string, @Body() updatedCommentDto: UpdateCommentDto) {
       return await this.commentService.updateComment(updatedCommentDto, id)
     }
 
-    @Delete('comment/:id/removeComment')
+    @Delete(':id/removeComment')
     async removeComment (@Param() id: string) {
       return await this.commentService.removeComment(id)
     }

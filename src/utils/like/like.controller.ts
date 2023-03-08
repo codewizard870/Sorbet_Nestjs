@@ -16,27 +16,27 @@ import {
   
   @ApiBearerAuth()
   @ApiTags("Like")
-  @Controller("/api")
+  @Controller("/like")
   export class LikeController {
     constructor(private readonly likeService: LikeService) {}
   
-    @Post('like/createPostLike')
+    @Post('/createPostLike')
     async createPostLike(@Body() createLikeDto: CreateLikeDto) {
       console.log(CreateLikeDto)
       return await this.likeService.createPostLike(createLikeDto)
     }
   
-    @Get('like/:postId/likes')
+    @Get('/:postId/likes')
     async findAllLikesForPost (@Param() postId: string) {
       return await this.likeService.findAllLikesForPost(postId)
     }
 
-    @Get('like/:id')
+    @Get('/:id')
     async findOne (@Param() id: string) {
       return await this.likeService.findOne(id)
     }
 
-    @Delete('like/remove')
+    @Delete('/remove')
     async removeLike (@Param() id: string) {
       return await this.likeService.removeLike(id)
     }

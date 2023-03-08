@@ -1,10 +1,53 @@
 import { Injectable } from "@nestjs/common";
 import * as AWS from "aws-sdk";
 import { PrismaService } from "src/utils/prisma/prisma.service";
+import { Storage } from "@google-cloud/storage";
+import path from "path";
+import { createWriteStream } from "fs";
+// import { ApolloServer, gql } from "apollo-server-express";
 
 @Injectable()
 export class ImagesService {
   constructor(private prismaService: PrismaService) {}
+
+  files = []
+
+  // typeDefs = gql`
+  //   type Query {
+  //     files: [String]
+  //   }
+  // `
+
+  // gcp = new Storage({
+  //   keyFilename: path.join(__dirname, '../filename'),
+  //   projectId: 'projectId'
+  // })
+
+  // buckets = this.gcp.getBuckets().then(buckets => console.log(buckets))
+
+  // thriveinBucket = this.gcp.bucket('thrivein-images')
+
+  // resolvers = {
+  //   Query: {
+  //     files: () => this.files
+  //   },
+  //   Mutation: {
+  //     uploadFile: async (_, { file }) => {
+  //       const { createReadStream, filename } = await file
+
+  //       await new Promise(res => 
+  //         createReadStream()
+  //           .pipe(
+  //             this.thriveinBucket.file(filename).createWriteStream({
+  //               resumable: false,
+  //               gzip: true
+  //             })
+  //           )
+  //           .on("finish", res)
+  //       )
+  //     }
+  //   }
+  // }
 
   AWS_S3_PROFILE_BUCKET = process.env.S3_AWS_PROFILE_BUCKET;
   AWS_S3_GIG_BUCKET = process.env.S3_AWS_POST_BUCKET;

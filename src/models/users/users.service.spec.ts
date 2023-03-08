@@ -120,29 +120,26 @@ describe("UsersService", () => {
   }
 
   let mockUsersService = {
-    create: jest.fn().mockImplementation(async (data: any, token: string) => {
+    create: jest.fn().mockImplementation(async (address: string, token: string) => {
       try {
-        const userFromEmail = await mockUsersService.getUserFromEmail(data.email)
-        const UserFromNearWallet = await mockUsersService.getUserFromNearWallet(data.nearWallet)
-        if (userFromEmail || UserFromNearWallet) {
+        const UserFromNearWallet = await mockUsersService.getUserFromNearWallet(address)
+        if (UserFromNearWallet) {
           throw new BadRequestException("User already Exists")
         }
         else {
           const result = await prisma.user.create({
             data: {
-              nearWallet: data.nearWallet,
-              firstName: data.firstName,
-              lastName: data.lastName,
-              email: data.email,
-              jobProfile: data.jobProfile,
-              location: data.location,
-              bio: data.bio,
+              nearWallet: address,
+              firstName: null,
+              lastName: null,
+              email: null,
+              bio: null,
               profileImage: null,
               confirmationCode: token,
             },
-          });
+          })
           if (result) {
-            return result;
+            return result
           }
         }
       } 
@@ -546,52 +543,16 @@ describe("UsersService", () => {
 
     addFollowerToUser: jest.fn().mockImplementation(async (userId: string, userToFollowId: string) => {
       try {
-        if (userId && userToFollowId) {
-          const user = await prisma.user.findFirst({
-            where: { id: userId }
-          })
-          const userToFollow = await prisma.user.findFirst({
-            where: { id: userToFollowId },
-          })
-          const following = user.following
-          const followingCheck = following.indexOf(userToFollowId)
-          console.log('followingCheck', followingCheck)
-          for (let i = 0; i < following.length; i++) {
-            if (following[i] == userToFollowId) {
-              console.log('User already follows' + userToFollow.firstName + userToFollow.lastName)
-              throw new Error(`User already follows ${userToFollow.firstName} ${userToFollow.lastName}`)
-            }
-          }
-          const updatedUser = await prisma.user.update({
-            where: { id: userId },
-            data: {
-              following: {
-                push: userToFollowId
-              }
-            }
-          })
-          const updatedUserToFollow = await prisma.user.update({
-            where: { id: userToFollowId },
-            data: {
-              followers: {
-                push: userId
-              }
-            }
-          })
-          console.log('Added follower - updated user: ', updatedUser)
-          console.log('Added following - updated user', updatedUserToFollow)
-          if (updatedUser && updatedUserToFollow) {
-            return { message: `${user.firstName} ${user.lastName} successfully followed ${userToFollow.firstName} ${userToFollow.lastName}` }
-          }
-          else {
-            console.log("Failed to update user or userToFollow")
-            throw new Error("Failed to update user or userToFollow")
-          }
+        const user = await prisma.follow.findFirst({
+          where: { fromUserId: userId, toUserId: userToFollowId }
+        })
+        if (user) {
+          console.log("Failed to update user or userToFollow")
+          return { message: `alreay followed from ${userId} to ${userToFollowId}` }
         }
-        else {
-          console.log('Missing userId or userToFollowId')
-          throw new Error("Missing userId or userToFollowId")
-        }
+        return await prisma.follow.create({
+          data: { fromUserId: userId, toUserId: userToFollowId }
+        })
       }
       catch (error) {
         console.log(error)
@@ -601,63 +562,17 @@ describe("UsersService", () => {
 
     removeFollowerFromUser: jest.fn().mockImplementation(async (userId: string, userToUnfollowId: string) => {
       try {
-        if (userId && userToUnfollowId) {
-          const user = await prisma.user.findFirst({
-            where: { id: userId },
-          })
-          const userToUnfollow = await prisma.user.findFirst({
-            where: { id: userToUnfollowId }
-          })
-          let updateUserFollowingArray: any
-          const following = user.following
-          const index = following.indexOf(userToUnfollowId)
-          if (index != -1) {
-            // Remove id from following array and update user following array
-            const updatedFollowingArray = following.splice(index, 1)
-            updateUserFollowingArray = await prisma.user.update({
-              where: { id: userId },
-              data: {
-                following: updatedFollowingArray
-              }
-            })
-            console.log('updated user following array', updateUserFollowingArray)
-          }
-          else {
-            console.log('User does not currently follow' + userToUnfollow.firstName + userToUnfollow.lastName)
-            throw new Error(`User does not follow ${userToUnfollow.firstName} ${userToUnfollow.lastName}.`)
-          }
-          
-            // Remove id from followers of user to unfollow and update followers array
-            let updatedFollowersArray: any
-            const followers = userToUnfollow.followers
-            const _index = followers.indexOf(userId)
-            if (index != -1) {
-              updatedFollowersArray = followers.splice(_index, 1)
-              const updateFollowersArray = await prisma.user.update({
-                where: { id: userToUnfollowId },
-                data: {
-                  followers: updatedFollowersArray
-                }
-              })
-              console.log('updated userToUnfollow followers array', updateFollowersArray)
-            }   
-            else {
-              console.log('User does not currently have' + userToUnfollow.firstName + userToUnfollow.lastName + 'as a follower')
-              throw new Error(`User does not have ${userToUnfollow.firstName} ${userToUnfollow.lastName} as a follower.`)
-            }
-          if (updateUserFollowingArray && updatedFollowersArray) {
-            return { message: `Successfully removed follower: ${userToUnfollow.firstName} ${userToUnfollow.lastName}` }  
-          }
-          else {
-            console.log('Could not update user followin array or userToUnfollow followers array')
-            throw new Error("Could not update user followin array or userToUnfollow followers array")
-          }
+        const user = await prisma.follow.findFirst({
+          where: { fromUserId: userId, toUserId: userToUnfollowId }
+        })
+        if (!user) {
+          console.log("Failed to update user or userToUnFollow")
+          return { message: `not exising following from ${userId} to ${userToUnfollowId}` }
         }
-        else {
-          console.log("Missing userId or userToUnfollowId")
-          throw new Error(`Missing userId or userToConnectWithId - userId: ${userId}, userToUnfollowId: ${userToUnfollowId}`)
-        }
-      } 
+        return await prisma.follow.deleteMany({
+          where: { fromUserId: userId, toUserId: userToUnfollowId }
+        })
+      }
       catch (error) {
         console.log(error)
         throw new Error("Unable to unfollow this user. Please try again.")
@@ -667,30 +582,30 @@ describe("UsersService", () => {
     followerIntersection: jest.fn().mockImplementation(async (user1_Id: string, user2_Id: string) => {
       try {
         const user1 = await prisma.user.findFirst({
-          where: { id: user1_Id }
+          where: { id: user1_Id }, include: { followers: true }
         })
-    
+  
         const user2 = await prisma.user.findFirst({
-          where: { id: user2_Id }
+          where: { id: user2_Id }, include: { followers: true }
         })
-    
+  
         if (user1 && user2) {
-          const connections_user1 = user1.connections
-          const connections_user2 = user2.connections
-          const connectionsIntersection = connections_user1.filter(connection => connections_user2.includes(connection))
-          if (connectionsIntersection.length > 0) {
-            return connectionsIntersection
+          const followers_user1 = user1.followers
+          const followers_user2 = user2.followers
+          const followersIntersection = followers_user1.filter(follower1 => followers_user2.find(follower2 => follower1.fromUserId == follower2.fromUserId))
+          if (followersIntersection.length > 0) {
+            return followersIntersection
           }
           else {
-            console.log(`User: ${user1.firstName} ${user1.lastName} has no common connections with user: ${user2.firstName} ${user2.lastName}`)
-            return {message: `User: ${user1.firstName} ${user1.lastName} has no common followers with user: ${user2.firstName} ${user2.lastName}`}
+            console.log(`User: ${user1.firstName} ${user1.lastName} has no common followers with user: ${user2.firstName} ${user2.lastName}`)
+            return { message: `User: ${user1.firstName} ${user1.lastName} has no common followers with user: ${user2.firstName} ${user2.lastName}` }
           }
         }
         else {
-          console.log("Could not find user1 or user2.")
-          throw new Error("Could not find user1 or user2.")
+          console.log("Could not update user or userToFollow.")
+          throw new Error("Could not update user or userToFollow.")
         }
-      } 
+      }
       catch (error) {
         console.log(error)
         throw new Error("Unable to check for mutual followers. Please try again.")
@@ -702,11 +617,11 @@ describe("UsersService", () => {
         const user1 = await prisma.user.findFirst({
           where: { id: user1_Id }
         })
-    
+  
         const user2 = await prisma.user.findFirst({
           where: { id: user2_Id }
         })
-    
+  
         if (user1 && user2) {
           const connections_user1 = user1.connections
           const connections_user2 = user2.connections
@@ -716,14 +631,14 @@ describe("UsersService", () => {
           }
           else {
             console.log(`User: ${user1.firstName} ${user1.lastName} has no common connections with user: ${user2.firstName} ${user2.lastName}`)
-            return {message: `User: ${user1.firstName} ${user1.lastName} has no common connections with user: ${user2.firstName} ${user2.lastName}`}
+            return { message: `User: ${user1.firstName} ${user1.lastName} has no common connections with user: ${user2.firstName} ${user2.lastName}` }
           }
         }
         else {
           console.log("Could not find user1 or user2.")
           throw new Error("Could not find user1 or user2.")
-        } 
-      } 
+        }
+      }
       catch (error) {
         console.log(error)
         throw new Error("Unable to check for mutual connections. Please try again.")
@@ -733,14 +648,17 @@ describe("UsersService", () => {
     userRandomRecommendations: jest.fn().mockImplementation(async (userId: string) => {
       try {
         const user = await prisma.user.findFirst({
-          where: { id: userId }
+          where: { id: userId }, include: { followers: true }
         })
         const userFollowers = user.followers
         const allUsers = await mockUsersService.getAll()
+  
         if (user && allUsers) {
-          const filteredUsers = allUsers.filter((filterUser: any) => !userFollowers.includes(filterUser.id))
+          const filteredUsers = allUsers.filter(
+            filterUser => (filterUser.id != userId) && !userFollowers.find(follower => filterUser.id == follower.fromUserId)
+          )
+          let recommendationsResult = []
           if (filteredUsers) {
-            let recommendationsResult = []
             for (let i = 0; i < 3; i++) {
               const randomInt = Math.floor((filteredUsers.length - 1) * Math.random())
               const randomUser = filteredUsers[randomInt]
@@ -748,23 +666,15 @@ describe("UsersService", () => {
                 recommendationsResult.push(randomUser)
                 filteredUsers.splice(randomInt, 1)
               }
-              else {
-                console.log("Could not find random user.")
-                throw new Error("Could not find random user.")
-              }
             }
-            return recommendationsResult
           }
-          else {
-            console.log(`Could not find users that ${user.firstName} ${user.lastName} does not follow.`)
-            throw new Error(`Could not find users that ${user.firstName} ${user.lastName} does not follow.`)
-          }
+          return recommendationsResult
         }
         else {
           console.log("Could not get user or allUsers")
           throw new Error("Could not get user or allUsers")
         }
-      } 
+      }
       catch (error) {
         console.log(error)
         throw new Error("Unable to recommend users. Please try again.")
@@ -774,31 +684,31 @@ describe("UsersService", () => {
     userRecommendations: jest.fn().mockImplementation(async (userId: string) => {
       try {
         const user = await prisma.user.findFirst({
-          where: { id: userId }
+          where: { id: userId }, include: { followers: true }
         })
         const allUsers = await mockUsersService.getAll()
         if (allUsers.length > 0) {
           let intersectionsCounts = []
           for (let i = 0; i < allUsers.length; i++) {
             const connectionIntersections = allUsers[i].connections.filter((connection: string) => user.connections.includes(connection))
-            const followerIntersections = allUsers[i].followers.filter((follower: string) => user.followers.includes(follower))
+            const followerIntersections = allUsers[i].followers.filter(follower1 => user.followers.find(follower2 => follower1.fromUserId == follower2.fromUserId))
             const totalIntersections = connectionIntersections.length + followerIntersections.length
             intersectionsCounts.push([allUsers[i].id, totalIntersections])
           }
           // sort array by most follower / connection intersections and return
           const mostMutual = intersectionsCounts
-            .sort(([ , a], [ , b]) => b - a)
+            .sort(([, a], [, b]) => b - a)
             .slice(0, 3)
           const recommendations = []
           if (mostMutual) {
             for (let i = 0; i < mostMutual.length; i++) {
               const _user = await prisma.user.findFirst({
-                where: { id: mostMutual[i][0] }
+                where: { id: mostMutual[i][0] }, include: { followers: true }
               })
-              const filteredFollowers = _user.followers.filter((follower: string) => !user.followers.includes(follower))
+              const filteredFollowers = _user.followers.filter(follower1 => !user.followers.find(follower2 => follower1.fromUserId == follower2.fromUserId))
               if (filteredFollowers.length > 0) {
                 const getUser = await prisma.user.findFirst({
-                  where: { id: filteredFollowers[0] }
+                  where: { id: filteredFollowers[0].fromUserId }
                 })
                 recommendations.push(getUser)
               }
@@ -815,7 +725,7 @@ describe("UsersService", () => {
           }
           else {
             console.log("Could not find the most mutual followers / connections")
-            throw new Error ("Could not find the most mutual followers / connections")
+            throw new Error("Could not find the most mutual followers / connections")
           }
           return
         }
@@ -854,7 +764,7 @@ describe("UsersService", () => {
 
   let newUser: any
   it("should create a user", async () => {
-    const createdUser = await service.create(createUserDto, generateRandomString(24))
+    const createdUser = await service.create('address', generateRandomString(24))
     newUser = createdUser
     expect(createdUser).toEqual({
       nearWallet: expect.any(String),
