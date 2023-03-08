@@ -223,15 +223,25 @@ model Group {
 }
 
 enum WidgetType {
-  NFT          @map("nft")
-  Image        @map("image")
-  Project_Link @map("project_link")
+  NFT                 @map("nft")
+  Photo               @map("photo")
+  Photo_Album         @map("photo_album")
+  Youtube_Video       @map("youtube_video")
+  Youtube_Plalist     @map("youtube_playlist")
+  Spotify_Song        @map("spotify_song")
+  Spotify_Album       @map("spotify_album")
+  Soundcloud_Song     @map("soundcloud_song")
+  Github_Profile      @map("github_profile")
+  Instagram_Post      @map("instagram_post")
+  Instagram_Profile   @map("instagram_profile")
+  Twitter_Profile     @map("twitter_profile")
 
   @@map("WidgetType")
 }
 
 model Widget {
   id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  profile_url  String?
   name         String?
   description  String?
   type         WidgetType
@@ -239,7 +249,7 @@ model Widget {
   nft_metadata String?
   project_link String?
   userId       String     @db.ObjectId
-  user         User?      @relation(fields: [userId], references: [id])
+  user         User       @relation(fields: [userId], references: [id])
   createdAt    DateTime   @default(now())
   updatedAt    DateTime?  @default(now())
 }

@@ -18,7 +18,7 @@ import { MagicService } from "./magic.service";
   const magic = new Magic(process.env.MAGIC_SECRET_KEY);
 
   @ApiTags("auth")
-  @Controller("/api/auth")
+  @Controller("/swagger/auth")
   export class MagicController {
     constructor(
         // private readonly magicAuthGuard: MagicAuthGuard,

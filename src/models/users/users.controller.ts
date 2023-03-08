@@ -14,14 +14,14 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("users")
-@Controller("/api/user")
+@Controller("/swagger/user")
 @ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post("createUser")
-  async create(@Request() req, @Body() token: string) {
-    return await this.usersService.create(req, token)
+  async create(@Body() address: string, @Body() token: string) {
+    return await this.usersService.create(address, token)
   }
 
   @Get("getAll")

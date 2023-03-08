@@ -19,7 +19,7 @@ import { Public } from "src/utils/auth/constants";
 
 @ApiBearerAuth()
 @ApiTags("locations")
-@Controller("/api/locations")
+@Controller("/swagger/locations")
 export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
 
