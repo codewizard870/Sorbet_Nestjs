@@ -45,23 +45,20 @@ describe("UsersController", () => {
   let controller: UsersController;
 
   let mockUsersService = {
-    create: jest.fn().mockImplementation(async (data: any, token: string) => {
+    create: jest.fn().mockImplementation(async (address: string, token: string) => {
       try {
-        const userFromEmail = await mockUsersService.getUserFromEmail(data.email)
-        const UserFromNearWallet = await mockUsersService.getUserFromNearWallet(data.nearWallet)
-        if (userFromEmail || UserFromNearWallet) {
+        const UserFromNearWallet = await mockUsersService.getUserFromNearWallet(address)
+        if (UserFromNearWallet) {
           throw new BadRequestException("User already Exists")
         }
         else {
           const result = await prisma.user.create({
             data: {
-              nearWallet: data.nearWallet,
-              firstName: data.firstName,
-              lastName: data.lastName,
-              email: data.email,
-              jobProfile: data.jobProfile,
-              location: data.location,
-              bio: data.bio,
+              nearWallet: address,
+              firstName: null,
+              lastName: null,
+              email: null,
+              bio: null,
               profileImage: null,
               confirmationCode: token,
             },
@@ -784,7 +781,7 @@ describe("UsersController", () => {
   let newUser: any
   let req: any
   it("should create a user", async () => {
-    const createdUser = await controller.create(createUserDto, generateRandomString(7))
+    const createdUser = await controller.create('address', generateRandomString(7))
     newUser = createdUser
     req = {
       user: {

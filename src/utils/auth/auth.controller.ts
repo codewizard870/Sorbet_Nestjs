@@ -17,7 +17,7 @@ import { userInfo } from "os";
 
 @ApiBearerAuth()
 @ApiTags("auth")
-@Controller("/api/auth")
+@Controller("/swagger/auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

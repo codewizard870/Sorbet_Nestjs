@@ -16,7 +16,7 @@ import {
   
   @ApiBearerAuth()
   @ApiTags("Comment")
-  @Controller("/api")
+  @Controller("/swagger")
   export class CommentController {
     constructor(private readonly commentService: CommentService) {}
   

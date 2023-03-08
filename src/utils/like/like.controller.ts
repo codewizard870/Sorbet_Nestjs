@@ -16,7 +16,7 @@ import {
   
   @ApiBearerAuth()
   @ApiTags("Like")
-  @Controller("/api")
+  @Controller("/swagger")
   export class LikeController {
     constructor(private readonly likeService: LikeService) {}
   

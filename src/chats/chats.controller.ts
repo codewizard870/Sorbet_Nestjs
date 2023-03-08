@@ -15,7 +15,7 @@ import { UpdateChatDto } from "./dto/update-chat.dto";
 
 @ApiBearerAuth()
 @ApiTags("Chats")
-@Controller("/api/chats")
+@Controller("/swagger/chats")
 export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 

@@ -17,7 +17,7 @@ import { CreateCommentDto } from "src/utils/comment/dto/create-comment-dto";
 import { UpdateCommentDto } from "src/utils/comment/dto/update-comment-dto";
 @ApiBearerAuth()
 @ApiTags("posts")
-@Controller("/api/posts")
+@Controller("/swagger/posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 

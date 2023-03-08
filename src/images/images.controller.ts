@@ -15,7 +15,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 @ApiBearerAuth()
 @ApiTags("images")
-@Controller("/api/images")
+@Controller("/swagger/images")
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
