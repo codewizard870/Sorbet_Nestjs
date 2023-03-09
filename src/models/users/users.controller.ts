@@ -7,6 +7,7 @@ import {
   Delete,
   Post,
   Query,
+  Param,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -50,17 +51,17 @@ export class UsersController {
     )
   }
 
-  @Patch("update")
-  async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+  @Patch(":id/update")
+  async update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.updateUserProfile(
-      req.user.id,
+      id,
       updateUserDto
     )
   }
 
-  @Delete("delete")
-  deleteUser(@Request() req) {
-    return this.usersService.delete(req.user.id);
+  @Delete(":id/delete")
+  deleteUser(@Param("id") id: string) {
+    return this.usersService.delete(id)
   }
 
   @Patch("addUserToGroup")
