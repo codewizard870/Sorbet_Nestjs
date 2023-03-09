@@ -19,6 +19,7 @@ model User {
   bio                 String?
   confirmationCode    String?  @unique
   profileImage        String?
+  tags                String[] @default([])
   connections         String[] @default([]) @db.ObjectId
   connection_requests String[] @default([]) @db.ObjectId
 
@@ -240,31 +241,36 @@ model Group {
 }
 
 enum WidgetType {
-  NFT                 @map("nft")
-  Photo               @map("photo")
-  Photo_Album         @map("photo_album")
-  Youtube_Video       @map("youtube_video")
-  Youtube_Plalist     @map("youtube_playlist")
-  Spotify_Song        @map("spotify_song")
-  Spotify_Album       @map("spotify_album")
-  Soundcloud_Song     @map("soundcloud_song")
-  Github_Profile      @map("github_profile")
-  Instagram_Post      @map("instagram_post")
-  Instagram_Profile   @map("instagram_profile")
-  Twitter_Profile     @map("twitter_profile")
+  NFT                     @map("nft")
+  Photo                   @map("photo")
+  Photo_Album             @map("photo_album")
+  Youtube_Video           @map("youtube_video")
+  Youtube_Plalist         @map("youtube_playlist")
+  Spotify_Song            @map("spotify_song")
+  Spotify_Album           @map("spotify_album")
+  Soundcloud_Song         @map("soundcloud_song")
+  Github_Profile          @map("github_profile")
+  Instagram_Post          @map("instagram_post")
+  Instagram_Profile       @map("instagram_profile")
+  Twitter_Profile         @map("twitter_profile")
+  Apple_Music_Song        @map("apple_music_song")
+  Apple_Music_Playlist    @map("apple_music_playlist")
+  Apple_Podcast_Episode   @map("apple_podcast_episode")
+  Apple_Podcast_Playlist  @map("apple_podcast_playlist")
+  Dribbble_Shot           @map("dribble_shot")
 
   @@map("WidgetType")
 }
 
 model Widget {
   id           String     @id @default(auto()) @map("_id") @db.ObjectId
-  profile_url  String?
+  username     String?
+  url          String?
   name         String?
   description  String?
   type         WidgetType
   image        String?
   nft_metadata String?
-  project_link String?
   userId       String     @db.ObjectId
   user         User       @relation(fields: [userId], references: [id])
   createdAt    DateTime   @default(now())

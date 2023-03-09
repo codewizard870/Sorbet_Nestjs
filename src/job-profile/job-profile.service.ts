@@ -8,7 +8,7 @@ import { UpdateJobProfileDto } from "./dto/update-job-profile.dto";
 export class JobProfileService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(data: any, id: string) {
+  async create(data: CreateJobProfileDto, id: string) {
     try {
       const result = await this.prismaService.jobProfile.create({
         data: {
@@ -124,15 +124,35 @@ export class JobProfileService {
     }
   }
 
+  async update(id: string, data: UpdateJobProfileDto) {
+    try {
+      const result = await this.prismaService.jobProfile.update({
+        where: { id: id },
+        data: data
+      })
+      if (result) {
+        return result
+      }
+      else {
+        console.log("Failed to updated job profile")
+        return { message: "Failed to updated job profile" }
+      }
+    } 
+    catch (error) {
+      
+    }
+  }
+
   async remove(id: string) {
     try {
       const result = await this.prismaService.jobProfile.delete({
         where: { id: id },
       });
       if (result) {
-        return { message: "Deleted Successfully" };
-      } else {
-        return { message: "Something went wrong" };
+        return { message: "Deleted Successfully" }
+      } 
+      else {
+        return { message: "Something went wrong" }
       }
     } 
     catch (error) {

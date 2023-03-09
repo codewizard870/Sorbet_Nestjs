@@ -27,7 +27,7 @@ export class PostsController {
     return await this.postsService.create(createPostDto)
   }
 
-  @Get("getAll")
+  @Get("findAll")
   findAll() {
     return this.postsService.findAll()
   }
@@ -37,12 +37,12 @@ export class PostsController {
     return this.postsService.findOne(id)
   }
 
-  @Patch(":id")
+  @Patch(":id/update")
   update(@Param("id") id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto)
   }
 
-  @Delete(":id")
+  @Delete(":id/remove")
   remove(@Param("id") id: string) {
     return this.postsService.remove(id)
   }
