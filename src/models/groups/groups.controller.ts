@@ -19,12 +19,12 @@ import { Public } from "src/utils/auth/constants";
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
-  @Post()
+  @Post("create")
   async create(@Body() createGroupDto: CreateGroupDto, userId: string) {
     return await this.groupsService.create(createGroupDto, userId)
   }
 
-  @Get()
+  @Get("findAll")
   async findAll() {
     return await this.groupsService.findAll();
   }
@@ -34,12 +34,12 @@ export class GroupsController {
     return this.groupsService.findOne(id);
   }
 
-  @Patch(":id")
+  @Patch(":id/update")
   update(@Param("id") id: string, @Body() updateGigDto: UpdateGroupDto) {
     return this.groupsService.update(id, updateGigDto);
   }
 
-  @Delete(":id")
+  @Delete(":id/remove")
   remove(@Param("id") id: string) {
     return this.groupsService.remove(id);
   }

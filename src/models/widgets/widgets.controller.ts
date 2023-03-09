@@ -6,6 +6,7 @@ import {
     Patch,
     Delete,
     Post,
+    Param,
     Response
   } from "@nestjs/common";
   import { WidgetsService } from "./widgets.service";
@@ -29,7 +30,7 @@ import {
         }
 
         @Get("getWidgetsByUserId")
-        async getWidgetsByUserId(@Body() userId) {
+        async getWidgetsByUserId(@Body() userId: string) {
             return await this.widgetsService.getWidgetsByUserId(userId)
         }
 
@@ -43,27 +44,22 @@ import {
             return await this.widgetsService.getWidgetFromNFTMetadata(nft_metadata)
         }
 
-        @Get("getWidgetFromProjectLink")
-        async getWidgetFromProjectLink(@Body() project_link: string) {
-            return await this.widgetsService.getWidgetFromProjectLink(project_link)
-        }
-
         @Get("getAll")
         async getAll() {
             return await this.widgetsService.getAll()
         }
 
-        @Patch('update')
-        async update(@Request() req, @Body() updateWidgetDto: UpdateWidgetDto) {
+        @Patch(':id/update')
+        async update(@Param() id, @Body() updateWidgetDto: UpdateWidgetDto) {
             return await this.widgetsService.update(
-                req.user.id,
+                id,
                 updateWidgetDto
             )
         }
 
-        @Delete("delete")
-        delete(@Request() req) {
-            return this.widgetsService.delete(req.user.id);
+        @Delete(":id/delete")
+        delete(@Param() id,) {
+            return this.widgetsService.delete(id)
         }
 
         @Post('createDribbleAccessToken')

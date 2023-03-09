@@ -5,6 +5,7 @@ import {
   Request,
   Patch,
   Delete,
+  Param,
   Post,
   Query,
 } from "@nestjs/common";
@@ -19,7 +20,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  @Post("createUser")
+  @Post("create")
   async create(@Body() address: string, @Body() token: string) {
     return await this.usersService.create(address, token)
   }
@@ -30,14 +31,14 @@ export class UsersController {
   }
 
   @Get("getUserFromEmail")
-  async getUserFromEmail(@Query("email") email: string) {
+  async getUserFromEmail(@Body("email") email: string) {
     return await this.usersService.getUserFromEmail(
       email
     )
   }
 
   @Get("getUserFromNearWallet")
-  async getUserFromNearWallet(@Query("nearWallet") nearWallet: string) {
+  async getUserFromNearWallet(@Body("nearWallet") nearWallet: string) {
     return await this.usersService.getUserFromNearWallet(
       nearWallet
     )
@@ -50,17 +51,17 @@ export class UsersController {
     )
   }
 
-  @Patch('update')
-  async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+  @Patch(":id/update")
+  async update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.updateUserProfile(
-      req.user.id,
+      id,
       updateUserDto
     )
   }
 
-  @Delete("delete")
-  deleteUser(@Request() req) {
-    return this.usersService.delete(req.user.id);
+  @Delete(":id/delete")
+  deleteUser(@Param("id") id: string) {
+    return this.usersService.delete(id);
   }
 
   @Patch("addUserToGroup")
@@ -104,17 +105,17 @@ export class UsersController {
   }
 
   @Post("addFollowerToUser")
-  async addFollowerToUser(@Body("userId") userId: string, @Body("userToFollowId") userToFollowId: string) {
+  async addFollowerToUser(@Request() req, @Body("userToFollowId") userToFollowId: string) {
     return await this.usersService.addFollowerToUser(
-      userId,
+      req.user.id,
       userToFollowId
     )
   }
 
   @Post("removeFollowerFromUser")
-  async removeFollowerFromUser(@Body("userId") userId: string, @Body("userToUnfollowId") userToUnfollowId: string) {
+  async removeFollowerFromUser(@Request() req, @Body("userToUnfollowId") userToUnfollowId: string) {
     return await this.usersService.removeFollowerFromUser(
-      userId,
+      req.user.id,
       userToUnfollowId
     )
   }
@@ -127,7 +128,7 @@ export class UsersController {
     )
   }
 
-  @Get("getMutualConnections")
+  @Get(":getMutualConnections")
   async getMutualConnections(@Request() req, @Body() user2_Id: string) {
     return await this.usersService.connectionIntersection(
       req.user.id,
@@ -136,16 +137,16 @@ export class UsersController {
   }
 
   @Get("userRandomRecommendations")
-  async userRandomRecommendations(@Query("userId") userId: string) {
+  async userRandomRecommendations(@Request() req) {
     return await this.usersService.userRandomRecommendations(
-      userId
+      req.user.id
     )
   }
 
   @Get("userRecommendations")
-  async userRecommendations(@Query("userId") userId: string) {
+  async userRecommendations(@Request() req) {
     return await this.usersService.userRecommendations(
-      userId
+      req.user.id
     )
   }
 }
