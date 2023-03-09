@@ -59,6 +59,7 @@
     "passport-local": "^1.0.0",
     "passport-magic": "^1.0.0",
     "passport-magic-login": "^1.2.1",
+    "prop-types": "^15.8.1",
     "react-twitter-embed": "^4.0.4",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

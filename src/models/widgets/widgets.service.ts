@@ -18,32 +18,15 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
   
     async create(data: any) {
       try {
-          const user = this.prisma.user.findFirst({
-            where: { id: data.userId }
-          })
-          console.log('user', user)
-
-          // const widgets = user.widgets
-          // const nftCheck = widgets.includes(data.nft_metadata)
-          // const imageCheck = widgets.includes(data.image)
-          // const projectLink = widgets.includes(data.project_link)
-
-          // if (nftCheck || imageCheck || projectLink) {
-          //   console.log('Widget already exists')
-          //   return { message: 'Widget already exists' }
-          // }
-          // else {
-
-          // }
-
-          const result = await this.prisma.widget.create({
+         const result = await this.prisma.widget.create({
             data: {
+              username: data.username,
+              url: data.url,
               name: data.name,
               description: data.description,
               type: data.type,
               image: data.image,
               nft_metadata: data.nft_metadata,
-              project_link: data.project_link,
               userId: data.userId,
               createdAt: data.createdAt,
               updatedAt: data.updatedAt
@@ -131,25 +114,6 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
             else {
               console.log("Could not find widget by nft metadata")
               return { message: 'Could not find widget by nft metadata' }
-            }
-          } 
-        catch (error) {
-            console.log(error)
-            throw new Error("An error occured. Please try again.")
-        }
-    }
-
-    async getWidgetFromProjectLink(project_link: string) {
-        try {
-            const result = await this.prisma.widget.findFirst({
-              where: {project_link: project_link},
-            })
-            if (result) {  
-              return result
-            }
-            else {
-              console.log("Could not find widget by project link")
-              return { message: 'Could not find widget by project link' }
             }
           } 
         catch (error) {

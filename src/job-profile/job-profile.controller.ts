@@ -18,38 +18,43 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 export class JobProfileController {
   constructor(private readonly jobProfileService: JobProfileService) {}
 
-  @Post()
+  @Post("create")
   create(@Body() createJobProfileDto: CreateJobProfileDto, @Request() req) {
     return this.jobProfileService.create(createJobProfileDto, req.user.id);
   }
 
-  @Get()
+  @Get("findAll")
   findAll() {
-    return this.jobProfileService.getAll();
+    return this.jobProfileService.getAll()
   }
 
-  @Get("/jobId/:jobId")
+  @Get("/findOne/:jobId")
   findOne(@Param("jobId") jobId: string) {
-    return this.jobProfileService.getFromJobId(jobId);
+    return this.jobProfileService.getFromJobId(jobId)
   }
 
-  @Get("/jobName/:jobName")
+  @Get("/getFromJobName/:jobName")
   getFromJobName(@Param("jobName") jobName: string) {
-    return this.jobProfileService.getFromJobName(jobName);
+    return this.jobProfileService.getFromJobName(jobName)
   }
 
   @Get("myProfile")
   getFromUserId(@Request() req) {
-    return this.jobProfileService.getFromUserId(req.user.id);
+    return this.jobProfileService.getFromUserId(req.user.id)
   }
 
   @Get("/jobType/:jobType")
   getFromJobType(@Param("jobType") jobType: string) {
-    return this.jobProfileService.getFromJobType(jobType);
+    return this.jobProfileService.getFromJobType(jobType)
+  }
+
+  @Patch(":id/update")
+  update(@Param("id") id: string, @Body() data: UpdateJobProfileDto) {
+    return this.jobProfileService.update(id, data)
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.jobProfileService.remove(id);
+    return this.jobProfileService.remove(id)
   }
 }

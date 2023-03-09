@@ -63,7 +63,6 @@ describe("WidgetsService", () => {
               type: data.type,
               image: data.image,
               nft_metadata: data.nft_metadata,
-              project_link: data.project_link,
               userId: data.userId,
               createdAt: data.createdAt,
               updatedAt: data.updatedAt
@@ -151,25 +150,6 @@ describe("WidgetsService", () => {
             else {
               console.log("Could not find widget by nfts")
               return { message: 'Could not find widget by nfts' }
-            }
-          } 
-        catch (error) {
-            console.log(error)
-            throw new Error("An error occured. Please try again.")
-        }
-      }),
-
-      getWidgetFromProjectLink: jest.fn().mockImplementation(async (project_link: string) => {
-        try {
-            const result = await prisma.widget.findFirst({
-              where: {project_link: project_link},
-            })
-            if (result) {  
-              return result
-            }
-            else {
-              console.log("Could not find widget by project links")
-              return { message: 'Could not find widget by project links' }
             }
           } 
         catch (error) {
@@ -345,19 +325,6 @@ describe("WidgetsService", () => {
         const widgetFromNftMetadata = await service.getWidgetFromNFTMetadata(widget.nft_metadata)
         console.log('widgetFromNfts', widgetFromNftMetadata)
         expect(service.getWidgetFromNFTMetadata).toBeCalled()
-        // expect(widgetFromNfts).toEqual({
-            
-        // })
-    })
-
-    it("should define a function to get a user from the NFTs", () => {
-        expect(service.getWidgetFromProjectLink).toBeDefined()
-      })
-    
-    it("should get a widget from project links", async () => {
-        const widgetFromProjectLinks = await service.getWidgetFromProjectLink(widget.project_links)
-        console.log('widgetFromProjectLinks', widgetFromProjectLinks)
-        expect(service.getWidgetFromProjectLink).toBeCalled()
         // expect(widgetFromNfts).toEqual({
             
         // })

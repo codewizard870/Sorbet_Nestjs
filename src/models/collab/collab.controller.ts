@@ -18,12 +18,12 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 export class CollabController {
   constructor(private readonly collabService: CollabService) {}
 
-  @Post()
+  @Post("create")
   async create(@Body() createCollabDto: CreateCollabDto) {
     return await this.collabService.create(createCollabDto)
   }
 
-  @Get()
+  @Get("findAll")
   async findAll() {
     return await this.collabService.findAll()
   }
@@ -48,12 +48,12 @@ export class CollabController {
     return this.collabService.findByPublicKey(publicKey)
   }
 
-  @Patch(":id")
+  @Patch(":id/update")
   update(@Param("id") id: string, @Body() updateCollabDto: UpdateCollabDto) {
     return this.collabService.update(id, updateCollabDto)
   }
 
-  @Delete(":id")
+  @Delete(":id/delete")
   remove(@Param("id") id: string) {
     return this.collabService.remove(id)
   }
