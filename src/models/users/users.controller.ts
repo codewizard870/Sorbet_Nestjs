@@ -27,27 +27,27 @@ export class UsersController {
 
   @Get("getAll")
   async getAll() {
-    return await this.usersService.getAll();
+    return await this.usersService.getAll()
   }
 
-  @Get("getUserFromEmail")
-  async getUserFromEmail(@Body("email") email: string) {
+  @Get("/getUserByEmail/:email")
+  async getUserFromEmail(@Param("email") email: string) {
     return await this.usersService.getUserFromEmail(
       email
     )
   }
 
-  @Get("getUserFromNearWallet")
-  async getUserFromNearWallet(@Body("nearWallet") nearWallet: string) {
+  @Get("getUserByNearWallet/:nearWallet")
+  async getUserFromNearWallet(@Param("nearWallet") nearWallet: string) {
     return await this.usersService.getUserFromNearWallet(
       nearWallet
     )
   }
 
-  @Get("getUserFromId")
-  async getUserFromId(@Request() req) {
+  @Get(":id")
+  async getUserFromId(@Param("id") id: string) {
     return await this.usersService.getUserFromId(
-      req.user.id
+      id
     )
   }
 

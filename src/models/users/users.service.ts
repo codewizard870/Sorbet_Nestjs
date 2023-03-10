@@ -67,14 +67,14 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { nearWallet: nearWallet },
-        include: { jobProfile: true, location: true, post: true, groups: true, followers: true, following: true },
+        include: { jobProfile: true, location: true, post: true, groups: true },
       })
       if (result) {
         return result
       }
       else {
         console.log("Could not find user by near wallet address")
-        return
+        return { message:  `Could not find user by near wallet address: ${nearWallet}`}
       }
     }
     catch (error) {
@@ -127,15 +127,15 @@ export class UsersService {
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            jobProfile: data.jobProfile,
-            location: data.location,
             bio: data.bio,
             profileImage: data.profileImage,
+            profileBannerImage: data.profileBannerImage,
+            tags: data.tags,
+            updatedAt: new Date(Date.now())
           },
         });
-        console.log(result)
         if (result) {
-          return { message: "Update Successfully" };
+          return result
         }
         else {
           return { message: "Something went wrong" };

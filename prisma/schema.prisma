@@ -19,6 +19,7 @@ model User {
   bio                 String?
   confirmationCode    String?  @unique
   profileImage        String?
+  profileBannerImage  String?
   tags                String[] @default([])
   connections         String[] @default([]) @db.ObjectId
   connection_requests String[] @default([]) @db.ObjectId
@@ -36,6 +37,7 @@ model User {
   groups     Group[]      @relation(name: "members", fields: [groupIDs], references: [id])
   widgets    Widget[]
   createdAt  DateTime     @default(now())
+  updatedAt  DateTime?
 }
 
 model JobProfile {
