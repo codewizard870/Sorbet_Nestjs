@@ -44,10 +44,10 @@ export class UsersController {
     )
   }
 
-  @Get("getUserFromId")
-  async getUserFromId(@Request() req) {
+  @Get(":id/getUserFromId")
+  async getUserFromId(@Query() id: string) {
     return await this.usersService.getUserFromId(
-      req.user.id
+      id
     )
   }
 
