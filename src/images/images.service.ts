@@ -2,73 +2,103 @@ import { Injectable } from "@nestjs/common";
 import * as AWS from "aws-sdk";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { Storage } from "@google-cloud/storage";
-import path from "path";
-import { createWriteStream } from "fs";
-// import { ApolloServer, gql } from "apollo-server-express";
+import * as path from "path";
+
+const cwd = path.join(__dirname, '..');
+const storage = new Storage({
+  projectId: 'composite-snow-379908',
+  keyFilename: '/Users/daenamcclintock/ThriveIN/ThriveIN_Backend/NestJS/composite-snow-379908-80e8442bb816.json'
+})
+console.log('cwd', cwd)
+
+interface AuthenticationModel {
+	keyFile?: string;
+	keyFilename?: string;
+	autoRetry?: boolean;
+	projectId?: string;
+	apiEndpoint?: string;
+	maxRetries?: number;
+	client_id?: string;
+	client_secret?: string;
+	scope?: string[];
+	email?: string;
+}
 
 @Injectable()
 export class ImagesService {
   constructor(private prismaService: PrismaService) {}
-
+  
   files = []
 
-  // typeDefs = gql`
-  //   type Query {
-  //     files: [String]
-  //   }
-  // `
 
-  // gcp = new Storage({
-  //   keyFilename: path.join(__dirname, '../filename'),
-  //   projectId: 'projectId'
-  // })
+  uploadFile(
+    bucketName: string,
+    filePath: string,
+    destFileName: string,
+    generationMatchPrecondition = 0
+  ) {
+    try {
+      const upload = async () => {
+        const options = {
+          destination: destFileName,
+          preconditionOpts: {ifGenerationMatch: generationMatchPrecondition},
+        }
+        const fileUpload = await storage.bucket(bucketName).upload(filePath, options)
+        console.log(`${filePath} uploaded to ${bucketName}`)
+        console.log('fileUpload', fileUpload)
+      }
+      upload()
+        .then((result) => console.log(result))
+        .catch(console.error)
+    } 
+    catch (error) {
+      console.error(error)
+    }
+  }
 
-  // buckets = this.gcp.getBuckets().then(buckets => console.log(buckets))
+  downloadFile(
+    bucketName: string,
+    fileName: string,
+    destFileName = path.join(cwd, fileName).toString()
+    // destFileName = '/Users/daenamcclintock/Desktop'
+  ) {
+    try {
+      const options = {
+        destination: destFileName,
+      }
+      const download = async () => {
+        await storage.bucket(bucketName).file(fileName).download(options)
+        console.log(
+          `gs://${bucketName}/${fileName} downloaded to ${destFileName}.`
+        )
+      }
+  
+      download()
+        .then((result) => console.log(result))
+        .catch(console.error)
+    } 
+    catch (error) {
+      console.error(error)
+    }
+  }
 
-  // thriveinBucket = this.gcp.bucket('thrivein-images')
-
-  // resolvers = {
-  //   Query: {
-  //     files: () => this.files
-  //   },
-  //   Mutation: {
-  //     uploadFile: async (_, { file }) => {
-  //       const { createReadStream, filename } = await file
-
-  //       await new Promise(res => 
-  //         createReadStream()
-  //           .pipe(
-  //             this.thriveinBucket.file(filename).createWriteStream({
-  //               resumable: false,
-  //               gzip: true
-  //             })
-  //           )
-  //           .on("finish", res)
-  //       )
-  //     }
-  //   }
-  // }
-
-  AWS_S3_PROFILE_BUCKET = process.env.S3_AWS_PROFILE_BUCKET;
-  AWS_S3_GIG_BUCKET = process.env.S3_AWS_POST_BUCKET;
-  AWS_S3_EVENT_BUCKET = process.env.S3_AWS_EVENT_BUCKET;
-  AWS_S3_WIDGET_BUCKET = process.env.S3_AWS_WIDGET_BUCKET;
-  s3 = new AWS.S3({
-    accessKeyId: process.env.S3_ACCESS_KEY_ID,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-    endpoint: "s3.eu-west-1.amazonaws.com",
-    region: "eu-west-1.",
-  });
+  GCP_PROFILE_BUCKET_NAME= process.env.GCP_PROFILE_BUCKET_NAME
+  GCP_POST_BUCKET_NAME = process.env.GCP_POST_BUCKET_NAME
+  GCP_EVENT_BUCKET_NAME = process.env.GCP_EVENT_BUCKET_NAME
+  GCP_GIG_BUCKET_NAME = process.env.GCP_GIG_BUCKET_NAME
+  GCP_WIDGET_BUCKET_NAME = process.env.GCP_WIDGET_BUCKET_NAME
 
   async uploadProfileImage(file: any, id: string) {
     //   const { originalname } = file;
+    const filePath = 'src/images/image.png'
+    const destFileName = 'image.png'
     try {
-      return await this.s3_upload(
-        file.buffer,
-        this.AWS_S3_PROFILE_BUCKET,
-        id,
-        file.mimetype,
-      );
+      return await this.uploadFile(
+        this.GCP_PROFILE_BUCKET_NAME,
+        filePath,
+        destFileName,
+
+      )
     } 
     catch (error) {
       console.log(error)
@@ -77,12 +107,45 @@ export class ImagesService {
   }
 
   async uploadPostImage(file: any, id: string) {
+    const filePath = ''
+    const destFileName = file
     try {
-      return await this.s3_upload(
-        file.buffer,
-        this.AWS_S3_GIG_BUCKET,
-        id,
-        file.mimetype,
+      return await this.uploadFile(
+        this.GCP_POST_BUCKET_NAME,
+        filePath,
+        destFileName,
+      )
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occurred. Please try again.")
+    }
+  }
+
+  async uploadEventImage(file: any, id: string) {
+    const filePath = ''
+    const destFileName = file
+    try {
+      return await this.uploadFile(
+        this.GCP_EVENT_BUCKET_NAME,
+        filePath,
+        destFileName,
+      )
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occurred. Please try again.")
+    }
+  }
+
+  async uploadGigImage(file: any, id: string) {
+    const filePath = ''
+    const destFileName = file
+    try {
+      return await this.uploadFile(
+        this.GCP_GIG_BUCKET_NAME,
+        filePath,
+        destFileName,
       )
     } 
     catch (error) {
@@ -92,12 +155,13 @@ export class ImagesService {
   }
 
   async uploadWidgetImage(file: any, id: string) {
+    const fileName = file
+    const destFileName = file
     try {
-      return await this.s3_upload(
-        file.buffer,
-        this.AWS_S3_WIDGET_BUCKET,
-        id,
-        file.mimetype,
+      return await this.uploadFile(
+        this.GCP_WIDGET_BUCKET_NAME,
+        fileName,
+        destFileName,
       ) 
     } 
     catch (error) {
@@ -106,61 +170,43 @@ export class ImagesService {
     }
   }
 
-  async s3_upload(file: any, bucket: string, id: string, mimetype: string) {
-    const params = {
-      Bucket: bucket,
-      Key: id,
-      Body: file,
-      ACL: "public-read",
-      ContentType: mimetype,
-      ContentDisposition: "inline",
-      CreateBucketConfiguration: {
-        LocationConstraint: "eu-west-1",
-      },
-    };
-    console.log(params)
-    try {
-      await this.s3.upload(params).promise();
-      return await this.s3.getSignedUrlPromise('getObject', {Bucket: bucket, Key: id});
-    } catch (error) {
-        console.log(error)
-        throw new Error("There was an error uploading. Please try again.")
-    }
+  async downloadProfileImage(name: string, id: string) {
+    const fileName = name
+    return await this.downloadFile(
+      this.GCP_PROFILE_BUCKET_NAME,
+      fileName,
+    )
   }
 
-  async downloadProfileImage(Key: string, id: string) {
-    const name = id + ".png";
-    return await this.s3_download(this.AWS_S3_PROFILE_BUCKET, Key);
+  async downloadPostImage(name: string, id: string) {
+    const fileName = name
+    return await this.downloadFile(
+      this.GCP_POST_BUCKET_NAME,
+      fileName,
+    );
   }
 
-  async downloadGigImage(Key: string, id: string) {
-    const name = id + ".png";
-    return await this.s3_download(this.AWS_S3_GIG_BUCKET, Key);
+  async downloadGigImage(name: string, id: string) {
+    const fileName = name
+    return await this.downloadFile(
+      this.GCP_GIG_BUCKET_NAME,
+      fileName,
+    )
   }
 
-  async downloadEventImage(Key: string, id: string) {
-    const name = id + ".png";
-    return await this.s3_download(this.AWS_S3_EVENT_BUCKET, Key);
+  async downloadEventImage(name: string, id: string) {
+    const fileName = name
+    return await this.downloadFile(
+      this.GCP_EVENT_BUCKET_NAME,
+      fileName,
+    )
   }
 
-  async downloadWidgetImage(Key: string, id: string) {
-    const name = id + ".png";
-    return await this.s3_download(this.AWS_S3_WIDGET_BUCKET, Key);
-  }
-
-  async s3_download(bucket: string, key: string) {
-    const params = {
-      Bucket: bucket,
-      Key: String(key),
-    };
-
-    console.log("params", params);
-
-    try {
-      let s3Response = await this.s3.getObject(params).promise();
-      return s3Response;
-    } catch (e) {
-      console.log("error", e);
-    }
+  async downloadWidgetImage(name: string, id: string) {
+    const fileName = name
+    return await this.downloadFile(
+      this.GCP_WIDGET_BUCKET_NAME,
+      fileName,
+    )
   }
 }

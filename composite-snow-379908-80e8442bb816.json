@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "composite-snow-379908",
+  "private_key_id": "80e8442bb81673709f4e73aba33e30d551a258e7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC2ysy0gkmGSELa\nU+bz2wMdVn6yUPk1Wi4EidDOjM6CW6YigjW0lSJoFsuf29DFGJGXdDBIgCpLCFJG\noG4a9+ZRsHWX6YLoLJcTOoCsrkG6Wr1Kd/ZEDeZ1YJ2M+LC/JFAZlXIJiCP2BgC3\nc+JjQp2Ssr2HzPgonwlghYidR+THfE4aaBu+F6G11qWhJ7ZhWVLjMWgOXFqTTVUg\nu/J/8ufkWulb8bPmUXb7FBcQQXqyQjMjJhvDOJTT1NZGDVLqGHvsSam09SS7Sxj9\nEXrwclU6ugRR/W6EmhoknOGRiVK7AwuR6aTe33ZcVbCcgJ3ghd+k02ZXaRVR/m6+\nm/viV+pdAgMBAAECggEABd7pkVYF5e54NOpVggJacdOhoO/vHsvVPfU3LQsZQSBG\ntNfiU2a6OZh2ZuaLA/vQBdPRM3UxL7BPTVBBL+ZDf7pxtZAvP0m2MZXntu051Fau\nTR2zgkN4BobG/3oVR7dzIyPJVGkKqg/hAgNbqAYvaNMLFQJXaXjdkjvA1hMzCrPz\ncuA/nddH+TwWdFOcNAV4eIxHj1CBlOBA0y66GEuN0P/IoIPIvM7YIH16tBiynDI6\nF5Cx61QyKQPVgOEDvVmOwigZKlXImV9mRgKjr7J3M5UwKjU9VnxK4+bu1MSWZF/b\nAOTwf1D85vcJERsNY+dMVc/ceDBXHeNVbIlffntjeQKBgQDbm8DOGvO35pvNAXw8\nax+Co5uMJo1Q+chwEwgkQTvlRWerhseP8bUWEDtD5/3uG16oVFc/Q4+XQ0YleJqO\npF1P8YcRZZxogxEmeJ1ufiTBEqs50YfAFhf2feAMkMYX4X4SOQWaNkHi37XyWBci\nL/Zr3/tqoG1TH5pXH/5ezJNYIwKBgQDVFTm2dz8lEHKEnk6Gwn0ZJpQkpqUxvbao\nYUKTQUJyV8wFHq3upa0MhatdwV+uDHvZZuFyDtB1aFpUWftlbmdyarkn8lh7jJBO\n6zNzitFYEY/qlF/GX2/v2c5lSOdm7yNnReyp/TBms0rqarEKrBA9Y8yNGdEixdkb\ns3kEwrabfwKBgCwlFQ7ZUCCplKwTHlwu1Hi4Vq5HmaSrcWVGDh7rlhSybPKH91my\nJsq2nJM78UmJ6u8/dQJcnGK1vUYPBlKiK7fEP3h5yoUfw7TODieF5/F/xTesLPOp\n/UspZn5gI9HtHCChocSsH3Zxret3Vb8jkQ+CSNHYSeGpuqbE4adAzGWtAoGBAJh3\nCIWLy43Mt/Q2hb+c9////6494yO1ODZA6W8OGepQ8fWT3yZMO4cjOdvq2nhiDFgh\nahy/ht8LXN7QR7ZrCe/vdy6jFDbK/BLL7lO1N1eJsW1K30DE1wZK1YjZYmHfqHhj\nqxRyyqghj/AtiSI2vaP/fcRUfbUg1dkhUO1cGWcnAoGAdkaVEWTgFKfHziuGQqbL\nDEBWD3at4YRPdS96Ml2CKvF+nhXpIhowkY6CySyI4l33bt6mDBiCvTwaAEeb6sGT\nL4ayGm/c5zh2885ewhHqmv45JUYDrF2f0VmkgFb3LVgEa5bGyw/6xlm5OILfIvcg\nITd5z8lfXzs0YTSzggFaJsA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "thrivein-service-account@composite-snow-379908.iam.gserviceaccount.com",
+  "client_id": "102281986853071145595",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/thrivein-service-account%40composite-snow-379908.iam.gserviceaccount.com"
+}
