@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "aerobic-badge-379110",
+  "private_key_id": "bcaae1f06e2bac92c8b209940a9c6f745f4d62ab",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCkvHGRxApr2fmU\nQ9wnuX5zUUAofkkWiLKm6FIlpAxh3p1TEXNjvPvwzUmp5mXHA681IQ+BRSw/420m\n4+WmQY8ZWwco59bagZXfCUMUQect5ph4uTbBhnC/l5raQyATJXjVMgrvdL2PMD/L\nGTeyEQRyBHIKaQP+Dc9jypxCvJjAJ0/anegSgKdmBOyXLV+2mOq7720FKFtlBpa5\nGR8oS+zGu8L6yViOpOHD+VbyFXEe5vzu+GIJDpB6zqsaWnn3QAQhkPtcCIRvABPL\n05oZvmK7MnJ8MljHpKRQIyFiHHsuodRLrTwc/b1YARkOpJ9MuAoyGHHrt1W6s4BD\n5cU3nGTHAgMBAAECggEACiw02yp+9kAEoHo8SxuySk63Joj93G1ekt3/zKE/vn9v\nuaR3Oq595FXY+avnlw2MMTy0Z2gtHljd8avbD5Q20PsFCyqd4upjpd09ji+vpe76\ndWIClprFtZ8YCehhP61ts8SeVkEgP4pcNh99h/pzCtNpc2kevP5/Uws88QYSbLMn\nXC4GFvKfVYlyf8QT/7sgG+7P0Wtof6dcM3pWeh0gjMAQH2SmchlFcNQ/2iOS8naS\nlqC2W5LkS0s3OZhPYFHROx5Surxl6ldv0owXMpEDs7Afh56IwUuSeI4AgLrP6/zx\nkpmLljMsFE53+TNHc7epdAzfRsunK/DFeeuLkSkpuQKBgQDZwktI2Ieqwg4ELXNe\nQ5KO8+PpvEmJo04znA+HjP4VKfmOrNg8NPxwsaqlO4Y2+He1nySZRuuivIt0bxGd\n9OhN9STpnanwQEhVGKoMcmOPyU5qiQ21g0UQvDaRPRfn0ZxtMTHpvIhg8UZI7iav\nbufwvKM8POGtdCF1Qs1nWOv4KwKBgQDBqmvoWmDWK5nKqzlbOQKzIqI0xLZ3fEX3\nBJYWmP0VrMl8pCzV1bjq5ctUguo/hkyMH1qFn/ZHHP0n0NNEV8pMSSs9o9tX2h8I\nZRvn8VoMRjkY+2z60z/mT0K3EIC1F4KtykPFRGNAeYurROluohdhBThF1Z2M+XbQ\n9ECxk7871QKBgBfQTqldvKBo7l14lvhFDX8CnvcNt0ENEd1FANHDEnpAB+GZd2BG\nLyEn3NCLDOdwDq9XAwqcHeLDGcEW8GdExC7aUzoVGuOCNCbSNq57x/WOfzvZVx11\niJUG8DS76KRaYO/0BFBaZNOtLxGEschXqZfDGVraEZgFbi9DqfDWYZ/XAoGACsex\nuf1N5p4GsYFWb/18aPxEiytn/L6uJlHbCOb7L3muvYFl/YEoCetApjOjVmXjXOlh\n4I5G5y516QF2wRch650nCwdT7k/16kG2i/KjUIuYIgvcxRl9NRS0YfxJLcthOstH\nenOUEsKxQ5dSZxYetwfTWg/J9U7tjjQKZdgTjQECgYAq3Xu1soNq2hoyNJOQ0jcr\ntYx23B8aMn2/rO6HrW0hbkVB4WLsc6JCRYq4LgiWMrwIXCR0Xp6H8NM+KT3as2a2\nReD6aAZzNtXDMNAbku6jZs1QwP0pNrArFsZA0hjfRL/YcD3ZM1fg0X//vJKaOYAp\nEAXq/yv3ZNmPOm9Ec7S70A==\n-----END PRIVATE KEY-----\n",
+  "client_email": "thrivein-nestjs-api@aerobic-badge-379110.iam.gserviceaccount.com",
+  "client_id": "107970414918409334419",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/thrivein-nestjs-api%40aerobic-badge-379110.iam.gserviceaccount.com"
+}

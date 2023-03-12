@@ -22,69 +22,62 @@ export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
   @Post("uploadProfileImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadProfileImage(@UploadedFile() file: Express.Multer.File, @Body() userId) {
-    console.log(userId)
-    return await this.imagesService.uploadProfileImage('image.png', userId)
+  // @UseInterceptors(FileInterceptor("file"))
+  async uploadProfileImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
+    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
   }
 
   @Post("uploadPostImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadPostImage(@UploadedFile() file: Express.Multer.File, @Body() body) {
-    return await this.imagesService.uploadPostImage(file, body.userId)
+  // @UseInterceptors(FileInterceptor("file"))
+  async uploadPostImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
+    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
   }
 
   @Post("uploadEventImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadEventImage(
-    @UploadedFile() file: Express.Multer.File, @Body() body) {
-    return await this.imagesService.uploadEventImage(file, body.userId)
+  // @UseInterceptors(FileInterceptor("file"))
+  async uploadEventImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
+    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
   }
 
   @Post("uploadGigImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadGigImage(
-    @UploadedFile() file: Express.Multer.File, @Body() body) {
-    return await this.imagesService.uploadGigImage(file, body.userId)
+  // @UseInterceptors(FileInterceptor("file"))
+  async uploadGigImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
+    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
   }
-
 
   @Post("uploadWidgetImage")
   // @UseInterceptors(FileInterceptor("file"))
-  async uploadWidgetImage(
-    @UploadedFile() file: Express.Multer.File, @Request() req) {
-    console.log("req.user", req.user.id);
-    return await this.imagesService.uploadWidgetImage(file, req.user.id)
+  async uploadWidgetImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
+    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
   }
 
-  @Get("downloadProfileImage")
-  async downloadProfileImage(@Query("Name") name: string, @Query() userId) {
-    console.log('name', name)
+  @Get("downloadProfileImage/:userId")
+  async downloadProfileImage(@Param() userId: string, @Query() destFileName: string) {
     console.log("userId", userId)
-    return await this.imagesService.downloadProfileImage(name, userId)
+    return await this.imagesService.downloadProfileImage(userId, destFileName)
   }
 
-  @Get("downloadPostImage")
-  async downloadPostImage(@Param("Name") name: string, @Query() userId) {
+  @Get("downloadPostImage/:userId")
+  async downloadPostImage(@Param() userId: string, @Query() destFileName: string) {
     console.log("userId", userId)
-    return await this.imagesService.downloadPostImage(name, userId)
+    return await this.imagesService.downloadPostImage(userId, destFileName)
   }
 
-  @Get("downloadGigImage")
-  async downloadGigImage(@Param("Name") name: string, @Query() userId) {
+  @Get("downloadGigImage/:userId")
+  async downloadGigImage(@Param() userId: string, @Query() destFileName: string) {
     console.log("userId", userId)
-    return await this.imagesService.downloadGigImage(name, userId)
+    return await this.imagesService.downloadGigImage(userId, destFileName)
   }
 
-  @Get("downloadEventImage")
-  async downloadEventImage(@Param("Name") name: string, @Query() userId) {
+  @Get("downloadEventImage/:userId")
+  async downloadEventImage(@Param() userId: string, @Query() destFileName: string) {
     console.log("userId", userId)
-    return await this.imagesService.downloadEventImage(name, userId)
+    return await this.imagesService.downloadEventImage(userId, destFileName)
   }
 
-  @Get("downloadWidgetImage")
-  async downloadWidgetImage(@Param("Name") name: string, @Query() userId) {
+  @Get("downloadWidgetImage/:userId")
+  async downloadWidgetImage(@Param() userId: string, @Query() destFileName: string) {
     console.log("userId", userId)
-    return await this.imagesService.downloadWidgetImage(name, userId)
+    return await this.imagesService.downloadWidgetImage(userId, destFileName)
   }
 }

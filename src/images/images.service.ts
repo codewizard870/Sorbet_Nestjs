@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Redirect } from "@nestjs/common";
 import * as AWS from "aws-sdk";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { Storage } from "@google-cloud/storage";
@@ -6,27 +6,13 @@ import * as path from "path";
 
 const cwd = path.join(__dirname, '..');
 const storage = new Storage({
-  projectId: 'composite-snow-379908',
-  keyFilename: '/Users/daenamcclintock/ThriveIN/ThriveIN_Backend/NestJS/composite-snow-379908-80e8442bb816.json'
+  keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
+  projectId: 'aerobic-badge-379110',
 })
-console.log('cwd', cwd)
-
-interface AuthenticationModel {
-	keyFile?: string;
-	keyFilename?: string;
-	autoRetry?: boolean;
-	projectId?: string;
-	apiEndpoint?: string;
-	maxRetries?: number;
-	client_id?: string;
-	client_secret?: string;
-	scope?: string[];
-	email?: string;
-}
 
 @Injectable()
 export class ImagesService {
-  constructor(private prismaService: PrismaService) {}
+  constructor() {}
   
   files = []
 
@@ -35,17 +21,16 @@ export class ImagesService {
     bucketName: string,
     filePath: string,
     destFileName: string,
-    generationMatchPrecondition = 0
+    // file: Express.Multer.File,
+    // generationMatchPrecondition = 0
   ) {
     try {
       const upload = async () => {
         const options = {
           destination: destFileName,
-          preconditionOpts: {ifGenerationMatch: generationMatchPrecondition},
         }
-        const fileUpload = await storage.bucket(bucketName).upload(filePath, options)
+        await storage.bucket(bucketName).upload(filePath, options)
         console.log(`${filePath} uploaded to ${bucketName}`)
-        console.log('fileUpload', fileUpload)
       }
       upload()
         .then((result) => console.log(result))
@@ -59,15 +44,16 @@ export class ImagesService {
   downloadFile(
     bucketName: string,
     fileName: string,
-    destFileName = path.join(cwd, fileName).toString()
-    // destFileName = '/Users/daenamcclintock/Desktop'
+    destFileName: string
   ) {
     try {
+      const bucket = storage.bucket(bucketName)
       const options = {
         destination: destFileName,
       }
       const download = async () => {
-        await storage.bucket(bucketName).file(fileName).download(options)
+        await storage.bucket(bucketName).file(fileName).download(options);
+    
         console.log(
           `gs://${bucketName}/${fileName} downloaded to ${destFileName}.`
         )
@@ -88,16 +74,13 @@ export class ImagesService {
   GCP_GIG_BUCKET_NAME = process.env.GCP_GIG_BUCKET_NAME
   GCP_WIDGET_BUCKET_NAME = process.env.GCP_WIDGET_BUCKET_NAME
 
-  async uploadProfileImage(file: any, id: string) {
-    //   const { originalname } = file;
-    const filePath = 'src/images/image.png'
-    const destFileName = 'image.png'
+  async uploadProfileImage(filePath: string, id: string) {
+    const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_PROFILE_BUCKET_NAME,
         filePath,
         destFileName,
-
       )
     } 
     catch (error) {
@@ -106,9 +89,8 @@ export class ImagesService {
     }
   }
 
-  async uploadPostImage(file: any, id: string) {
-    const filePath = ''
-    const destFileName = file
+  async uploadPostImage(filePath: string, id: string) {
+    const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_POST_BUCKET_NAME,
@@ -122,9 +104,8 @@ export class ImagesService {
     }
   }
 
-  async uploadEventImage(file: any, id: string) {
-    const filePath = ''
-    const destFileName = file
+  async uploadEventImage(filePath: string, id: string) {
+    const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_EVENT_BUCKET_NAME,
@@ -138,9 +119,8 @@ export class ImagesService {
     }
   }
 
-  async uploadGigImage(file: any, id: string) {
-    const filePath = ''
-    const destFileName = file
+  async uploadGigImage(filePath: string, id: string) {
+    const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_GIG_BUCKET_NAME,
@@ -154,15 +134,14 @@ export class ImagesService {
     }
   }
 
-  async uploadWidgetImage(file: any, id: string) {
-    const fileName = file
-    const destFileName = file
+  async uploadWidgetImage(filePath: string, id: string) {
+    const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_WIDGET_BUCKET_NAME,
-        fileName,
+        filePath,
         destFileName,
-      ) 
+      )
     } 
     catch (error) {
       console.log(error)
@@ -170,43 +149,48 @@ export class ImagesService {
     }
   }
 
-  async downloadProfileImage(name: string, id: string) {
-    const fileName = name
+  async downloadProfileImage(id: string, destFileName: string) {
+    const fileName = id + '.png'
     return await this.downloadFile(
       this.GCP_PROFILE_BUCKET_NAME,
       fileName,
+      destFileName
     )
   }
 
-  async downloadPostImage(name: string, id: string) {
-    const fileName = name
+  async downloadPostImage(id: string, destFileName: string) {
+    const fileName = id + '.png'
     return await this.downloadFile(
       this.GCP_POST_BUCKET_NAME,
       fileName,
+      destFileName
     );
   }
 
-  async downloadGigImage(name: string, id: string) {
-    const fileName = name
+  async downloadGigImage(id: string, destFileName: string) {
+    const fileName = id + '.png'
     return await this.downloadFile(
       this.GCP_GIG_BUCKET_NAME,
       fileName,
+      destFileName
     )
   }
 
-  async downloadEventImage(name: string, id: string) {
-    const fileName = name
+  async downloadEventImage(id: string, destFileName: string) {
+    const fileName = id + '.png'
     return await this.downloadFile(
       this.GCP_EVENT_BUCKET_NAME,
       fileName,
+      destFileName
     )
   }
 
-  async downloadWidgetImage(name: string, id: string) {
-    const fileName = name
+  async downloadWidgetImage(id: string, destFileName: string) {
+    const fileName = id + '.png'
     return await this.downloadFile(
       this.GCP_WIDGET_BUCKET_NAME,
       fileName,
+      destFileName
     )
   }
 }
