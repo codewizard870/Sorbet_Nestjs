@@ -68,6 +68,29 @@ export class ImagesService {
     }
   }
 
+  deleteFile(
+    bucketName: string,
+    fileName: string,
+    generationMatchPrecondition = 0
+  ) {
+    try {
+      const deleteOptions = {
+        ifGenerationMatch: generationMatchPrecondition,
+      };
+      async function deleteFile() {
+        await storage.bucket(bucketName).file(fileName).delete(deleteOptions)
+    
+        console.log(`gs://${bucketName}/${fileName} deleted`)
+      }
+      deleteFile()
+        .then(result => console.log('deletedFile', result))
+        .catch(error => console.error(error))
+    } 
+    catch (error) {
+      console.error(error)
+    }
+  }
+
   GCP_PROFILE_BUCKET_NAME= process.env.GCP_PROFILE_BUCKET_NAME
   GCP_POST_BUCKET_NAME = process.env.GCP_POST_BUCKET_NAME
   GCP_EVENT_BUCKET_NAME = process.env.GCP_EVENT_BUCKET_NAME
@@ -191,6 +214,46 @@ export class ImagesService {
       this.GCP_WIDGET_BUCKET_NAME,
       fileName,
       destFileName
+    )
+  }
+
+  async deleteProfileImage(id: string) {
+    const fileName = id + '.png'
+    return await this.deleteFile(
+      this.GCP_PROFILE_BUCKET_NAME,
+      fileName
+    )
+  }
+
+  async deletePostImage(id: string) {
+    const fileName = id + '.png'
+    return await this.deleteFile(
+      this.GCP_POST_BUCKET_NAME,
+      fileName
+    )
+  }
+
+  async deleteGigImage(id: string) {
+    const fileName = id + '.png'
+    return await this.deleteFile(
+      this.GCP_GIG_BUCKET_NAME,
+      fileName
+    )
+  }
+
+  async deleteEventImage(id: string) {
+    const fileName = id + '.png'
+    return await this.deleteFile(
+      this.GCP_EVENT_BUCKET_NAME,
+      fileName
+    )
+  }
+
+  async deleteWidgetImage(id: string) {
+    const fileName = id + '.png'
+    return await this.deleteFile(
+      this.GCP_WIDGET_BUCKET_NAME,
+      fileName
     )
   }
 }
