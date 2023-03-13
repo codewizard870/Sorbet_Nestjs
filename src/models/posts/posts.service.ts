@@ -45,7 +45,7 @@ export class PostsService {
         },
       })
       if (result) {
-        if (data.address) {
+        if (data.address && data.langitude && data.langitude) {
           try {
             const res = await this.prismaService.location.create({
               data: {

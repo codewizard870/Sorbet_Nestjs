@@ -28,7 +28,7 @@ export class ImagesController {
 
   @Post("uploadPostImage")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadPostImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+  async uploadPostImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
     return await this.imagesService.uploadProfileImage(userId, file)
   }
 

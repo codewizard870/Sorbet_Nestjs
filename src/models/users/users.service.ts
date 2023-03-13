@@ -98,7 +98,7 @@ export class UsersService {
   async getAll() {
     try {
       const allUsers = await this.prisma.user.findMany({
-        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true }
+        include: { jobProfile: true, location: true, post: true, groups: true, followers:true, widgets: true }
       })
       if (allUsers) {
         return allUsers

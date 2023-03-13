@@ -29,7 +29,8 @@ export class ImagesService {
       const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`
       resolve(publicUrl)
     })
-    .on('error', () => {
+    .on('error', (e) => {
+      console.log(e)
       reject(`Unable to upload image.`)
     })
     .end(buffer)
