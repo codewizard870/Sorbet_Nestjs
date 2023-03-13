@@ -83,44 +83,6 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
           throw new Error("An error occured. Please try again.")
       }
     }
-
-    async getWidgetFromImage(image: string) {
-        try {
-            const result = await this.prisma.widget.findFirst({
-              where: {image: image},
-            })
-            if (result) {  
-              return result
-            }
-            else {
-              console.log("Could not find widget by image")
-              return { message: 'Could not find widget by image' }
-            }
-          } 
-        catch (error) {
-            console.log(error)
-            throw new Error("An error occured. Please try again.")
-        }
-    }
-
-    async getWidgetFromNFTMetadata(nft_metadata: string) {
-        try {
-            const result = await this.prisma.widget.findFirst({
-              where: {nft_metadata: nft_metadata},
-            })
-            if (result) {  
-              return result
-            }
-            else {
-              console.log("Could not find widget by nft metadata")
-              return { message: 'Could not find widget by nft metadata' }
-            }
-          } 
-        catch (error) {
-            console.log(error)
-            throw new Error("An error occured. Please try again.")
-        }
-    }
   
     async getAll() {
       try {

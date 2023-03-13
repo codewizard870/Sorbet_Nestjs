@@ -2,12 +2,10 @@ import {
     Controller,
     Get,
     Body,
-    Request,
     Patch,
     Delete,
     Post,
     Param,
-    Response
   } from "@nestjs/common";
   import { WidgetsService } from "./widgets.service";
   import { CreateWidgetDto } from "./dto/create-widgets-dto";
@@ -24,24 +22,14 @@ import {
             return await this.widgetsService.create(data)
         }
         
-        @Get("getWidgetById")
-        async getWidgetById(@Body() id: string) {
+        @Get("getWidgetById/:id")
+        async getWidgetById(@Param() id: string) {
             return await this.widgetsService.getWidgetById(id)
         }
 
-        @Get("getWidgetsByUserId")
-        async getWidgetsByUserId(@Body() userId: string) {
+        @Get("getWidgetsByUserId/:userId")
+        async getWidgetsByUserId(@Param() userId: string) {
             return await this.widgetsService.getWidgetsByUserId(userId)
-        }
-
-        @Get("getWidgetFromImage")
-        async getWidgetFromImage(@Body() image: string) {
-            return await this.widgetsService.getWidgetFromImage(image)
-        }
-
-        @Get("getWidgetFromNFTMetadata")
-        async getWidgetFromNFTMetadata(@Body() nft_metadata: string) {
-            return await this.widgetsService.getWidgetFromNFTMetadata(nft_metadata)
         }
 
         @Get("getAll")
@@ -50,7 +38,7 @@ import {
         }
 
         @Patch(':id/update')
-        async update(@Param() id, @Body() updateWidgetDto: UpdateWidgetDto) {
+        async update(@Param() id: string, @Body() updateWidgetDto: UpdateWidgetDto) {
             return await this.widgetsService.update(
                 id,
                 updateWidgetDto
@@ -58,7 +46,7 @@ import {
         }
 
         @Delete(":id/delete")
-        delete(@Param() id,) {
+        delete(@Param() id: string) {
             return this.widgetsService.delete(id)
         }
 
