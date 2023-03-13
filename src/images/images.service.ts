@@ -16,36 +16,26 @@ export class ImagesService {
   
   files = []
 
+  uploadFile = (bucketName: string, file: Express.Multer.File) => new Promise( async (resolve, reject) => {
+    const bucket = await storage.bucket(bucketName)
+    const { originalname, buffer } = file
+  
+    const blob = bucket.file(originalname.replace(/ /g, "_"))
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+      public: true
+    })
+    blobStream.on('finish', () => {
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+      resolve(publicUrl)
+    })
+    .on('error', () => {
+      reject(`Unable to upload image.`)
+    })
+    .end(buffer)
+  })
 
-  uploadFile(
-    bucketName: string,
-    filePath: string,
-    destFileName: string,
-    // file: Express.Multer.File,
-    // generationMatchPrecondition = 0
-  ) {
-    try {
-      const upload = async () => {
-        const options = {
-          destination: destFileName,
-        }
-        await storage.bucket(bucketName).upload(filePath, options)
-        console.log(`${filePath} uploaded to ${bucketName}`)
-      }
-      upload()
-        .then((result) => console.log(result))
-        .catch(console.error)
-    } 
-    catch (error) {
-      console.error(error)
-    }
-  }
-
-  downloadFile(
-    bucketName: string,
-    fileName: string,
-    destFileName: string
-  ) {
+  downloadFile(bucketName: string, fileName: string, destFileName: string) {
     try {
       const bucket = storage.bucket(bucketName)
       const options = {
@@ -97,13 +87,12 @@ export class ImagesService {
   GCP_GIG_BUCKET_NAME = process.env.GCP_GIG_BUCKET_NAME
   GCP_WIDGET_BUCKET_NAME = process.env.GCP_WIDGET_BUCKET_NAME
 
-  async uploadProfileImage(filePath: string, id: string) {
+  async uploadProfileImage(id: string, file: Express.Multer.File) {
     const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_PROFILE_BUCKET_NAME,
-        filePath,
-        destFileName,
+        file,
       )
     } 
     catch (error) {
@@ -112,13 +101,12 @@ export class ImagesService {
     }
   }
 
-  async uploadPostImage(filePath: string, id: string) {
+  async uploadPostImage(id: string, file: Express.Multer.File) {
     const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_POST_BUCKET_NAME,
-        filePath,
-        destFileName,
+        file,
       )
     } 
     catch (error) {
@@ -127,13 +115,12 @@ export class ImagesService {
     }
   }
 
-  async uploadEventImage(filePath: string, id: string) {
+  async uploadEventImage(id: string, file: Express.Multer.File) {
     const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_EVENT_BUCKET_NAME,
-        filePath,
-        destFileName,
+        file
       )
     } 
     catch (error) {
@@ -142,13 +129,12 @@ export class ImagesService {
     }
   }
 
-  async uploadGigImage(filePath: string, id: string) {
+  async uploadGigImage(id: string, file: Express.Multer.File) {
     const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_GIG_BUCKET_NAME,
-        filePath,
-        destFileName,
+        file
       )
     } 
     catch (error) {
@@ -157,13 +143,12 @@ export class ImagesService {
     }
   }
 
-  async uploadWidgetImage(filePath: string, id: string) {
+  async uploadWidgetImage(id: string, file: Express.Multer.File) {
     const destFileName = id + '.png'
     try {
       return await this.uploadFile(
         this.GCP_WIDGET_BUCKET_NAME,
-        filePath,
-        destFileName,
+        file
       )
     } 
     catch (error) {

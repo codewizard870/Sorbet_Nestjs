@@ -11,8 +11,6 @@ import {
   Delete,
 } from "@nestjs/common";
 import { ImagesService } from "./images.service";
-import { CreateImageDto } from "./dto/create-image.dto";
-import { UpdateImageDto } from "./dto/update-image.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
@@ -23,33 +21,33 @@ export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
   @Post("uploadProfileImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadProfileImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
-    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadProfileImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+    return await this.imagesService.uploadProfileImage(userId, file)
   }
 
   @Post("uploadPostImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadPostImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
-    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadPostImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+    return await this.imagesService.uploadProfileImage(userId, file)
   }
 
   @Post("uploadEventImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadEventImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
-    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadEventImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+    return await this.imagesService.uploadProfileImage(userId, file)
   }
 
   @Post("uploadGigImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadGigImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
-    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadGigImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+    return await this.imagesService.uploadProfileImage(userId, file)
   }
 
   @Post("uploadWidgetImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadWidgetImage(/*@UploadedFile() filePath: Express.Multer.File*/ @Body() body) {
-    return await this.imagesService.uploadProfileImage(body.filePath, body.userId)
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadWidgetImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+    return await this.imagesService.uploadProfileImage(userId, file)
   }
 
   @Get("downloadProfileImage/:userId")
