@@ -128,7 +128,7 @@ export class UsersController {
     )
   }
 
-  @Get(":getMutualConnections")
+  @Get("getMutualConnections")
   async getMutualConnections(@Request() req, @Body() user2_Id: string) {
     return await this.usersService.connectionIntersection(
       req.user.id,
@@ -137,9 +137,9 @@ export class UsersController {
   }
 
   @Get("userRandomRecommendations")
-  async userRandomRecommendations(@Request() req) {
+  async userRandomRecommendations(@Query("userId") userId: string) {
     return await this.usersService.userRandomRecommendations(
-      req.user.id
+      userId
     )
   }
 

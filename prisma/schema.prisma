@@ -195,7 +195,8 @@ enum PostType {
 enum LocationType {
   Remote @map("Remote")
   OnSite @map("OnSite")
-
+  Online @map("Online")
+  InPerson @map("In Person")
   @@map("LocationType")
 }
 

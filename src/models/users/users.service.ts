@@ -539,6 +539,7 @@ export class UsersService {
       const user = await this.prisma.user.findFirst({
         where: { id: userId }, include: { followers: true }
       })
+
       const userFollowers = user.followers
       const allUsers = await this.getAll()
 

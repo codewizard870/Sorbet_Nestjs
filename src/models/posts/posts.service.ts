@@ -73,6 +73,7 @@ export class PostsService {
     try {
       const posts = await this.prismaService.post.findMany({
         include: {
+          user: true,
           location: true,
           like: true,
           commment: true

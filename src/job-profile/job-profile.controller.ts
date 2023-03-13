@@ -6,7 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-  Request,
+  Request
 } from "@nestjs/common";
 import { JobProfileService } from "./job-profile.service";
 import { CreateJobProfileDto } from "./dto/create-job-profile.dto";
