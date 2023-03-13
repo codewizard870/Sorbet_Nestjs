@@ -47,7 +47,7 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { email: email },
-        include: { jobProfile: true, location: true, post: true, groups: true },
+        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
       })
       if (result) {
         return result
@@ -67,7 +67,7 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { nearWallet: nearWallet },
-        include: { jobProfile: true, location: true, post: true, groups: true },
+        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
       })
       if (result) {
         return result
@@ -87,7 +87,7 @@ export class UsersService {
     try {
       const user = await this.prisma.user.findFirst({
         where: { id: _id },
-        include: { jobProfile: true, location: true, post: true, groups: true },
+        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
       });
       return user;
     } catch (error) {
@@ -98,7 +98,7 @@ export class UsersService {
   async getAll() {
     try {
       const allUsers = await this.prisma.user.findMany({
-        include: { jobProfile: true, location: true, post: true, groups: true, followers: true }
+        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true }
       })
       if (allUsers) {
         return allUsers
