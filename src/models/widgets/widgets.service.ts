@@ -102,6 +102,26 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
         throw new Error("Error getting all widgets.")
       }
     }
+
+    async findAllByType(type: string) {
+      try {
+        const widgets = await this.prisma.widget.findMany({
+          where: { type: type }
+          // include: { user: true }
+        })
+        if (widgets) {
+          return widgets
+        }
+        else {
+          console.log("Could not get all the widgets by type")
+          return { message: 'Could not get all the widgets by type' }
+        }
+      } 
+      catch (error) {
+        console.log(`Error Occured, ${error}`);
+        throw new Error("Error getting all widgets.")
+      }
+    }
   
     async update(id: string, updateWidgetDto: any) {
       try {

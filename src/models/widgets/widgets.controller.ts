@@ -26,6 +26,11 @@ import {
     findAll() {
       return this.widgetsService.findAll()
     }
+
+    @Get("findAllByType/:type")
+    findAllByType(@Param("type") type: string) {
+      return this.widgetsService.findAllByType(type)
+    }
   
     @Get(":id")
     findOne(@Param("id") id: string) {
@@ -33,8 +38,8 @@ import {
     }
 
     @Get("findByUserId/:userId")
-    findByUserId(@Param("id") id: string) {
-      return this.widgetsService.findByUserId(id)
+    findByUserId(@Param("userId") userId: string) {
+      return this.widgetsService.findByUserId(userId)
     }
   
     @Patch(":id/update")
