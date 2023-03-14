@@ -19,7 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule.forRoot()],
       useFactory: async (configService: ConfigService) => {
         console.log("JWTSecret:");
         console.log(configService.get<string>('JWTSECRET'));
