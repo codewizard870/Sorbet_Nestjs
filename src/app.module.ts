@@ -3,7 +3,6 @@ import { APP_GUARD, APP_PIPE } from "@nestjs/core";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./utils/auth/auth.module";
-import { MagicModule } from "./utils/magic/magic.module";
 // import { JwtAuthGuard } from "./utils/auth/guards/jwt-auth.guard";
 // import { MagicAuthGuard } from "./utils/magic/guards/magic.guard";
 import { UsersModule } from "./models/users/users.module";
@@ -27,7 +26,6 @@ import { CommentModule } from "./utils/comment/comment.module";
 @Module({
   imports: [
     AuthModule,
-    MagicModule,
     UsersModule,
     TokensModule,
     GoogleMapsModule,

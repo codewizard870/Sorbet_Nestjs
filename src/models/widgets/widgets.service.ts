@@ -65,7 +65,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
         }
     }
 
-    async getWidgetsByUserId(userId: string) {
+    async findByUserId(userId: string) {
       try {
           const widgets = await this.prisma.widget.findMany({
               where: { userId: userId }

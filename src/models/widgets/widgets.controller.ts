@@ -31,6 +31,11 @@ import {
     findOne(@Param("id") id: string) {
       return this.widgetsService.findOne(id)
     }
+
+    @Get("findByUserId/:userId")
+    findByUserId(@Param("id") id: string) {
+      return this.widgetsService.findByUserId(id)
+    }
   
     @Patch(":id/update")
     update(@Param("id") id: string, @Body() updateWidgetDto: UpdateWidgetDto) {

@@ -129,7 +129,7 @@ export class AuthService {
   async signUpWithWallet(address: string) {
     try {
       const user = await this.usersService.getUserFromNearWallet(address)
-console.log(address, user)
+      console.log(address, user)
       if (user) {
         console.log('User already exists')
         return { message: 'User already exists' }

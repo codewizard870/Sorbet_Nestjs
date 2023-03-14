@@ -31,14 +31,4 @@ export class AuthController {
   signInWithWallet(@Body("address") address:string) {
     return this.authService.signInWithWallet(address)
   }
-
-  @Get('getUserById')
-  getUserById(@Body() id:string) {
-    return this.authService.getUserById(id)
-  }
-
-  @Get('getUserByWalletAddress')
-  getUserByWalletAddress(@Body() address:string) {
-    return this.authService.getUserByWalletAddress(address)
-  }
 }
