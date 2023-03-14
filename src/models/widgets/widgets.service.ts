@@ -46,7 +46,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
       }
     }
 
-    async getWidgetById(id: string) {
+    async findOne(id: string) {
         try {
             const widgetById = await this.prisma.widget.findFirst({
                 where: { id: id }
@@ -84,10 +84,10 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
       }
     }
   
-    async getAll() {
+    async findAll() {
       try {
         const allWidgets = await this.prisma.widget.findMany({
-          include: { user: true }
+          // include: { user: true }
         })
         if (allWidgets) {
           return allWidgets
@@ -131,7 +131,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
         }
     }
   
-    async delete(id: string) {
+    async remove(id: string) {
       try {
         const result = await this.prisma.widget.delete({
           where: { id: id },

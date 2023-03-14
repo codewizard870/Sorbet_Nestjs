@@ -271,7 +271,7 @@ model Widget {
   url          String?
   name         String?
   description  String?
-  type         WidgetType
+  type         String?
   image        String?
   nft_metadata String?
   userId       String     @db.ObjectId

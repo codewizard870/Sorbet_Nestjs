@@ -1,8 +1,22 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { WidgetType } from "@prisma/client";
+// import { WidgetType } from "@prisma/client";
 import { IsOptional } from "class-validator";
 
 export class CreateWidgetDto {
+  @IsOptional()
+  @ApiProperty()
+  username: string
+
+  @IsOptional()
+  @ApiProperty()
+  url: string
+
+  // @ApiProperty({
+  //   description: "description of the Widget Type",
+  //   enum: WidgetType,
+  // })
+  // type: WidgetType;
+
   @IsOptional()
   @ApiProperty()
   name: string
@@ -11,20 +25,17 @@ export class CreateWidgetDto {
   @ApiProperty()
   description: string
 
-  @ApiProperty({
-    description: "description of the Widget Type",
-    enum: WidgetType,
-  })
-  type: WidgetType;
+  @IsOptional()
+  @ApiProperty()
+  type: string
 
+  @IsOptional()
   @ApiProperty()
   image: string
 
+  @IsOptional()
   @ApiProperty()
   nft_metadata: string
-
-  @ApiProperty()
-  project_link: string
 
   @ApiProperty()
   userId: string
