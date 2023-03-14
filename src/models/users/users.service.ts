@@ -74,7 +74,7 @@ export class UsersService {
       }
       else {
         console.log("Could not find user by near wallet address")
-        return { message: `Could not find user by near wallet address: ${nearWallet}` }
+        throw new Error(`Could not find user by near wallet address: ${nearWallet}`);
       }
     }
     catch (error) {
@@ -98,7 +98,7 @@ export class UsersService {
   async getAll() {
     try {
       const allUsers = await this.prisma.user.findMany({
-        include: { jobProfile: true, location: true, post: true, groups: true, followers: true, widgets: true }
+        include: { jobProfile: true, location: true, post: true, groups: true, followers:true, widgets: true }
       })
       if (allUsers) {
         return allUsers
