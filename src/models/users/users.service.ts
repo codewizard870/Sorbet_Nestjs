@@ -17,6 +17,7 @@ export class UsersService {
   async create(address: string, token: string) {
     try {
       const UserFromNearWallet = await this.getUserFromNearWallet(address)
+      console.log(UserFromNearWallet);
       if (UserFromNearWallet) {
         throw new BadRequestException("User already Exists")
       }
@@ -29,7 +30,7 @@ export class UsersService {
             email: null,
             bio: null,
             profileImage: null,
-            confirmationCode: token,
+            confirmationCode: (Math.random() * 10000).toString(),
           },
         });
         if (result) {
@@ -74,6 +75,7 @@ export class UsersService {
       }
       else {
         console.log("Could not find user by near wallet address")
+        return null;
         throw new Error(`Could not find user by near wallet address: ${nearWallet}`);
       }
     }
@@ -98,7 +100,7 @@ export class UsersService {
   async getAll() {
     try {
       const allUsers = await this.prisma.user.findMany({
-        include: { jobProfile: true, location: true, post: true, groups: true, followers:true, widgets: true }
+        include: { jobProfile: true, location: true, post: true, groups: true, followers: true, widgets: true }
       })
       if (allUsers) {
         return allUsers

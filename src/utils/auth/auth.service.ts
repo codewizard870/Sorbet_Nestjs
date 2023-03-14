@@ -37,39 +37,27 @@ export class AuthService {
 
 
   async signUpWithWallet(address: string) {
-    try {
-      const user = await this.usersService.getUserFromNearWallet(address)
+    const user = await this.usersService.getUserFromNearWallet(address)
+    return new Promise(async (resolve, reject) => {
       if (user) {
         // console.log('User already exists')
         const token = this.generateToken(address)
         if (token) {
           console.log('User successfully signed in')
-          return token
+          resolve(token);
         }
         // return { message: 'User already exists' }
       } else {
-        const user = await this.usersService.getUserFromNearWallet(address)
-        if (user) {
-          const token = this.generateToken(address)
-          if (token) {
-            console.log('User successfully signed in')
-            return token
-          }
-          else throw new Error("Error signing user in")
+        const token = this.generateToken(address)
+        const newUser = await this.usersService.create(address, token);
+        if (newUser) {
+          resolve(token);
+          return token;
+        } else {
+          reject('User could not be signed up')
         }
       }
-      const token = this.generateToken(address)
-      const newUser = await this.usersService.create(address, token);
-      if (newUser) {
-        console.log('User successfully signed up')
-        return { success: true }
-      }
-      else throw new Error('User could not be signed up');
-    }
-    catch (error) {
-      console.log(error)
-      throw new Error('Error signing user up')
-    }
+    })
   }
 
   async signInWithWallet(address: string) {
