@@ -75,7 +75,6 @@ export class UsersService {
       }
       else {
         console.log("Could not find user by near wallet address")
-        return null;
         throw new Error(`Could not find user by near wallet address: ${nearWallet}`);
       }
     }
