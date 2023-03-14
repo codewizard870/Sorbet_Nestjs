@@ -22,31 +22,31 @@ export class ImagesController {
 
   @Post("uploadProfileImage")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadProfileImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+  async uploadProfileImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
     return await this.imagesService.uploadProfileImage(userId, file)
   }
 
   @Post("uploadPostImage")
   @UseInterceptors(FileInterceptor("file"))
   async uploadPostImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
-    return await this.imagesService.uploadProfileImage(userId, file)
+    return await this.imagesService.uploadPostImage(userId, file)
   }
 
   @Post("uploadEventImage")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadEventImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+  async uploadEventImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
     return await this.imagesService.uploadProfileImage(userId, file)
   }
 
   @Post("uploadGigImage")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadGigImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+  async uploadGigImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
     return await this.imagesService.uploadProfileImage(userId, file)
   }
 
   @Post("uploadWidgetImage")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadWidgetImage(@UploadedFile() file: Express.Multer.File, @Body() userId: string) {
+  async uploadWidgetImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
     return await this.imagesService.uploadProfileImage(userId, file)
   }
 
