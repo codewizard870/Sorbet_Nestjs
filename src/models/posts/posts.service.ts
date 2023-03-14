@@ -72,11 +72,25 @@ export class PostsService {
   async findAll() {
     try {
       const posts = await this.prismaService.post.findMany({
+        orderBy: [
+          {
+            createdAt: 'desc',
+          },
+        ],
         include: {
           user: true,
           location: true,
-          like: true,
-          commment: true
+          like: {
+            include: {
+              user: true,
+            },
+          },
+          comment: {
+            include: {
+              user: true,
+            },
+          },
+          followers: true,
         },
       })
       if (posts) {
@@ -101,7 +115,8 @@ export class PostsService {
           location: true,
           user: true,
           like: true,
-          commment: true
+          comment: true,
+          followers: true,
         },
       })
       if (post) {
@@ -248,11 +263,11 @@ export class PostsService {
     try {
       const post = await this.prismaService.post.findFirst({
         where: { id: postId },
-        include: { commment: true }
+        include: { comment: true }
       })
       if (post) {
-        for (let i = 0; i < post.commment.length; i++) {
-          if (post.commment[i].id == commentId)
+        for (let i = 0; i < post.comment.length; i++) {
+          if (post.comment[i].id == commentId)
             return await this.commentService.removeComment(commentId)
         }
 

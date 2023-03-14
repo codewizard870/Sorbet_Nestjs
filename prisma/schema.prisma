@@ -152,7 +152,7 @@ model Post {
   //relations
   location  Location[]
   like      Like[]
-  commment  Comment[]
+  comment  Comment[]
   followers Follow[]
 
   //relation with user
