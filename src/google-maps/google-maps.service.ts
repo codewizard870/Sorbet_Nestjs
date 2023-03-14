@@ -4,7 +4,7 @@ import * as NodeGeocoder from "node-geocoder";
 
 @Injectable()
 export class GoogleMapsService {
-  constructor(private config: ConfigService) {}
+  constructor(private config: ConfigService) { }
   private readonly accessKey = this.config.get("GOOGLE_MAPS_ACCESS_KEY");
 
   options = {
@@ -29,7 +29,7 @@ export class GoogleMapsService {
         lat: res[0].latitude,
         lng: res[0].longitude,
       }
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occured, please try again.")

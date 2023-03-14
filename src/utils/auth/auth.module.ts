@@ -12,6 +12,9 @@ import { jwtConstants } from "./constants";
 // import { JwtStrategy } from "./Strategies/jwt.strategy";
 import { LocalStrategy } from "./Strategies/local.strategy";
 
+
+console.log("jwtConstants.secret");
+console.log(jwtConstants.secret);
 @Module({
   imports: [
     UsersModule,
@@ -34,4 +37,4 @@ import { LocalStrategy } from "./Strategies/local.strategy";
   ],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }
