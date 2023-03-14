@@ -30,7 +30,6 @@ export class AuthService {
     const payload = {
       address
     };
-
     const token = this.jwtService.sign(payload);
     return token;
   }
@@ -45,6 +44,7 @@ export class AuthService {
           const token = this.generateToken(address)
           if (token) {
             console.log('User successfully signed in')
+
             resolve(token);
           }
           // return { message: 'User already exists' }
