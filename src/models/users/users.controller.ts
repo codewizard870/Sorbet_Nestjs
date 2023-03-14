@@ -143,10 +143,10 @@ export class UsersController {
     )
   }
 
-  @Get("userRecommendations")
-  async userRecommendations(@Request() req) {
-    return await this.usersService.userRecommendations(
-      req.user.id
-    )
-  }
+  // @Get("userRecommendations")
+  // async userRecommendations(@Request() req) {
+  //   return await this.usersService.userRecommendations(
+  //     req.user.id
+  //   )
+  // }
 }

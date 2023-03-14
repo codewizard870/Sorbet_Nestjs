@@ -86,7 +86,9 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
   
     async getAll() {
       try {
-        const allWidgets = await this.prisma.widget.findMany({})
+        const allWidgets = await this.prisma.widget.findMany({
+          include: { user: true }
+        })
         if (allWidgets) {
           return allWidgets
         }

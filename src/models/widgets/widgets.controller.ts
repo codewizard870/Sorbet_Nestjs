@@ -6,15 +6,15 @@ import {
     Delete,
     Post,
     Param,
+    Query
   } from "@nestjs/common";
   import { WidgetsService } from "./widgets.service";
   import { CreateWidgetDto } from "./dto/create-widgets-dto";
   import { UpdateWidgetDto } from "./dto/update-widgets-dto";
   import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-  @ApiTags("users")
+    @ApiTags("widgets")
     @Controller("/widgets")
-    @ApiBearerAuth()
     export class WidgetsController {
     constructor(private readonly widgetsService: WidgetsService) {}
         @Post("createWidget")
@@ -22,7 +22,7 @@ import {
             return await this.widgetsService.create(data)
         }
         
-        @Get("getWidgetById/:id")
+        @Get(":id")
         async getWidgetById(@Param() id: string) {
             return await this.widgetsService.getWidgetById(id)
         }
@@ -32,7 +32,7 @@ import {
             return await this.widgetsService.getWidgetsByUserId(userId)
         }
 
-        @Get("getAll")
+        @Get("/getAll")
         async getAll() {
             return await this.widgetsService.getAll()
         }
@@ -45,8 +45,8 @@ import {
             )
         }
 
-        @Delete(":id/delete")
-        delete(@Param() id: string) {
+        @Delete(":id")
+        async delete(@Param() id: string) {
             return this.widgetsService.delete(id)
         }
 
