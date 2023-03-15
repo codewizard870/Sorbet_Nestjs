@@ -51,4 +51,9 @@ import {
     remove(@Param("id") id: string) {
       return this.widgetsService.remove(id)
     }
+
+    @Post("createDribbbleAccessToken")
+    createDribbbleAccessToken(@Body("dribbbleCode") dribbbleCode: string ) {
+      return this.widgetsService.createDribbbleAccessToken(dribbbleCode)
     }
+  }

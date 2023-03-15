@@ -135,18 +135,35 @@ export class PostsService {
 
   async findByUserId(userId: string) {
     try {
-      const post = await this.prismaService.post.findFirst({
+      const userPosts = await this.prismaService.post.findMany({
         where: { userId: userId },
+        orderBy: [
+          {
+            createdAt: 'desc',
+          },
+        ],
         include: {
           location: true,
+          user: true,
+          like: {
+            include: {
+              user: true
+            }
+          },
+          comment: {
+            include: {
+              user: true
+            }
+          },
+          followers: true,
         },
       })
-      if (post) {
-        return post
+      if (userPosts) {
+        return userPosts
       }
       else {
-        console.log("Could not find post.")
-        throw new Error("Could not find post.")
+        console.log("Could not find posts by userId.")
+        throw new Error("Could not find posts by userId.")
       }
     }
     catch (error) {

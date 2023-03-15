@@ -169,7 +169,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
       }
     }
 
-    async createDribbleAccessToken(dribbbleCode: string) {
+    async createDribbbleAccessToken(dribbbleCode: string) {
       try {
         const response = await fetch(`https://dribbble.com/oauth/token?client_id=${DRIBBLE_CLIENT_ID}&client_secret=${DRIBBLE_CLIENT_SECRET}&code=${dribbbleCode}`, {
           mode: 'no-cors',
@@ -183,7 +183,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
     
         const data = await response.json()
         console.log(data)
-        return data
+        return data.access_token
       } 
       catch (error) {
         console.log(error)

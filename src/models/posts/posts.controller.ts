@@ -37,6 +37,11 @@ export class PostsController {
     return this.postsService.findOne(id)
   }
 
+  @Get("findByUserId/:userId")
+  findByUserId(@Param("userId") userId: string) {
+    return this.postsService.findByUserId(userId)
+  }
+
   @Patch(":id/update")
   update(@Param("id") id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto)
