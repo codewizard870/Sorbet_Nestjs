@@ -27,8 +27,8 @@ model User {
   followers Follow[] @relation("followers")
   following Follow[] @relation("following")
 
-  like       Like[]
-  comment    Comment[]
+  likes      Like[]
+  comments   Comment[]
   jobProfile JobProfile[]
   token      Token?
   location   Location?
@@ -151,8 +151,8 @@ model Post {
 
   //relations
   location  Location[]
-  like      Like[]
-  comment  Comment[]
+  likes     Like[]
+  comments  Comment[]
   followers Follow[]
 
   //relation with user

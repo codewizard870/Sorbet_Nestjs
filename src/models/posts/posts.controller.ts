@@ -51,29 +51,4 @@ export class PostsController {
   remove(@Param("id") id: string) {
     return this.postsService.remove(id)
   }
-
-  @Post('likePost')
-  likePost(@Body() data: CreateLikeDto) {
-    return this.postsService.likePost(data)
-  }
-
-  @Post('removeLikePost')
-  removeLikePost(@Body("postId") postId: string, @Body("userId") userId: string) {
-    return this.postsService.removeLikeFromPost(postId, userId)
-  }
-
-  @Post('commentOnPost')
-  commentOnPost(@Body() data: CreateCommentDto) {
-    return this.postsService.commentOnPost(data)
-  }
-
-  @Patch('updatePostComment')
-  updatePostComment(@Body() data: UpdateCommentDto, commentId: string) {
-    return this.postsService.updatePostComment(data, commentId)
-  }
-
-  @Delete('removeCommentFromPost')
-  removeCommentFromPost(@Body("postId") postId: string, @Body("commentId") commentId: string) {
-    return this.postsService.removeCommentFromPost(postId, commentId)
-  }
 }

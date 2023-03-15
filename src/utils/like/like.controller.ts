@@ -20,24 +20,33 @@ import {
   export class LikeController {
     constructor(private readonly likeService: LikeService) {}
   
-    @Post('/createPostLike')
-    async createPostLike(@Body() createLikeDto: CreateLikeDto) {
-      console.log(CreateLikeDto)
-      return await this.likeService.createPostLike(createLikeDto)
+    @Post('/create')
+    async create(@Body() createLikeDto: CreateLikeDto) {
+      return await this.likeService.createLike(createLikeDto)
+    }
+
+    @Get('/findAll')
+    async findAll () {
+      return await this.likeService.findAll()
     }
   
     @Get('/:postId/likes')
-    async findAllLikesForPost (@Param() postId: string) {
+    async findAllForPost (@Param("postId") postId: string) {
       return await this.likeService.findAllLikesForPost(postId)
     }
 
+    @Get('/:userId/likes')
+    async findAllForUser (@Param("userId") userId: string) {
+      return await this.likeService.findAllLikesForUser(userId)
+    }
+
     @Get('/:id')
-    async findOne (@Param() id: string) {
+    async findOne (@Param("id") id: string) {
       return await this.likeService.findOne(id)
     }
 
-    @Delete('/remove')
-    async removeLike (@Param() id: string) {
+    @Delete(':id/remove')
+    async removeLike (@Param("id") id: string) {
       return await this.likeService.removeLike(id)
     }
   }

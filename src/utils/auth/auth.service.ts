@@ -8,9 +8,7 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { UsersService } from "src/models/users/users.service";
-import { ServerResponse } from "http";
 import { ApiInternalServerErrorResponse } from "@nestjs/swagger";
-import { sendEmail } from "./constants";
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import * as dotenv from "dotenv";
 dotenv.config();

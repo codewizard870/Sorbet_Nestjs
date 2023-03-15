@@ -80,12 +80,12 @@ export class PostsService {
         include: {
           user: true,
           location: true,
-          like: {
+          likes: {
             include: {
               user: true,
             },
           },
-          comment: {
+          comments: {
             include: {
               user: true,
             },
@@ -114,8 +114,16 @@ export class PostsService {
         include: {
           location: true,
           user: true,
-          like: true,
-          comment: true,
+          likes: {
+            include: {
+              user: true
+            }
+          },
+          comments: {
+            include: {
+              user: true
+            }
+          },
           followers: true,
         },
       })
@@ -145,12 +153,12 @@ export class PostsService {
         include: {
           location: true,
           user: true,
-          like: {
+          likes: {
             include: {
               user: true
             }
           },
-          comment: {
+          comments: {
             include: {
               user: true
             }
@@ -208,97 +216,6 @@ export class PostsService {
     catch (error) {
       console.log(error)
       throw new Error("Failed to remove post.")
-    }
-  }
-
-  async likePost(data: CreateLikeDto) {
-    try {
-      const createdLike = await this.likeService.createPostLike(data)
-      if (createdLike) {
-        return { message: `User: ${data.userId} successfully liked post: ${data.postId}` }
-      }
-      else {
-        console.log(`User: ${data.userId} failed to like post: ${data.postId}`)
-        return { message: `User: ${data.userId} failed to like post: ${data.postId}` }
-      }
-    }
-    catch (error) {
-      console.log(error)
-      throw new Error("Failed to like post.")
-    }
-  }
-
-  async removeLikeFromPost(postId: string, userId: string) {
-    try {
-      return await this.likeService.removePostLike(postId, userId)
-    }
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async commentOnPost(data: CreateCommentDto) {
-    try {
-      if (data.postId) {
-        const createdComment = await this.commentService.createPostComment(data)
-        if (createdComment)
-          return createdComment
-        else {
-          console.log(`User: ${data.userId} failed to comment on post: ${data.postId}`)
-          return { message: `User: ${data.userId} failed to comment on post: ${data.postId}` }
-        }
-      }
-      else {
-        console.log(`Data missing postId`)
-        throw new Error(`Data missing postId`)
-      }
-    }
-    catch (error) {
-      console.log(error)
-      throw new Error("Failed to comment on post.")
-    }
-  }
-
-  async updatePostComment(updateCommentDto: UpdateCommentDto, commentId: string) {
-    try {
-      const updatedPost = await this.commentService.updateComment(updateCommentDto, commentId)
-      if (updatedPost)
-        return updatedPost
-      else {
-        console.log(`Unable to update comment: ${commentId}`)
-        return { message: `Unable to update comment: ${commentId}` }
-      }
-    }
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async removeCommentFromPost(postId: string, commentId: string) {
-    try {
-      const post = await this.prismaService.post.findFirst({
-        where: { id: postId },
-        include: { comment: true }
-      })
-      if (post) {
-        for (let i = 0; i < post.comment.length; i++) {
-          if (post.comment[i].id == commentId)
-            return await this.commentService.removeComment(commentId)
-        }
-
-        console.log(`Post: ${postId} does not have comment: ${commentId}`)
-        return { message: `Post: ${postId} does not have comment: ${commentId}` }
-      }
-      else {
-        console.log(`Unable to find post`)
-        return { message: `Unable to find post` }
-      }
-    }
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
     }
   }
 }
