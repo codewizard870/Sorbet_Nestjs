@@ -19,16 +19,16 @@ import { userInfo } from "os";
 @ApiTags("auth")
 @Controller("/auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public()
   @Post('signUpWithWallet')
-  signUpWithWallet(@Body("address") address:string) {
-    return this.authService.signUpWithWallet(address)
+  signUpWithWallet(@Body("address") address: string, @Body("email") email: string) {
+    return this.authService.signUpWithWallet(address, email)
   }
 
   @Post('signInWithWallet')
-  signInWithWallet(@Body("address") address:string) {
+  signInWithWallet(@Body("address") address: string) {
     return this.authService.signInWithWallet(address)
   }
 }

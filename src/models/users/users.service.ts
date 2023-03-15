@@ -14,11 +14,12 @@ export class UsersService {
     private prisma: PrismaService,
   ) { }
 
-  async create(address: string, token: string) {
+  async create(address: string, email: string, token: string) {
     try {
-      const UserFromNearWallet = await this.getUserFromNearWallet(address)
-      console.log(UserFromNearWallet);
-      if (UserFromNearWallet) {
+      const user = await this.prisma.user.findFirst({
+        where: { nearWallet: address },
+      })
+      if (user) {
         throw new BadRequestException("User already Exists")
       }
       else {
@@ -27,7 +28,7 @@ export class UsersService {
             nearWallet: address,
             firstName: null,
             lastName: null,
-            email: null,
+            email: email,
             bio: null,
             profileImage: null,
             confirmationCode: (Math.random() * 10000).toString(),

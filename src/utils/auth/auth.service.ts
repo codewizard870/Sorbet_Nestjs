@@ -19,7 +19,7 @@ const BaseUrl = process.env.BASEURL;
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly prismaService: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly passwordsService: PasswordsService
   ) { }
@@ -33,50 +33,42 @@ export class AuthService {
   }
 
 
-  async signUpWithWallet(address: string) {
+  async signUpWithWallet(address: string, email: string) {
     try {
-      const user = await this.usersService.getUserFromNearWallet(address)
-      return new Promise(async (resolve, reject) => {
-        if (user) {
-          // console.log('User already exists')
-          const token = this.generateToken(address)
-          if (token) {
-            console.log('User successfully signed in')
-
-            resolve(token);
-          }
-          // return { message: 'User already exists' }
-        } else {
-          const token = this.generateToken(address)
-          const newUser = await this.usersService.create(address, token);
-          if (newUser) {
-            resolve(token);
-            return token;
-          } else {
-            reject('User could not be signed up')
-          }
-        }
+      const user = await this.prisma.user.findFirst({
+        where: { nearWallet: address },
       })
-    } catch (error) {
-      console.log(error);
-    }
 
+      if (user) {
+        throw new Error("Already registered")
+      } else {
+        // const token = this.generateToken(address)
+        const token = "";
+        const newUser = await this.usersService.create(address, email, token);
+        if (newUser) {
+          console.log("User successfully signed up")
+          return newUser;
+        }
+        else
+          throw new Error("Error signing user up")
+      }
+    } catch (error) {
+      console.log(error)
+      throw new Error("Error signing user up")
+    }
   }
 
   async signInWithWallet(address: string) {
     try {
-      const user = await this.usersService.getUserFromNearWallet(address)
+      const user = await this.prisma.user.findFirst({
+        where: { nearWallet: address },
+      })
       if (user) {
-        const token = this.generateToken(address)
-        if (token) {
           console.log('User successfully signed in')
-          return token
-        }
-        else throw new Error("Error signing user in")
+          return user.confirmationCode;
       } else {
-        this.signUpWithWallet(address);
+        throw new Error('Error signing user in')
       }
-
     }
     catch (error) {
       console.log(error)

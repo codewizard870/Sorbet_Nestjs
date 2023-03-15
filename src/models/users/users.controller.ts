@@ -22,7 +22,7 @@ export class UsersController {
 
   @Post("create")
   async create(@Body() address: string, @Body() token: string) {
-    return await this.usersService.create(address, token)
+    return await this.usersService.create(address, null, token)
   }
 
   @Get("getAll")
