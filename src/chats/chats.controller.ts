@@ -54,8 +54,8 @@ export class ChatsController {
     return await this.chatsService.remove(id);
   }
 
-  @Get("searchMessages")
-  async searchMessages(@Body() text: string) {
+  @Get("searchMessages/:text")
+  async searchMessages(@Param("text") text: string) {
     return await this.chatsService.searchMessages(text)
   }
 }

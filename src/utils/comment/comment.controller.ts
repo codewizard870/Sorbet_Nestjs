@@ -20,28 +20,33 @@ import {
   export class CommentController {
     constructor(private readonly commentService: CommentService) {}
   
-    @Post('createPostComment')
-    async createPostComment(@Body() createCommentDto: CreateCommentDto) {
-      return await this.commentService.createPostComment(createCommentDto)
+    @Post('create')
+    async create(@Body() createCommentDto: CreateCommentDto) {
+      return await this.commentService.createComment(createCommentDto)
     }
   
     @Get('post/:postId/commments')
-    async findAllCommentsForPost (@Param() postId: string) {
+    async findAllForPost (@Param("postId") postId: string) {
       return await this.commentService.findAllCommentsForPost(postId)
     }
 
-    @Get(':id')
-    async findOne (@Param() id: string) {
-      return await this.commentService.findOne(id)
+    @Get('/findAll')
+    async findAll () {
+      return await this.commentService.findAllComments()
     }
 
-    @Patch(':id/updateComment')
-    async updateComment (@Param() id: string, @Body() updatedCommentDto: UpdateCommentDto) {
+    @Get(':id')
+    async findOne (@Param("id") id: string) {
+      return await this.commentService.findById(id)
+    }
+
+    @Patch(':id/update')
+    async update (@Param("id") id: string, @Body() updatedCommentDto: UpdateCommentDto) {
       return await this.commentService.updateComment(updatedCommentDto, id)
     }
 
-    @Delete(':id/removeComment')
-    async removeComment (@Param() id: string) {
+    @Delete(':id/remove')
+    async remove (@Param("id") id: string) {
       return await this.commentService.removeComment(id)
     }
   }

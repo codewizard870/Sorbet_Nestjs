@@ -34,9 +34,12 @@ export class GroupsService {
 
   async findAll() {
     try {
-      return await this.prismaService.group.findMany({
-        include: { members: true },
+      const allGroups = await this.prismaService.group.findMany({
+        include: { members: true, location: true },
       })
+      if (allGroups) {
+        return allGroups
+      }
     } 
     catch (error) {
       console.log(error)
@@ -44,12 +47,12 @@ export class GroupsService {
     }
   }
 
-  async findOne(_id: string) {
+  async findOne(id: string) {
     try {
       const group = await this.prismaService.group.findFirst({
-        where: { id: _id },
+        where: { id: id },
         include: { members: true },
-      });
+      })
       return group
     } 
     catch (error) {

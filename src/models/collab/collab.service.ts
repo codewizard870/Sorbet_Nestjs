@@ -14,10 +14,10 @@ export class CollabService {
   
       const result = await this.prismaService.collab.create({
         data: {
-          collabId: '',
-          userId: '',
-          wallet_address: '',
-          public_key: '',
+          collabId: data.collabId,
+          userId: data.userId,
+          wallet_address: data.wallet_address,
+          public_key: data.public_key,
           createdAt: new Date(Date.now()),
           updatedAt: new Date(Date.now())
         },
@@ -30,7 +30,7 @@ export class CollabService {
       } 
     } 
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -43,31 +43,30 @@ export class CollabService {
       }
       else {
         console.log("Failed to find all collabs")
-        return { message: 'Failed to find all collabs' }
+        throw new Error("Failed to find all collabs")
       }
-      
     } 
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
 
-  async findOne(_id: string) {
+  async findOne(id: string) {
     try {
       const collab = await this.prismaService.collab.findFirst({
-        where: { id: _id },
+        where: { id: id },
       })
       if (collab) {
         return collab
       }
       else {
         console.log("Failed to find collab")
-        return { message: 'Failed to find collab' }
+        throw new Error('Failed to find collab')
       }
     } 
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -82,11 +81,11 @@ export class CollabService {
       }
       else {
         console.log("Failed to find collab")
-        return { message: 'Failed to find collab' }
+        throw new Error('Failed to find collab')
       }
     } 
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -101,11 +100,11 @@ export class CollabService {
       }
       else {
         console.log("Failed to find collab")
-        return { message: 'Failed to find collab' }
+        throw new Error('Failed to find collab')
       }
     } 
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -120,11 +119,11 @@ export class CollabService {
       }
       else {
         console.log("Failed to find collab")
-        return { message: 'Failed to find collab' }
+        throw new Error('Failed to find collab')
       }
     } 
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -139,13 +138,13 @@ export class CollabService {
         return { message: `Successfully updated collab` }
       }
       else {
-        console.log(`Failed to remove collab ${id}`)
-        return { message: `Failed to update collab` }
+        console.log(`Failed to update collab ${id}`)
+        throw new Error('Failed to update collab')
       }
     } 
     catch (error) {
-      console.log(error)
-      throw new Error("Failed to remove collab.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -155,16 +154,16 @@ export class CollabService {
         where: { id: id },
       })
       if (removedCollab) {
-        return { message: `Successfully removed collab` }
+        return { message: `Successfully deleted collab` }
       }
       else {
-        console.log(`Failed to remove collab ${id}`)
-        return { message: `Failed to remove collab` }
+        console.log(`Failed to delete collab ${id}`)
+        return { message: `Failed to delete collab` }
       }
     } 
     catch (error) {
-      console.log(error)
-      throw new Error("Failed to remove collab.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 }

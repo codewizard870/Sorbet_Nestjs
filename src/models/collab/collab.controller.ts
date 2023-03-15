@@ -33,18 +33,18 @@ export class CollabController {
     return this.collabService.findOne(id)
   }
 
-  @Get("findByUserId")
-  findByUserId(@Body() userId: string) {
+  @Get("findByUserId/:userId")
+  findByUserId(@Param("userId") userId: string) {
     return this.collabService.findByUserId(userId)
   }
 
-  @Get("findByWalletAddress")
-  findByWalletAddress(@Body() walletAddress: string) {
+  @Get("findByWalletAddress/:walletAddress")
+  findByWalletAddress(@Param("walletAddress") walletAddress: string) {
     return this.collabService.findByWalletAddress(walletAddress)
   }
 
-  @Get("findByPublicKey")
-  findByPublicKey(@Body() publicKey: string) {
+  @Get("findByPublicKey/:publicKey")
+  findByPublicKey(@Param("publicKey") publicKey: string) {
     return this.collabService.findByPublicKey(publicKey)
   }
 

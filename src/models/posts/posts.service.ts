@@ -141,7 +141,7 @@ export class PostsService {
     }
   }
 
-  async findByUserId(userId: string) {
+  async findAllByUserId(userId: string) {
     try {
       const userPosts = await this.prismaService.post.findMany({
         where: { userId: userId },

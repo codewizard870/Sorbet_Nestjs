@@ -225,7 +225,6 @@ model Collab {
   userId         String
   wallet_address String
   public_key     String
-  // location         Location[]
   createdAt      DateTime
   updatedAt      DateTime?
 }

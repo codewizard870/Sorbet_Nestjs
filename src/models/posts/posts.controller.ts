@@ -39,7 +39,7 @@ export class PostsController {
 
   @Get("findByUserId/:userId")
   findByUserId(@Param("userId") userId: string) {
-    return this.postsService.findByUserId(userId)
+    return this.postsService.findAllByUserId(userId)
   }
 
   @Patch(":id/update")
