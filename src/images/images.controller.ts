@@ -4,7 +4,6 @@ import {
   Post,
   Param,
   UploadedFile,
-  Request,
   Body,
   UseInterceptors,
   Query,
@@ -20,83 +19,24 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
-  @Post("uploadProfileImage")
+  @Post("upload")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadProfileImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
-    return await this.imagesService.uploadProfileImage(userId, file)
+  async uploadImage(@UploadedFile() file: Express.Multer.File, @Body("bucketName") bucketName: string , @Body("userId") userId: string) {
+    return await this.imagesService.uploadImage(bucketName, userId, file)
   }
 
-  @Post("uploadPostImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadPostImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
-    return await this.imagesService.uploadPostImage(userId, file)
+  @Get("getMetadata/:bucketName/:userId")
+  async getMetadata(@Param("bucketName") bucketName: string, @Param("userId") userId: string, @Query() destFileName: string) {
+    return await this.imagesService.getImageMetadata(bucketName, userId)
   }
 
-  @Post("uploadEventImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadEventImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
-    return await this.imagesService.uploadProfileImage(userId, file)
+  @Get("download/:bucketName/:userId")
+  async downloadImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string, @Query() destFileName: string) {
+    return await this.imagesService.downloadImage(bucketName, userId, destFileName)
   }
 
-  @Post("uploadGigImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadGigImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
-    return await this.imagesService.uploadProfileImage(userId, file)
-  }
-
-  @Post("uploadWidgetImage")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadWidgetImage(@UploadedFile() file: Express.Multer.File, @Body("userId") userId: string) {
-    return await this.imagesService.uploadProfileImage(userId, file)
-  }
-
-  @Get("downloadProfileImage/:userId")
-  async downloadProfileImage(@Param() userId: string, @Query() destFileName: string) {
-    return await this.imagesService.downloadProfileImage(userId, destFileName)
-  }
-
-  @Get("downloadPostImage/:userId")
-  async downloadPostImage(@Param() userId: string, @Query() destFileName: string) {
-    return await this.imagesService.downloadPostImage(userId, destFileName)
-  }
-
-  @Get("downloadGigImage/:userId")
-  async downloadGigImage(@Param() userId: string, @Query() destFileName: string) {
-    return await this.imagesService.downloadGigImage(userId, destFileName)
-  }
-
-  @Get("downloadEventImage/:userId")
-  async downloadEventImage(@Param() userId: string, @Query() destFileName: string) {
-    return await this.imagesService.downloadEventImage(userId, destFileName)
-  }
-
-  @Get("downloadWidgetImage/:userId")
-  async downloadWidgetImage(@Param() userId: string, @Query() destFileName: string) {
-    return await this.imagesService.downloadWidgetImage(userId, destFileName)
-  }
-
-  @Delete('deleteProfileImage/:userId')
-  async deleteProfileImage(@Param() userId: string) {
-    return await this.imagesService.deleteProfileImage(userId)
-  }
-
-  @Delete('deletePostImage/:userId')
-  async deletePostImage(@Param() userId: string) {
-    return await this.imagesService.deletePostImage(userId)
-  }
-
-  @Delete('deleteGigImage/:userId')
-  async deleteGigImage(@Param() userId: string) {
-    return await this.imagesService.deleteGigImage(userId)
-  }
-
-  @Delete('deleteEventImage/:userId')
-  async deleteEventImage(@Param() userId: string) {
-    return await this.imagesService.deleteEventImage(userId)
-  }
-  
-  @Delete('deleteWidgetImage/:userId')
-  async deleteWidgetImage(@Param() userId: string) {
-    return await this.imagesService.deleteWidgetImage(userId)
+  @Delete('delete/:bucketName/:userId')
+  async deleteImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+    return await this.imagesService.deleteImage(bucketName, userId)
   }
 }

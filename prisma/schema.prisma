@@ -15,9 +15,10 @@ model User {
   nearWallet          String?  @unique
   firstName           String?
   lastName            String?
+  title               String?
   email               String?
   bio                 String?
-  confirmationCode    String?  @unique
+  confirmationCode    String?
   profileImage        String?
   profileBannerImage  String?
   tags                String[] @default([])
