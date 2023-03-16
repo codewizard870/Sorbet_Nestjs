@@ -21,8 +21,8 @@ export class ImagesController {
 
   @Post("upload")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadImage(@UploadedFile() file: Express.Multer.File, @Body("bucketName") bucketName: string , @Body("userId") userId: string) {
-    return await this.imagesService.uploadImage(bucketName, userId, file)
+  async uploadImage(@UploadedFile("file") file: Express.Multer.File, @Body("bucketName") bucketName: string, @Body("userId") userId: string) {
+    return await this.imagesService.uploadImage(file, bucketName, userId)
   }
 
   @Get("getMetadata/:bucketName/:userId")

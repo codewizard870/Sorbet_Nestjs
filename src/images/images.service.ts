@@ -16,11 +16,12 @@ export class ImagesService {
 
   // vision = new ImageAnnotatorClient({})
   
-  uploadFile = (bucketName: string, file: Express.Multer.File) => new Promise( async (resolve, reject) => {
+  uploadFile = (file: Express.Multer.File, bucketName: string, id: string) => new Promise( async (resolve, reject) => {
     const bucket = await this.storage.bucket(bucketName)
     const { originalname, buffer } = file
   
     const blob = bucket.file(originalname.replace(/ /g, "_"))
+    // const blob = bucket.file(id + '.png')
     const blobStream = blob.createWriteStream({
       resumable: false,
       public: true
@@ -109,12 +110,12 @@ export class ImagesService {
     }
   }
 
-  async uploadImage(bucketName: string, id: string, file: Express.Multer.File) {
-    const destFileName = id + '.png'
+  async uploadImage(file: Express.Multer.File, bucketName: string, id: string) {
     try {
       return await this.uploadFile(
-        bucketName,
         file,
+        bucketName,
+        id
       )
     } 
     catch (error) {
