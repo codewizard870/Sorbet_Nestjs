@@ -13,7 +13,7 @@ import {
   import { UpdateWidgetDto } from "./dto/update-widgets-dto";
   import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-    @ApiTags("widgets")
+    @ApiTags("Widgets")
     @Controller("/widgets")
     export class WidgetsController {
     constructor(private readonly widgetsService: WidgetsService) {}
@@ -42,12 +42,12 @@ import {
       return this.widgetsService.findByUserId(userId)
     }
   
-    @Patch(":id/update")
+    @Patch(":id")
     update(@Param("id") id: string, @Body() updateWidgetDto: UpdateWidgetDto) {
       return this.widgetsService.update(id, updateWidgetDto)
     }
   
-    @Delete(":id/remove")
+    @Delete(":id")
     remove(@Param("id") id: string) {
       return this.widgetsService.remove(id)
     }

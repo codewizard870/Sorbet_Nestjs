@@ -150,7 +150,7 @@ export class UsersService {
     }
   }
 
-  async delete(_id: string) {
+  async remove(_id: string) {
     try {
       const result = await this.prisma.user.delete({
         where: { id: _id },

@@ -34,12 +34,12 @@ export class GroupsController {
     return this.groupsService.findOne(id);
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   update(@Param("id") id: string, @Body() updateGigDto: UpdateGroupDto) {
     return this.groupsService.update(id, updateGigDto);
   }
 
-  @Delete(":id/remove")
+  @Delete(":id")
   remove(@Param("id") id: string) {
     return this.groupsService.remove(id);
   }

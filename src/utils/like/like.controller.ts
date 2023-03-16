@@ -26,28 +26,28 @@ import {
     }
 
     @Get('/findAll')
-    async findAll () {
+    async findAll() {
       return await this.likeService.findAll()
     }
   
     @Get('/:postId/likes')
-    async findAllForPost (@Param("postId") postId: string) {
+    async findAllForPost(@Param("postId") postId: string) {
       return await this.likeService.findAllLikesForPost(postId)
     }
 
     @Get('/:userId/likes')
-    async findAllForUser (@Param("userId") userId: string) {
+    async findAllForUser(@Param("userId") userId: string) {
       return await this.likeService.findAllLikesForUser(userId)
     }
 
     @Get('/:id')
-    async findOne (@Param("id") id: string) {
+    async findOne(@Param("id") id: string) {
       return await this.likeService.findOne(id)
     }
 
-    @Delete(':id/remove')
-    async removeLike (@Param("id") id: string) {
-      return await this.likeService.removeLike(id)
+    @Delete(':id')
+    async delete(@Param("id") id: string) {
+      return await this.likeService.remove(id)
     }
   }
   

@@ -13,7 +13,7 @@ import { UpdateCollabDto } from "./dto/update-collab.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiBearerAuth()
-@ApiTags("events")
+@ApiTags("Collabs")
 @Controller("/collab")
 export class CollabController {
   constructor(private readonly collabService: CollabService) {}
@@ -48,12 +48,12 @@ export class CollabController {
     return this.collabService.findByPublicKey(publicKey)
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   update(@Param("id") id: string, @Body() updateCollabDto: UpdateCollabDto) {
     return this.collabService.update(id, updateCollabDto)
   }
 
-  @Delete(":id/delete")
+  @Delete(":id")
   remove(@Param("id") id: string) {
     return this.collabService.remove(id)
   }

@@ -40,12 +40,12 @@ import {
       return await this.commentService.findById(id)
     }
 
-    @Patch(':id/update')
+    @Patch(':id')
     async update (@Param("id") id: string, @Body() updatedCommentDto: UpdateCommentDto) {
       return await this.commentService.updateComment(updatedCommentDto, id)
     }
 
-    @Delete(':id/remove')
+    @Delete(':id')
     async remove (@Param("id") id: string) {
       return await this.commentService.removeComment(id)
     }

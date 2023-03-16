@@ -44,7 +44,7 @@ export class ChatsController {
     return await this.chatsService.getChatByUserId(userId);
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   update(@Param("id") id: string, @Body() updateChatsDto: UpdateChatDto) {
     return this.chatsService.update(id, updateChatsDto);
   }

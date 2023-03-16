@@ -48,13 +48,13 @@ export class JobProfileController {
     return this.jobProfileService.getFromJobType(jobType)
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   update(@Param("id") id: string, @Body() data: UpdateJobProfileDto) {
     return this.jobProfileService.update(id, data)
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  delete(@Param("id") id: string) {
     return this.jobProfileService.remove(id)
   }
 }

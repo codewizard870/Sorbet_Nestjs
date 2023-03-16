@@ -111,7 +111,7 @@ export class LikeService {
     }
   }
 
-  async removeLike(id: string) {
+  async remove(id: string) {
     try {
       const result = await this.prismaService.like.delete({
         where: { id: id },

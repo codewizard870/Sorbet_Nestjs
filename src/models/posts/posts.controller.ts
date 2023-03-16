@@ -16,7 +16,7 @@ import { CreateLikeDto } from "src/utils/like/dto/create-like-dto";
 import { CreateCommentDto } from "src/utils/comment/dto/create-comment-dto";
 import { UpdateCommentDto } from "src/utils/comment/dto/update-comment-dto";
 @ApiBearerAuth()
-@ApiTags("posts")
+@ApiTags("Posts")
 @Controller("/posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
@@ -42,13 +42,13 @@ export class PostsController {
     return this.postsService.findAllByUserId(userId)
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   update(@Param("id") id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto)
   }
 
-  @Delete(":id/remove")
-  remove(@Param("id") id: string) {
+  @Delete(":id")
+  delete(@Param("id") id: string) {
     return this.postsService.remove(id)
   }
 }

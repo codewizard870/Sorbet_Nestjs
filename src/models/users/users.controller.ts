@@ -14,7 +14,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-@ApiTags("users")
+@ApiTags("Users")
 @Controller("/user")
 @ApiBearerAuth()
 export class UsersController {
@@ -51,7 +51,7 @@ export class UsersController {
     )
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   async update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.updateUserProfile(
       id,
@@ -59,13 +59,13 @@ export class UsersController {
     )
   }
 
-  @Delete(":id/delete")
-  deleteUser(@Param("id") id: string) {
-    return this.usersService.delete(id);
+  @Delete(":id")
+  delete(@Param("id") id: string) {
+    return this.usersService.remove(id)
   }
 
   @Patch("addUserToGroup")
-  async addUserToGroup(@Request() req, @Body() groupId: string) {
+  async addUserToGroup(@Request() req, @Body("groupId") groupId: string) {
     return await this.usersService.addUserToGroup(
       req.user.id,
       groupId
