@@ -26,13 +26,13 @@ export class ImagesController {
   }
 
   @Get("getMetadata/:bucketName/:userId")
-  async getMetadata(@Param("bucketName") bucketName: string, @Param("userId") userId: string, @Query() destFileName: string) {
+  async getMetadata(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
     return await this.imagesService.getImageMetadata(bucketName, userId)
   }
 
   @Get("download/:bucketName/:userId")
-  async downloadImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string, @Query() destFileName: string) {
-    return await this.imagesService.downloadImage(bucketName, userId, destFileName)
+  async downloadImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+    return await this.imagesService.downloadImage(bucketName, userId)
   }
 
   @Delete('delete/:bucketName/:userId')

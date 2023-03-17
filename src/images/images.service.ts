@@ -49,8 +49,9 @@ export class ImagesService {
     return { imageUrl }
   }
 
-  getFileMetadata = async (bucketName: string, fileName: string) => {
+  getFileMetadata = async (bucketName: string, userId: string) => {
     try {
+      const fileName = userId + '.png'
       const bucket = this.storage.bucket(bucketName)
       const file = bucket.file(fileName)
       const getMetadata = async () => {
@@ -72,38 +73,42 @@ export class ImagesService {
             return result
           }
         })
-        .catch(console.error)
-    } 
+        .catch((error) => console.error(error))
+    }
     catch (error) {
       console.error(error)
     }
   }
 
-  downloadFile = async (bucketName: string, userId: string, destFileName: string) => {
+  downloadFile = async (bucketName: string, userId: string) => {
     try {
-      const options = {
-        destination: destFileName,
-      }
-      const download = async () => {
-        await this.storage.bucket(bucketName).file(userId + '.png').download(options);
-    
-        console.log(
-          `gs://${bucketName}/${userId + '.png'} downloaded to ${destFileName}.`
-        )
-      }
-  
-      download()
-        .then((result) => console.log(result))
-        .catch(console.error)
+      const bucket = this.storage.bucket(bucketName);
+      const gcsFileName = `${userId}.png`
+
+      const file = bucket.file(gcsFileName)
+      const stream = file.createReadStream()
+
+      stream.on('error', (err) => {
+        console.error(err);
+        throw new Error('File not found')
+      })
+
+      stream.on('response', (response) => {
+        response.headers['Content-Type'] = 'image/png';
+        response.headers['Content-Disposition'] = `attachment; filename="${gcsFileName}"`
+      })
+
+      return stream
     } 
     catch (error) {
       console.error(error)
     }
   }
 
-  deleteFile = async (bucketName: string, fileName: string) => {
+  deleteFile = async (bucketName: string, userId: string) => {
     try {
       const deleteFile = async () => {
+        const fileName = userId + '.png'
         const bucket = await this.storage.bucket(bucketName)
         const file = bucket.file(fileName)
         await file.delete()
@@ -120,12 +125,12 @@ export class ImagesService {
     }
   }
 
-  async uploadImage(file: Express.Multer.File, bucketName: string, id: string) {
+  async uploadImage(file: Express.Multer.File, bucketName: string, userId: string) {
     try {
       return await this.uploadFile(
         file,
         bucketName,
-        id
+        userId
       )
     } 
     catch (error) {
@@ -134,28 +139,24 @@ export class ImagesService {
     }
   }
 
-  async getImageMetadata(bucketName: string, id: string) {
-    const fileName = id + '.png'
+  async getImageMetadata(bucketName: string, userId: string) {
     return await this.getFileMetadata(
       bucketName,
-      fileName
+      userId
     )
   }
 
-  async downloadImage(bucketName: string, id: string, destFileName: string) {
-    const fileName = id + '.png'
+  async downloadImage(bucketName: string, userId: string) {
     return await this.downloadFile(
       bucketName,
-      fileName,
-      destFileName
+      userId
     )
   }
 
-  async deleteImage(bucketName: string, id: string) {
-    const fileName = id + '.png'
+  async deleteImage(bucketName: string, userId: string) {
     return await this.deleteFile(
       bucketName,
-      fileName
+      userId
     )
   }
 }
