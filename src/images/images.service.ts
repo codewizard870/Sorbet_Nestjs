@@ -16,30 +16,42 @@ export class ImagesService {
 
   // vision = new ImageAnnotatorClient({})
   
-  uploadFile = (file: Express.Multer.File, bucketName: string, id: string) => new Promise( async (resolve, reject) => {
-    const bucket = await this.storage.bucket(bucketName)
-    const { /*originalname,*/ buffer } = file
-  
-    // const blob = bucket.file(originalname.replace(/ /g, "_"))
-    const blob = bucket.file(id + '.png')
-    const blobStream = blob.createWriteStream({
-      resumable: false,
-      public: true
-    })
-    blobStream.on('finish', () => {
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`
-      resolve(publicUrl)
-    })
-    .on('error', (error: any) => {
-      console.log('error', error)
-      reject(`Unable to upload image.`)
-    })
-    .end(buffer)
-  })
+  uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
+    const bucket = this.storage.bucket(bucketName)
+    const gcsFileName = `${userId}.png`
+    const options = {
+      metadata: {
+        contentType: 'image/png',
+      },
+    }
 
-  getFileMetadata(bucketName: string, fileName: string) {
+    const stream = bucket.file(gcsFileName).createWriteStream(options)
+    stream.on('error', (err) => {
+      console.error(err);
+    })
+    stream.on('finish', async () => {
+      await bucket.file(gcsFileName).makePublic()
+    });
+
+    stream.end(file.buffer);
+
+    const imageUrl = await new Promise<string>((resolve, reject) => {
+      stream.on('finish', () => {
+        const publicUrl = `https://storage.googleapis.com/${bucketName}/${gcsFileName}`
+        resolve(publicUrl)
+      })
+
+      stream.on('error', (err) => {
+        reject(err)
+      })
+    })
+
+    return { imageUrl }
+  }
+
+  getFileMetadata = async (bucketName: string, fileName: string) => {
     try {
-      const bucket = this.storage.bucket(bucketName);
+      const bucket = this.storage.bucket(bucketName)
       const file = bucket.file(fileName)
       const getMetadata = async () => {
         const [ metadata ] = await file.getMetadata()
@@ -67,7 +79,7 @@ export class ImagesService {
     }
   }
 
-  downloadFile(bucketName: string, userId: string, destFileName: string) {
+  downloadFile = async (bucketName: string, userId: string, destFileName: string) => {
     try {
       const options = {
         destination: destFileName,
@@ -89,15 +101,15 @@ export class ImagesService {
     }
   }
 
-  deleteFile(bucketName: string, fileName: string, generationMatchPrecondition = 0) {
+  deleteFile = async (bucketName: string, fileName: string) => {
     try {
-      const deleteOptions = {
-        ifGenerationMatch: generationMatchPrecondition,
-      };
       const deleteFile = async () => {
-        await this.storage.bucket(bucketName).file(fileName).delete(deleteOptions)
+        const bucket = await this.storage.bucket(bucketName)
+        const file = bucket.file(fileName)
+        await file.delete()
     
         console.log(`gs://${bucketName}/${fileName} deleted`)
+        return { message: `Successfully deleted file: ${fileName} from bucket: ${bucketName}` }
       }
       deleteFile()
         .then(result => console.log('deletedFile', result))
