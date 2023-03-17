@@ -22,6 +22,9 @@ export class ImagesController {
   @Post("upload")
   @UseInterceptors(FileInterceptor("file"))
   async uploadImage(@UploadedFile("file") file: Express.Multer.File, @Body("bucketName") bucketName: string, @Body("userId") userId: string) {
+    console.log('file constructor', file)
+    console.log('bucketName constructor', bucketName)
+    console.log('userId constructor', userId)
     return await this.imagesService.uploadImage(file, bucketName, userId)
   }
 

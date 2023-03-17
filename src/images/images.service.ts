@@ -18,10 +18,10 @@ export class ImagesService {
   
   uploadFile = (file: Express.Multer.File, bucketName: string, id: string) => new Promise( async (resolve, reject) => {
     const bucket = await this.storage.bucket(bucketName)
-    const { originalname, buffer } = file
+    const { /*originalname,*/ buffer } = file
   
-    const blob = bucket.file(originalname.replace(/ /g, "_"))
-    // const blob = bucket.file(id + '.png')
+    // const blob = bucket.file(originalname.replace(/ /g, "_"))
+    const blob = bucket.file(id + '.png')
     const blobStream = blob.createWriteStream({
       resumable: false,
       public: true
@@ -30,8 +30,8 @@ export class ImagesService {
       const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`
       resolve(publicUrl)
     })
-    .on('error', (e) => {
-      console.log(e)
+    .on('error', (error: any) => {
+      console.log('error', error)
       reject(`Unable to upload image.`)
     })
     .end(buffer)
@@ -67,18 +67,16 @@ export class ImagesService {
     }
   }
 
-  downloadFile(bucketName: string, fileName: string, destFileName: string) {
+  downloadFile(bucketName: string, userId: string, destFileName: string) {
     try {
-      const bucket = this.storage.bucket(bucketName)
-      console.log('bucket', bucket)
       const options = {
         destination: destFileName,
       }
       const download = async () => {
-        await this.storage.bucket(bucketName).file(fileName).download(options);
+        await this.storage.bucket(bucketName).file(userId + '.png').download(options);
     
         console.log(
-          `gs://${bucketName}/${fileName} downloaded to ${destFileName}.`
+          `gs://${bucketName}/${userId + '.png'} downloaded to ${destFileName}.`
         )
       }
   
@@ -96,7 +94,7 @@ export class ImagesService {
       const deleteOptions = {
         ifGenerationMatch: generationMatchPrecondition,
       };
-      async function deleteFile() {
+      const deleteFile = async () => {
         await this.storage.bucket(bucketName).file(fileName).delete(deleteOptions)
     
         console.log(`gs://${bucketName}/${fileName} deleted`)
