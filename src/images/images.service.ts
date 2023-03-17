@@ -51,29 +51,13 @@ export class ImagesService {
 
   getFileMetadata = async (bucketName: string, userId: string) => {
     try {
-      const fileName = userId + '.png'
-      const bucket = this.storage.bucket(bucketName)
-      const file = bucket.file(fileName)
-      const getMetadata = async () => {
-        const [ metadata ] = await file.getMetadata()
-        return metadata
-        // if (metadata.contentType.startsWith('image/')) {
-        //   const [imageBuffer] = await file.download();
-        //   const [result] = await this.vision.annotateImage({
-        //     image: { content: imageBuffer },
-        //     features: [{ type: 'IMAGE_PROPERTIES' }],
-        //   });
-        //   console.log('imagePropertiesAnnotation', result.imagePropertiesAnnotation);
-        // }
-      }
-      getMetadata()
-        .then((result) => {
-          if (result.bucket == bucketName && result.name == fileName) {
-            console.log(result)
-            return result
-          }
-        })
-        .catch((error) => console.error(error))
+      const bucket = this.storage.bucket(bucketName);
+      const gcsFileName = `${userId}.png`
+
+      const file = bucket.file(gcsFileName)
+      const [ metadata ] = await file.getMetadata()
+
+      return metadata
     }
     catch (error) {
       console.error(error)

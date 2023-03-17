@@ -26,7 +26,7 @@ export class ImagesController {
   }
 
   @Get("getMetadata/:bucketName/:userId")
-  async getMetadata(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+  async getMetadata(@Param("bucketName") bucketName: string, @Param("userId") userId: string): Promise<any> {
     return await this.imagesService.getImageMetadata(bucketName, userId)
   }
 
