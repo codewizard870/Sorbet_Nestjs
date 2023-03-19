@@ -15,10 +15,12 @@ model User {
   nearWallet          String?  @unique
   firstName           String?
   lastName            String?
+  title               String?
   email               String?
   bio                 String?
-  confirmationCode    String?  @unique
+  confirmationCode    String?
   profileImage        String?
+  profileBannerImage  String?
   tags                String[] @default([])
   connections         String[] @default([]) @db.ObjectId
   connection_requests String[] @default([]) @db.ObjectId
@@ -26,8 +28,8 @@ model User {
   followers Follow[] @relation("followers")
   following Follow[] @relation("following")
 
-  like       Like[]
-  comment    Comment[]
+  likes      Like[]
+  comments   Comment[]
   jobProfile JobProfile[]
   token      Token?
   location   Location?
@@ -36,6 +38,7 @@ model User {
   groups     Group[]      @relation(name: "members", fields: [groupIDs], references: [id])
   widgets    Widget[]
   createdAt  DateTime     @default(now())
+  updatedAt  DateTime?
 }
 
 model JobProfile {
@@ -149,8 +152,8 @@ model Post {
 
   //relations
   location  Location[]
-  like      Like[]
-  commment  Comment[]
+  likes     Like[]
+  comments  Comment[]
   followers Follow[]
 
   //relation with user
@@ -162,8 +165,8 @@ model Location {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   locationType LocationType
   address      String
-  latitude     Float
-  langitude    Float
+  latitude     Float?
+  langitude    Float?
 
   // relation with post
   post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
@@ -193,7 +196,8 @@ enum PostType {
 enum LocationType {
   Remote @map("Remote")
   OnSite @map("OnSite")
-
+  Online @map("Online")
+  InPerson @map("In Person")
   @@map("LocationType")
 }
 
@@ -222,7 +226,6 @@ model Collab {
   userId         String
   wallet_address String
   public_key     String
-  // location         Location[]
   createdAt      DateTime
   updatedAt      DateTime?
 }
@@ -268,7 +271,7 @@ model Widget {
   url          String?
   name         String?
   description  String?
-  type         WidgetType
+  type         String?
   image        String?
   nft_metadata String?
   userId       String     @db.ObjectId

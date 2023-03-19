@@ -7,7 +7,6 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { Context, MockContext, createMockContext } from "../../../test/prisma/context"
 import { PrismaClient } from '@prisma/client'
-import { Content } from "@prisma/client";
 import { TokensService } from "src/utils/tokens/tokens.service";
 
 

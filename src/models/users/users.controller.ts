@@ -5,16 +5,16 @@ import {
   Request,
   Patch,
   Delete,
+  Param,
   Post,
   Query,
-  Param,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-@ApiTags("users")
+@ApiTags("Users")
 @Controller("/user")
 @ApiBearerAuth()
 export class UsersController {
@@ -22,36 +22,36 @@ export class UsersController {
 
   @Post("create")
   async create(@Body() address: string, @Body() token: string) {
-    return await this.usersService.create(address, token)
+    return await this.usersService.create(address, null, token)
   }
 
   @Get("getAll")
   async getAll() {
-    return await this.usersService.getAll();
+    return await this.usersService.getAll()
   }
 
-  @Get("getUserFromEmail")
-  async getUserFromEmail(@Body("email") email: string) {
+  @Get("/getUserByEmail/:email")
+  async getUserFromEmail(@Param("email") email: string) {
     return await this.usersService.getUserFromEmail(
       email
     )
   }
 
-  @Get("getUserFromNearWallet")
-  async getUserFromNearWallet(@Body("nearWallet") nearWallet: string) {
+  @Get("getUserByNearWallet/:nearWallet")
+  async getUserFromNearWallet(@Param("nearWallet") nearWallet: string) {
     return await this.usersService.getUserFromNearWallet(
       nearWallet
     )
   }
 
-  @Get(":id/getUserFromId")
-  async getUserFromId(@Query() id: string) {
+  @Get("getUserById/:id")
+  async getUserFromId(@Param("id") id: string) {
     return await this.usersService.getUserFromId(
       id
     )
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   async update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.updateUserProfile(
       id,
@@ -59,13 +59,13 @@ export class UsersController {
     )
   }
 
-  @Delete(":id/delete")
-  deleteUser(@Param("id") id: string) {
-    return this.usersService.delete(id)
+  @Delete(":id")
+  delete(@Param("id") id: string) {
+    return this.usersService.remove(id)
   }
 
   @Patch("addUserToGroup")
-  async addUserToGroup(@Request() req, @Body() groupId: string) {
+  async addUserToGroup(@Request() req, @Body("groupId") groupId: string) {
     return await this.usersService.addUserToGroup(
       req.user.id,
       groupId
@@ -128,7 +128,7 @@ export class UsersController {
     )
   }
 
-  @Get(":getMutualConnections")
+  @Get("getMutualConnections")
   async getMutualConnections(@Request() req, @Body() user2_Id: string) {
     return await this.usersService.connectionIntersection(
       req.user.id,
@@ -137,16 +137,16 @@ export class UsersController {
   }
 
   @Get("userRandomRecommendations")
-  async userRandomRecommendations(@Request() req) {
+  async userRandomRecommendations(@Query("userId") userId: string) {
     return await this.usersService.userRandomRecommendations(
-      req.user.id
+      userId
     )
   }
 
-  @Get("userRecommendations")
-  async userRecommendations(@Request() req) {
-    return await this.usersService.userRecommendations(
-      req.user.id
-    )
-  }
+  // @Get("userRecommendations")
+  // async userRecommendations(@Request() req) {
+  //   return await this.usersService.userRecommendations(
+  //     req.user.id
+  //   )
+  // }
 }

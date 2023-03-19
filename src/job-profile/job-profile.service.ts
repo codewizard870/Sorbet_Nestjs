@@ -8,34 +8,53 @@ import { UpdateJobProfileDto } from "./dto/update-job-profile.dto";
 export class JobProfileService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(data: CreateJobProfileDto, id: string) {
+  async create(data: CreateJobProfileDto, userId: string) {
     try {
       const result = await this.prismaService.jobProfile.create({
         data: {
           name: data.name,
           type: data.type,
-          userId: id,
+          userId: userId,
         },
-      });
+      })
       if (result) {
-        return result;
-      } else {
+        return result
+      } 
+      else {
         throw new BadRequestException("Error occured");
       }
-    } catch (error) {
-      throw new BadRequestException("Unable to create User", error);
+    } 
+    catch (error) {
+      throw new BadRequestException("Unable to create User", error)
+    }
+  }
+
+  async getAll() {
+    try {
+      const result = this.prismaService.jobProfile.findMany({
+        include: {user: true},
+      })
+      if(result) {
+        return result
+      }
+      else {
+        throw new Error("No job profiles were found.");
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured, please try again.")
     }
   }
 
   async getFromUserId(userId: string) {
     try {
       const result = await this.prismaService.jobProfile.findMany({
-        where: {
-          userId: userId,
-        },
-      });
+        where: { userId: userId },
+        include: { user: true }
+      })
       if (result) {
-        return result;
+        return result
       } 
       else {
         throw new Error("Job profile not found.");
@@ -46,21 +65,18 @@ export class JobProfileService {
       throw new Error("An error occured, please try again.")
     }
   }
+
   async getFromJobName(name: string) {
     try {
       const result = await this.prismaService.jobProfile.findMany({
-        where: {
-          name: name,
-        },
-        include: {
-          user: true,
-        },
-      });
+        where: { name: name },
+        include: { user: true },
+      })
       if (result) {
-        return result;
+        return result
       }
       else {
-        throw new Error("Job profile not found.");
+        throw new Error("Job profile not found.")
       }
     } 
     catch (error) {
@@ -68,17 +84,18 @@ export class JobProfileService {
       throw new Error("An error occured, please try again.")
     }
   }
+
   async getFromJobType(jobType: string) {
     try {
       const result = await this.prismaService.jobProfile.findMany({
         where: { type: jobType },
         include: { user: true },
-      });
+      })
       if (result) {
-        return result;
+        return result
       } 
       else {
-        throw new Error("Job profile not found.");
+        throw new Error("Job profile not found.")
       }
     } 
     catch (error) {
@@ -87,35 +104,17 @@ export class JobProfileService {
     }
   }
 
-  async getFromJobId(id: string) {
+  async getById(id: string) {
     try {
       const result = await this.prismaService.jobProfile.findMany({
         where: { id: id },
-        include: {user: true},
-      });
+        include: { user: true },
+      })
       if (result) {
-        return result;
+        return result
       } 
       else {
-        throw new Error("Job profile not found.");
-      }
-    } 
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
-    }
-  }
-
-  async getAll() {
-    try {
-      const result = this.prismaService.jobProfile.findMany({
-        include: {user: true},
-      });
-      if(result) {
-        return result;
-      }
-      else {
-        throw new Error("No job profiles were found.");
+        throw new Error("Job profile not found.")
       }
     } 
     catch (error) {
@@ -135,11 +134,12 @@ export class JobProfileService {
       }
       else {
         console.log("Failed to updated job profile")
-        return { message: "Failed to updated job profile" }
+        throw new Error("Failed to updated job profile")
       }
     } 
     catch (error) {
-      
+      console.error(error)
+      throw new Error("An error occured, please try again.")
     }
   }
 

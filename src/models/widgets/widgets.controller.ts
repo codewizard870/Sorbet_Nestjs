@@ -2,68 +2,58 @@ import {
     Controller,
     Get,
     Body,
-    Request,
     Patch,
     Delete,
     Post,
     Param,
-    Response
+    Query
   } from "@nestjs/common";
   import { WidgetsService } from "./widgets.service";
   import { CreateWidgetDto } from "./dto/create-widgets-dto";
   import { UpdateWidgetDto } from "./dto/update-widgets-dto";
   import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-  @ApiTags("users")
+    @ApiTags("Widgets")
     @Controller("/widgets")
-    @ApiBearerAuth()
     export class WidgetsController {
     constructor(private readonly widgetsService: WidgetsService) {}
-        @Post("createWidget")
-        async create(@Body() data: CreateWidgetDto) {
-            return await this.widgetsService.create(data)
-        }
-        
-        @Get("getWidgetById")
-        async getWidgetById(@Body() id: string) {
-            return await this.widgetsService.getWidgetById(id)
-        }
-
-        @Get("getWidgetsByUserId")
-        async getWidgetsByUserId(@Body() userId: string) {
-            return await this.widgetsService.getWidgetsByUserId(userId)
-        }
-
-        @Get("getWidgetFromImage")
-        async getWidgetFromImage(@Body() image: string) {
-            return await this.widgetsService.getWidgetFromImage(image)
-        }
-
-        @Get("getWidgetFromNFTMetadata")
-        async getWidgetFromNFTMetadata(@Body() nft_metadata: string) {
-            return await this.widgetsService.getWidgetFromNFTMetadata(nft_metadata)
-        }
-
-        @Get("getAll")
-        async getAll() {
-            return await this.widgetsService.getAll()
-        }
-
-        @Patch(':id/update')
-        async update(@Param() id, @Body() updateWidgetDto: UpdateWidgetDto) {
-            return await this.widgetsService.update(
-                id,
-                updateWidgetDto
-            )
-        }
-
-        @Delete(":id/delete")
-        delete(@Param() id,) {
-            return this.widgetsService.delete(id)
-        }
-
-        @Post('createDribbleAccessToken')
-        async createDribbleAccessToken(@Body() dribbbleCode: string) {
-            return await this.widgetsService.createDribbleAccessToken(dribbbleCode)
-        }
+    @Post("create")
+    async create(@Body() data: CreateWidgetDto) {
+      return await this.widgetsService.create(data)
     }
+  
+    @Get("findAll")
+    findAll() {
+      return this.widgetsService.findAll()
+    }
+
+    @Get("findAllByType/:type")
+    findAllByType(@Param("type") type: string) {
+      return this.widgetsService.findAllByType(type)
+    }
+  
+    @Get(":id")
+    findOne(@Param("id") id: string) {
+      return this.widgetsService.findOne(id)
+    }
+
+    @Get("findByUserId/:userId")
+    findByUserId(@Param("userId") userId: string) {
+      return this.widgetsService.findByUserId(userId)
+    }
+  
+    @Patch(":id")
+    update(@Param("id") id: string, @Body() updateWidgetDto: UpdateWidgetDto) {
+      return this.widgetsService.update(id, updateWidgetDto)
+    }
+  
+    @Delete(":id")
+    remove(@Param("id") id: string) {
+      return this.widgetsService.remove(id)
+    }
+
+    @Post("createDribbbleAccessToken")
+    createDribbbleAccessToken(@Body("dribbbleCode") dribbbleCode: string ) {
+      return this.widgetsService.createDribbbleAccessToken(dribbbleCode)
+    }
+  }

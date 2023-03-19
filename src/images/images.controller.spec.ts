@@ -221,20 +221,12 @@ describe("ImagesController", () => {
     expect(controller).toBeDefined();
   });
 
-  it("should define an endpoint to upload a profile image", () => {
-    expect(controller.uploadProfileImage).toBeDefined()
-  })
-
   it("should upload a profile image", async () => {
     const imageBuffer = (await fileToBuffer(
       __dirname + '/mock-upload-image.png',
     )) as Express.Multer.File;
     // const uploadedImage = await controller.uploadProfileImage(imageBuffer[0], req)
     // console.log(uploadedImage)
-  })
-
-  it("should define an endpoint to upload a gig image", () => {
-    expect(controller.uploadPostImage).toBeDefined()
   })
 
   it("should upload a gig image", async () => {
@@ -245,20 +237,12 @@ describe("ImagesController", () => {
     // console.log(uploadedImage)
   })
 
-  it("should define an endpoint to upload an event image", () => {
-    expect(controller.uploadPostImage).toBeDefined()
-  })
-
   it("should upload an event image", async () => {
     const imageBuffer = (await fileToBuffer(
       __dirname + '/mock-upload-image.png',
     )) as Express.Multer.File;
     // const uploadedImage = await controller.uploadEventImage(imageBuffer[0], req)
     // console.log(uploadedImage)
-  })
-
-  it("should define an endpoint to upload a widget image", () => {
-    expect(controller.uploadWidgetImage).toBeDefined()
   })
 
   it("should upload a widget image", async () => {

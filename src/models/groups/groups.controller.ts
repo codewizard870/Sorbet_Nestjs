@@ -14,7 +14,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Public } from "src/utils/auth/constants";
 
 @ApiBearerAuth()
-@ApiTags("Gigs")
+@ApiTags("Groups")
 @Controller("/groups")
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
@@ -34,12 +34,12 @@ export class GroupsController {
     return this.groupsService.findOne(id);
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   update(@Param("id") id: string, @Body() updateGigDto: UpdateGroupDto) {
     return this.groupsService.update(id, updateGigDto);
   }
 
-  @Delete(":id/remove")
+  @Delete(":id")
   remove(@Param("id") id: string) {
     return this.groupsService.remove(id);
   }

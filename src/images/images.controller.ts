@@ -4,52 +4,39 @@ import {
   Post,
   Param,
   UploadedFile,
-  Request,
   Body,
   UseInterceptors,
+  Query,
+  Delete,
 } from "@nestjs/common";
 import { ImagesService } from "./images.service";
-import { CreateImageDto } from "./dto/create-image.dto";
-import { UpdateImageDto } from "./dto/update-image.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+
 @ApiBearerAuth()
-@ApiTags("images")
+@ApiTags("Images")
 @Controller("/images")
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
-  @Post("uploadProfileImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadProfileImage(
-    @UploadedFile() file: Express.Multer.File,
-    @Request() req
-  ) {
-    return await this.imagesService.uploadProfileImage(file, req.user.id);
-  }
-
-  @Post("uploadPostImage")
+  @Post("upload")
   @UseInterceptors(FileInterceptor("file"))
-  async uploadPostImage(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body
-  ) {
-    return await this.imagesService.uploadPostImage(file, body.userId);
+  async uploadImage(@UploadedFile("file") file: Express.Multer.File, @Body("bucketName") bucketName: string, @Body("userId") userId: string): Promise<{ imageUrl: string }> {
+    return await this.imagesService.uploadImage(file, bucketName, userId)
   }
 
-  @Post("uploadWidgetImage")
-  // @UseInterceptors(FileInterceptor("file"))
-  async uploadWidgetImage(
-    @UploadedFile() file: Express.Multer.File,
-    @Request() req
-  ) {
-    console.log("req.user", req.user.id);
-    return await this.imagesService.uploadWidgetImage(file, req.user.id);
+  @Get("getMetadata/:bucketName/:userId")
+  async getMetadata(@Param("bucketName") bucketName: string, @Param("userId") userId: string): Promise<any> {
+    return await this.imagesService.getImageMetadata(bucketName, userId)
   }
 
-  @Get("download/:Key")
-  async downloadImage(@Param("Key") Key: string, @Request() req) {
-    console.log("req.user", req.user.id);
-    return await this.imagesService.downloadProfileImage(Key, req.user.id);
+  @Get("download/:bucketName/:userId")
+  async downloadImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+    return await this.imagesService.downloadImage(bucketName, userId)
+  }
+
+  @Delete('delete/:bucketName/:userId')
+  async deleteImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+    return await this.imagesService.deleteImage(bucketName, userId)
   }
 }

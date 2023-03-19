@@ -7,7 +7,7 @@ import { UpdateCommentDto } from "./dto/update-comment-dto";
 export class CommentService {
   constructor(private prismaService: PrismaService) {}
 
-  async createPostComment(data: CreateCommentDto) {
+  async createComment(data: CreateCommentDto) {
     try {
       const newComment = await this.prismaService.comment.create({
         data: {
@@ -35,7 +35,7 @@ export class CommentService {
     try {
       const postComments =  await this.prismaService.comment.findMany({
         where: { postId: postId },
-        include: { post: true }
+        include: { post: true, user: true }
       })
       if (postComments) {
         return postComments
@@ -51,11 +51,44 @@ export class CommentService {
     }
   }
 
-  async findOne(id: string) {
+  async findAllCommentsForUser(userId: string) {
+    try {
+      const userComments =  await this.prismaService.comment.findMany({
+        where: { userId: userId },
+        include: { post: true, user: true }
+      })
+      if (userComments) {
+        return userComments
+      }
+      else {
+        console.log(`Unable to get all comments for post: ${userId}`)
+        return { message: `Unable to get all comments for post: ${userId}` }
+      }
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async findAllComments() {
+    try {
+      const allComments = await this.prismaService.comment.findMany({
+        include: { post: true, user: true },
+      })
+      return allComments
+    } 
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  } 
+
+  async findById(id: string) {
     try {
       const comment = await this.prismaService.comment.findFirst({
         where: { id: id },
-        include: { user: true,  post: true },
+        include: { post: true, user: true },
       })
       return comment
     } 

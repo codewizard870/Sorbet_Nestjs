@@ -14,7 +14,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Public } from "src/utils/auth/constants";
 
 @ApiBearerAuth()
-@ApiTags("timezones")
+@ApiTags("Timezones")
 @Controller("/timezones")
 export class TimezonesController {
   constructor(private readonly timezonesService: TimezonesService) {}

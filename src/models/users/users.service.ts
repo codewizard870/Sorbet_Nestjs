@@ -14,10 +14,12 @@ export class UsersService {
     private prisma: PrismaService,
   ) { }
 
-  async create(address: string, token: string) {
+  async create(address: string, email: string, token: string) {
     try {
-      const UserFromNearWallet = await this.getUserFromNearWallet(address)
-      if (UserFromNearWallet) {
+      const user = await this.prisma.user.findFirst({
+        where: { nearWallet: address },
+      })
+      if (user) {
         throw new BadRequestException("User already Exists")
       }
       else {
@@ -26,10 +28,10 @@ export class UsersService {
             nearWallet: address,
             firstName: null,
             lastName: null,
-            email: null,
+            email: email,
             bio: null,
             profileImage: null,
-            confirmationCode: token,
+            confirmationCode: (Math.random() * 10000).toString(),
           },
         });
         if (result) {
@@ -47,7 +49,7 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { email: email },
-        include: { jobProfile: true, location: true, post: true, groups: true },
+        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
       })
       if (result) {
         return result
@@ -67,14 +69,14 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { nearWallet: nearWallet },
-        include: { jobProfile: true, location: true, post: true, groups: true, followers: true, following: true },
+        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
       })
       if (result) {
         return result
       }
       else {
         console.log("Could not find user by near wallet address")
-        return
+        throw new Error(`Could not find user by near wallet address: ${nearWallet}`);
       }
     }
     catch (error) {
@@ -87,7 +89,7 @@ export class UsersService {
     try {
       const user = await this.prisma.user.findFirst({
         where: { id: _id },
-        include: { jobProfile: true, location: true, post: true, groups: true },
+        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
       });
       return user;
     } catch (error) {
@@ -98,7 +100,7 @@ export class UsersService {
   async getAll() {
     try {
       const allUsers = await this.prisma.user.findMany({
-        include: { jobProfile: true, location: true, post: true, groups: true, followers: true }
+        include: { jobProfile: true, location: true, post: true, groups: true, followers: true, widgets: true }
       })
       if (allUsers) {
         return allUsers
@@ -127,15 +129,15 @@ export class UsersService {
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            jobProfile: data.jobProfile,
-            location: data.location,
             bio: data.bio,
             profileImage: data.profileImage,
+            profileBannerImage: data.profileBannerImage,
+            tags: data.tags,
+            updatedAt: new Date(Date.now())
           },
         });
-        console.log(result)
         if (result) {
-          return { message: "Update Successfully" };
+          return result
         }
         else {
           return { message: "Something went wrong" };
@@ -148,7 +150,7 @@ export class UsersService {
     }
   }
 
-  async delete(_id: string) {
+  async remove(_id: string) {
     try {
       const result = await this.prisma.user.delete({
         where: { id: _id },
@@ -539,6 +541,7 @@ export class UsersService {
       const user = await this.prisma.user.findFirst({
         where: { id: userId }, include: { followers: true }
       })
+
       const userFollowers = user.followers
       const allUsers = await this.getAll()
 
@@ -570,62 +573,62 @@ export class UsersService {
     }
   }
 
-  async userRecommendations(userId: string) {
-    try {
-      const user = await this.prisma.user.findFirst({
-        where: { id: userId }, include: { followers: true }
-      })
-      const allUsers = await this.getAll()
-      if (allUsers.length > 0) {
-        let intersectionsCounts = []
-        for (let i = 0; i < allUsers.length; i++) {
-          const connectionIntersections = allUsers[i].connections.filter((connection: string) => user.connections.includes(connection))
-          const followerIntersections = allUsers[i].followers.filter(follower1 => user.followers.find(follower2 => follower1.fromUserId == follower2.fromUserId))
-          const totalIntersections = connectionIntersections.length + followerIntersections.length
-          intersectionsCounts.push([allUsers[i].id, totalIntersections])
-        }
-        // sort array by most follower / connection intersections and return
-        const mostMutual = intersectionsCounts
-          .sort(([, a], [, b]) => b - a)
-          .slice(0, 3)
-        const recommendations = []
-        if (mostMutual) {
-          for (let i = 0; i < mostMutual.length; i++) {
-            const _user = await this.prisma.user.findFirst({
-              where: { id: mostMutual[i][0] }, include: { followers: true }
-            })
-            const filteredFollowers = _user.followers.filter(follower1 => !user.followers.find(follower2 => follower1.fromUserId == follower2.fromUserId))
-            if (filteredFollowers.length > 0) {
-              const getUser = await this.prisma.user.findFirst({
-                where: { id: filteredFollowers[0].fromUserId }
-              })
-              recommendations.push(getUser)
-            }
-            else {
-              return {
-                message: `Could not retrieve recommendations for ${user.firstName} ${user.lastName} to follow.`,
-              }
-            }
-          }
-          return {
-            message: `Recommendations for ${user.firstName} ${user.lastName} to follow.`,
-            recommendations: recommendations
-          }
-        }
-        else {
-          console.log("Could not find the most mutual followers / connections")
-          throw new Error("Could not find the most mutual followers / connections")
-        }
-        return
-      }
-      else {
-        console.log(`Could not find any users.`)
-        throw new Error(`Could not find any users.`)
-      }
-    }
-    catch (error) {
-      console.log(error)
-      throw new Error("Unable to recommend users. Please try again.")
-    }
-  }
+  // async userRecommendations(userId: string) {
+  //   try {
+  //     const user = await this.prisma.user.findFirst({
+  //       where: { id: userId }, include: { followers: true }
+  //     })
+  //     const allUsers = await this.getAll()
+  //     if (allUsers.length > 0) {
+  //       let intersectionsCounts = []
+  //       for (let i = 0; i < allUsers.length; i++) {
+  //         const connectionIntersections = allUsers[i].connections.filter((connection: string) => user.connections.includes(connection))
+  //         const followerIntersections = allUsers[i].followers.filter(follower1 => user.followers.find(follower2 => follower1.fromUserId == follower2.fromUserId))
+  //         const totalIntersections = connectionIntersections.length + followerIntersections.length
+  //         intersectionsCounts.push([allUsers[i].id, totalIntersections])
+  //       }
+  //       // sort array by most follower / connection intersections and return
+  //       const mostMutual = intersectionsCounts
+  //         .sort(([, a], [, b]) => b - a)
+  //         .slice(0, 3)
+  //       const recommendations = []
+  //       if (mostMutual) {
+  //         for (let i = 0; i < mostMutual.length; i++) {
+  //           const _user = await this.prisma.user.findFirst({
+  //             where: { id: mostMutual[i][0] }, include: { followers: true }
+  //           })
+  //           const filteredFollowers = _user.followers.filter(follower1 => !user.followers.find(follower2 => follower1.fromUserId == follower2.fromUserId))
+  //           if (filteredFollowers.length > 0) {
+  //             const getUser = await this.prisma.user.findFirst({
+  //               where: { id: filteredFollowers[0].fromUserId }
+  //             })
+  //             recommendations.push(getUser)
+  //           }
+  //           else {
+  //             return {
+  //               message: `Could not retrieve recommendations for ${user.firstName} ${user.lastName} to follow.`,
+  //             }
+  //           }
+  //         }
+  //         return {
+  //           message: `Recommendations for ${user.firstName} ${user.lastName} to follow.`,
+  //           recommendations: recommendations
+  //         }
+  //       }
+  //       else {
+  //         console.log("Could not find the most mutual followers / connections")
+  //         throw new Error("Could not find the most mutual followers / connections")
+  //       }
+  //       return
+  //     }
+  //     else {
+  //       console.log(`Could not find any users.`)
+  //       throw new Error(`Could not find any users.`)
+  //     }
+  //   }
+  //   catch (error) {
+  //     console.log(error)
+  //     throw new Error("Unable to recommend users. Please try again.")
+  //   }
+  // }
 }

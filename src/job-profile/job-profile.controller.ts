@@ -20,7 +20,7 @@ export class JobProfileController {
 
   @Post("create")
   create(@Body() createJobProfileDto: CreateJobProfileDto, @Request() req) {
-    return this.jobProfileService.create(createJobProfileDto, req.user.id);
+    return this.jobProfileService.create(createJobProfileDto, req.user.id)
   }
 
   @Get("findAll")
@@ -28,12 +28,12 @@ export class JobProfileController {
     return this.jobProfileService.getAll()
   }
 
-  @Get("/findOne/:jobId")
-  findOne(@Param("jobId") jobId: string) {
-    return this.jobProfileService.getFromJobId(jobId)
+  @Get("findOne/:id")
+  findOne(@Param("id") id: string) {
+    return this.jobProfileService.getById(id)
   }
 
-  @Get("/getFromJobName/:jobName")
+  @Get("getFromJobName/:jobName")
   getFromJobName(@Param("jobName") jobName: string) {
     return this.jobProfileService.getFromJobName(jobName)
   }
@@ -43,18 +43,18 @@ export class JobProfileController {
     return this.jobProfileService.getFromUserId(req.user.id)
   }
 
-  @Get("/jobType/:jobType")
+  @Get("jobType/:jobType")
   getFromJobType(@Param("jobType") jobType: string) {
     return this.jobProfileService.getFromJobType(jobType)
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   update(@Param("id") id: string, @Body() data: UpdateJobProfileDto) {
     return this.jobProfileService.update(id, data)
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  delete(@Param("id") id: string) {
     return this.jobProfileService.remove(id)
   }
 }

@@ -16,7 +16,7 @@ import { CreateLikeDto } from "src/utils/like/dto/create-like-dto";
 import { CreateCommentDto } from "src/utils/comment/dto/create-comment-dto";
 import { UpdateCommentDto } from "src/utils/comment/dto/update-comment-dto";
 @ApiBearerAuth()
-@ApiTags("posts")
+@ApiTags("Posts")
 @Controller("/posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
@@ -37,38 +37,18 @@ export class PostsController {
     return this.postsService.findOne(id)
   }
 
-  @Patch(":id/update")
+  @Get("findByUserId/:userId")
+  findByUserId(@Param("userId") userId: string) {
+    return this.postsService.findAllByUserId(userId)
+  }
+
+  @Patch(":id")
   update(@Param("id") id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto)
   }
 
-  @Delete(":id/remove")
-  remove(@Param("id") id: string) {
+  @Delete(":id")
+  delete(@Param("id") id: string) {
     return this.postsService.remove(id)
-  }
-
-  @Post('likePost')
-  likePost(@Body() data: CreateLikeDto) {
-    return this.postsService.likePost(data)
-  }
-
-  @Post('removeLikePost')
-  removeLikePost(@Body("postId") postId: string, @Body("userId") userId: string) {
-    return this.postsService.removeLikeFromPost(postId, userId)
-  }
-
-  @Post('commentOnPost')
-  commentOnPost(@Body() data: CreateCommentDto) {
-    return this.postsService.commentOnPost(data)
-  }
-
-  @Patch('updatePostComment')
-  updatePostComment(@Body() data: UpdateCommentDto, commentId: string) {
-    return this.postsService.updatePostComment(data, commentId)
-  }
-
-  @Delete('removeCommentFromPost')
-  removeCommentFromPost(@Body("postId") postId: string, @Body("commentId") commentId: string) {
-    return this.postsService.removeCommentFromPost(postId, commentId)
   }
 }

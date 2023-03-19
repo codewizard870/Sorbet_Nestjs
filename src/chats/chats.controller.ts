@@ -44,7 +44,7 @@ export class ChatsController {
     return await this.chatsService.getChatByUserId(userId);
   }
 
-  @Patch(":id/update")
+  @Patch(":id")
   update(@Param("id") id: string, @Body() updateChatsDto: UpdateChatDto) {
     return this.chatsService.update(id, updateChatsDto);
   }
@@ -54,8 +54,8 @@ export class ChatsController {
     return await this.chatsService.remove(id);
   }
 
-  @Get("searchMessages")
-  async searchMessages(@Body() text: string) {
+  @Get("searchMessages/:text")
+  async searchMessages(@Param("text") text: string) {
     return await this.chatsService.searchMessages(text)
   }
 }

@@ -46,7 +46,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
       }
     }
 
-    async getWidgetById(id: string) {
+    async findOne(id: string) {
         try {
             const widgetById = await this.prisma.widget.findFirst({
                 where: { id: id }
@@ -65,7 +65,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
         }
     }
 
-    async getWidgetsByUserId(userId: string) {
+    async findByUserId(userId: string) {
       try {
           const widgets = await this.prisma.widget.findMany({
               where: { userId: userId }
@@ -83,54 +83,38 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
           throw new Error("An error occured. Please try again.")
       }
     }
-
-    async getWidgetFromImage(image: string) {
-        try {
-            const result = await this.prisma.widget.findFirst({
-              where: {image: image},
-            })
-            if (result) {  
-              return result
-            }
-            else {
-              console.log("Could not find widget by image")
-              return { message: 'Could not find widget by image' }
-            }
-          } 
-        catch (error) {
-            console.log(error)
-            throw new Error("An error occured. Please try again.")
-        }
-    }
-
-    async getWidgetFromNFTMetadata(nft_metadata: string) {
-        try {
-            const result = await this.prisma.widget.findFirst({
-              where: {nft_metadata: nft_metadata},
-            })
-            if (result) {  
-              return result
-            }
-            else {
-              console.log("Could not find widget by nft metadata")
-              return { message: 'Could not find widget by nft metadata' }
-            }
-          } 
-        catch (error) {
-            console.log(error)
-            throw new Error("An error occured. Please try again.")
-        }
-    }
   
-    async getAll() {
+    async findAll() {
       try {
-        const allWidgets = await this.prisma.widget.findMany({})
+        const allWidgets = await this.prisma.widget.findMany({
+          // include: { user: true }
+        })
         if (allWidgets) {
           return allWidgets
         }
         else {
           console.log("Could not get all the widgets")
           return { message: 'Could not get all the widgets' }
+        }
+      } 
+      catch (error) {
+        console.log(`Error Occured, ${error}`);
+        throw new Error("Error getting all widgets.")
+      }
+    }
+
+    async findAllByType(type: string) {
+      try {
+        const widgets = await this.prisma.widget.findMany({
+          where: { type: type }
+          // include: { user: true }
+        })
+        if (widgets) {
+          return widgets
+        }
+        else {
+          console.log("Could not get all the widgets by type")
+          return { message: 'Could not get all the widgets by type' }
         }
       } 
       catch (error) {
@@ -167,7 +151,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
         }
     }
   
-    async delete(id: string) {
+    async remove(id: string) {
       try {
         const result = await this.prisma.widget.delete({
           where: { id: id },
@@ -185,7 +169,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
       }
     }
 
-    async createDribbleAccessToken(dribbbleCode: string) {
+    async createDribbbleAccessToken(dribbbleCode: string) {
       try {
         const response = await fetch(`https://dribbble.com/oauth/token?client_id=${DRIBBLE_CLIENT_ID}&client_secret=${DRIBBLE_CLIENT_SECRET}&code=${dribbbleCode}`, {
           mode: 'no-cors',
@@ -199,7 +183,7 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
     
         const data = await response.json()
         console.log(data)
-        return data
+        return data.access_token
       } 
       catch (error) {
         console.log(error)
