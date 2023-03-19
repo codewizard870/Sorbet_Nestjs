@@ -19,7 +19,7 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   endpoint: "s3.eu-west-1.amazonaws.com",
   region: "eu-west-1.",
-});
+})
 
 const Image = 'https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-1-scaled-1150x647.png'
 
