@@ -13,7 +13,7 @@ import { ImagesService } from "./images.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
-// @ApiBearerAuth()
+@ApiBearerAuth()
 @ApiTags("Images")
 @Controller("/images")
 export class ImagesController {

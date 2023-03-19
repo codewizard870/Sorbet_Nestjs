@@ -176,23 +176,6 @@ describe("ImagesService", () => {
     expect(service).toBeDefined()
   })
 
-  it("should define a function to upload a profile image", () => {
-    expect(service.uploadProfileImage).toBeDefined()
-  })
-
-  it("should upload a profile image", async () => {
-    // const uploadedProfileImage = await service.uploadProfileImage(Image, "id")
-    // console.log(uploadedProfileImage)
-    // expect(service.uploadProfileImage).toBeCalled()
-    // expect(service.uploadProfileImage).toEqual({
-
-    // })
-  })
-
-  it("should define a function to upload a gig image", () => {
-    expect(service.uploadPostImage).toBeDefined()
-  })
-
   it("should upload a gig image", async () => {
     // const uploadedGigImage = await service.uploadGigImage(Image, "id")
     // console.log(uploadedGigImage)
@@ -202,9 +185,6 @@ describe("ImagesService", () => {
     // })
   })
 
-  it("should define a function to upload an event image", () => {
-    expect(service.uploadEventImage).toBeDefined()
-  })
 
   it("should upload an event image", async () => {
     // const uploadedEventImage = await service.uploadEventImage(Image, "id")
@@ -213,10 +193,6 @@ describe("ImagesService", () => {
     // expect(service.uploadProfileImage).toEqual({
 
     // })
-  })
-
-  it("should define a function to download a profile image", () => {
-    expect(service.downloadProfileImage).toBeDefined()
   })
 
   it("should download a profile image", async () => {
@@ -228,10 +204,6 @@ describe("ImagesService", () => {
     // })
   })
 
-  it("should define a function to download a profile image", () => {
-    expect(service.downloadProfileImage).toBeDefined()
-  })
-
   it("should download a gig image", async () => {
     // const downloadedGigImage = await service.downloadGigImage("Key", "id")
     // console.log(downloadedGigImage)
@@ -241,10 +213,6 @@ describe("ImagesService", () => {
     // })
   })
 
-  it("should define a function to download an event image", () => {
-    expect(service.downloadProfileImage).toBeDefined()
-  })
-
   it("should download an event image", async () => {
     // const downloadedEventImage = await service.downloadEventImage("Key", "id")
     // console.log(downloadedEventImage)
@@ -252,10 +220,6 @@ describe("ImagesService", () => {
     // expect(service.uploadProfileImage).toEqual({
 
     // })
-  })
-
-  it("should define a function to download a widget image", () => {
-    expect(service.downloadWidgetImage).toBeDefined()
   })
 
   it("should download a widget image", async () => {

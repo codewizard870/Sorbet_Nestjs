@@ -1,6 +1,4 @@
 import { Injectable, Redirect } from "@nestjs/common";
-import * as AWS from "aws-sdk";
-import { PrismaService } from "src/utils/prisma/prisma.service";
 import { Storage } from "@google-cloud/storage";
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 import * as path from "path";
@@ -13,11 +11,13 @@ export class ImagesService {
     keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
     projectId: 'aerobic-badge-379110',
   })
-
-  // vision = new ImageAnnotatorClient({})
   
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
+    console.log('file', file)
+    console.log('bucketName', bucketName)
+    console.log('userId', userId)
     const bucket = this.storage.bucket(bucketName)
+    console.log('bucket', bucket)
     const gcsFileName = `${userId}.png`
     const options = {
       metadata: {
@@ -26,6 +26,7 @@ export class ImagesService {
     }
 
     const stream = bucket.file(gcsFileName).createWriteStream(options)
+    console.log('stream', stream)
     stream.on('error', (err) => {
       console.error(err);
     })
@@ -41,8 +42,8 @@ export class ImagesService {
         resolve(publicUrl)
       })
 
-      stream.on('error', (err) => {
-        reject(err)
+      stream.on('error', (error) => {
+        reject(error)
       })
     })
 
@@ -51,11 +52,16 @@ export class ImagesService {
 
   getFileMetadata = async (bucketName: string, userId: string) => {
     try {
-      const bucket = this.storage.bucket(bucketName);
+      console.log('bucketName', bucketName)
+      console.log('userId', userId)
+      const bucket = this.storage.bucket(bucketName)
+      console.log('bucket', bucket)
       const gcsFileName = `${userId}.png`
 
       const file = bucket.file(gcsFileName)
+      console.log('file', file)
       const [ metadata ] = await file.getMetadata()
+      console.log('metadata', metadata)
 
       return metadata
     }
@@ -66,7 +72,10 @@ export class ImagesService {
 
   downloadFile = async (bucketName: string, userId: string) => {
     try {
-      const bucket = this.storage.bucket(bucketName);
+      console.log('bucketName', bucketName)
+      console.log('userId', userId)
+      const bucket = this.storage.bucket(bucketName)
+      console.log('bucket', bucket)
       const gcsFileName = `${userId}.png`
 
       const file = bucket.file(gcsFileName)
@@ -91,10 +100,15 @@ export class ImagesService {
 
   deleteFile = async (bucketName: string, userId: string) => {
     try {
+      console.log('bucketName', bucketName)
+      console.log('userId', userId)
       const deleteFile = async () => {
         const fileName = userId + '.png'
+        console.log('fileName', fileName)
         const bucket = await this.storage.bucket(bucketName)
+        console.log('bucket', bucket)
         const file = bucket.file(fileName)
+        console.log('file', file)
         await file.delete()
     
         console.log(`gs://${bucketName}/${fileName} deleted`)
