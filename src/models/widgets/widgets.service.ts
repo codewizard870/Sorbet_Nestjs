@@ -26,7 +26,8 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
               description: data.description,
               type: data.type,
               image: data.image,
-              nft_metadata: data.nft_metadata,
+              nftMetadata: data.nftMetadata,
+              oauthToken: data.oauthToken,
               userId: data.userId,
               createdAt: data.createdAt,
               updatedAt: data.updatedAt

@@ -11,18 +11,40 @@ import {
 } from "@nestjs/common";
 import { ImagesService } from "./images.service";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { CreateImageDto } from './dto/create-image.dto';
+import { ApiFile, FileExtender } from 'src/utils/decorators';
 
 @ApiBearerAuth()
 @ApiTags("Images")
 @Controller("/images")
 export class ImagesController {
-  constructor(private readonly imagesService: ImagesService) {}
+  constructor(private readonly imagesService: ImagesService) { }
 
   @Post("upload")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadImage(@UploadedFile("file") file: Express.Multer.File, @Body("bucketName") bucketName: string, @Body("userId") userId: string): Promise<{ imageUrl: string }> {
-    return await this.imagesService.uploadImage(file, bucketName, userId)
+  @UseInterceptors(FileExtender)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        bucketName: { type: 'string' },
+        userId: { type: 'string' },
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  async uploadImage
+    (
+      @Body() body: CreateImageDto,
+      @UploadedFile() file: Express.Multer.File,
+    ): Promise<{ imageUrl: string }> {
+    return await this.imagesService.uploadImage(file, body.bucketName, body.userId);
+
   }
 
   @Get("getMetadata/:bucketName/:userId")

@@ -11,13 +11,13 @@ export class ImagesService {
     keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
     projectId: 'aerobic-badge-379110',
   })
-  
+
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
     console.log('file', file)
     console.log('bucketName', bucketName)
     console.log('userId', userId)
     const bucket = this.storage.bucket(bucketName)
-    console.log('storage', this.storage)
+    // console.log('storage', this.storage)
     console.log('bucket', bucket)
     const gcsFileName = `${userId}.png`
     const options = {
@@ -93,7 +93,7 @@ export class ImagesService {
       })
 
       return stream
-    } 
+    }
     catch (error) {
       console.error(error)
     }
@@ -111,14 +111,14 @@ export class ImagesService {
         const file = bucket.file(fileName)
         console.log('file', file)
         await file.delete()
-    
+
         console.log(`gs://${bucketName}/${fileName} deleted`)
         return { message: `Successfully deleted file: ${fileName} from bucket: ${bucketName}` }
       }
       deleteFile()
         .then(result => console.log('deletedFile', result))
         .catch(error => console.error(error))
-    } 
+    }
     catch (error) {
       console.error(error)
     }
@@ -126,12 +126,15 @@ export class ImagesService {
 
   async uploadImage(file: Express.Multer.File, bucketName: string, userId: string) {
     try {
+      console.log("bucketName", bucketName)
+      console.log("file", file)
+      console.log("userId", userId)
       return await this.uploadFile(
         file,
         bucketName,
         userId
       )
-    } 
+    }
     catch (error) {
       console.log(error)
       throw new Error("An error occurred. Please try again.")
