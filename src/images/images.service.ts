@@ -1,16 +1,11 @@
-import { Injectable, Redirect } from "@nestjs/common";
-import { Storage } from "@google-cloud/storage";
-import { ImageAnnotatorClient } from '@google-cloud/vision';
-import * as path from "path";
+import { Injectable } from "@nestjs/common";
+import { StorageClass } from 'src/utils/gcp/storage';
+
 
 @Injectable()
 export class ImagesService {
-  constructor() {}
-
-  storage = new Storage({
-    keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
-    projectId: 'aerobic-badge-379110',
-  })
+  constructor() { }
+  storage = new StorageClass().storage;
 
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
     console.log('file', file)
@@ -61,7 +56,7 @@ export class ImagesService {
 
       const file = bucket.file(gcsFileName)
       console.log('file', file)
-      const [ metadata ] = await file.getMetadata()
+      const [metadata] = await file.getMetadata()
       console.log('metadata', metadata)
 
       return metadata
