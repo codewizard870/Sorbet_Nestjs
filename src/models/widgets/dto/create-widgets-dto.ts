@@ -35,7 +35,11 @@ export class CreateWidgetDto {
 
   @IsOptional()
   @ApiProperty()
-  nft_metadata: string
+  nftMetadata: string
+
+  @IsOptional()
+  @ApiProperty()
+  oauthToken: string
 
   @ApiProperty()
   userId: string

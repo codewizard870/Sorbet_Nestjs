@@ -105,33 +105,33 @@ export class UsersController {
   }
 
   @Post("addFollowerToUser")
-  async addFollowerToUser(@Request() req, @Body("userToFollowId") userToFollowId: string) {
+  async addFollowerToUser(@Body("userId") userId: string, @Body("userToFollowId") userToFollowId: string) {
     return await this.usersService.addFollowerToUser(
-      req.user.id,
+      userId,
       userToFollowId
     )
   }
 
   @Post("removeFollowerFromUser")
-  async removeFollowerFromUser(@Request() req, @Body("userToUnfollowId") userToUnfollowId: string) {
+  async removeFollowerFromUser(@Body("userId") userId: string, @Body("userToUnfollowId") userToUnfollowId: string) {
     return await this.usersService.removeFollowerFromUser(
-      req.user.id,
+      userId,
       userToUnfollowId
     )
   }
 
-  @Get("getMutualFollowers")
-  async getMutualFollowers(@Request() req, @Body() user2_Id: string) {
+  @Get("getMutualFollowers/:userId")
+  async getMutualFollowers(@Param("userId") userId: string, @Body() user2_Id: string) {
     return await this.usersService.followerIntersection(
-      req.user.id,
+      userId,
       user2_Id
     )
   }
 
-  @Get("getMutualConnections")
-  async getMutualConnections(@Request() req, @Body() user2_Id: string) {
+  @Get("getMutualConnections/:userId")
+  async getMutualConnections(@Param("userId") userId: string, @Body() user2_Id: string) {
     return await this.usersService.connectionIntersection(
-      req.user.id,
+      userId,
       user2_Id
     )
   }
