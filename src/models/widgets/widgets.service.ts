@@ -169,6 +169,37 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
       }
     }
 
+    async deleteByIndex(userId: string, widgetIndex: string) {
+      try {
+        const user = await this.prisma.user.findFirst({
+          where: { id: userId },
+          include: { widgets: true }
+        })
+        if (user) {
+          const index = parseInt(widgetIndex)
+          const targetWidget = user.widgets[index]
+          const targetWidgetId = targetWidget.id
+          const result = await this.prisma.widget.delete({
+            where: { id: targetWidgetId }
+          })
+          if (result) {
+            return { message: "Deleted Successfully" };
+          } 
+          else {
+            return { message: "Unable to delete widget" };
+          }
+        }
+        else {
+          console.log('Error finding user my id')
+          throw new Error('Error finding user by id')
+        }
+      } 
+      catch (error) {
+        console.error(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }
+
     async createDribbbleAccessToken(dribbbleCode: string) {
       try {
         const response = await fetch(`https://dribbble.com/oauth/token?client_id=${DRIBBLE_CLIENT_ID}&client_secret=${DRIBBLE_CLIENT_SECRET}&code=${dribbbleCode}`, {

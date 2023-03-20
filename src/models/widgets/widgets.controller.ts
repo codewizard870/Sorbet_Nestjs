@@ -52,6 +52,11 @@ import {
       return this.widgetsService.remove(id)
     }
 
+    @Delete("deleteByIndex/:userId/:widgetIndex")
+    deleteWidgetByIndex(@Param("userId") userId: string, @Param("widgetIndex") widgetIndex: string) {
+      return this.widgetsService.deleteByIndex(userId, widgetIndex)
+    }
+
     @Post("createDribbbleAccessToken")
     createDribbbleAccessToken(@Body("dribbbleCode") dribbbleCode: string ) {
       return this.widgetsService.createDribbbleAccessToken(dribbbleCode)

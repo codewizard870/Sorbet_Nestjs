@@ -28,14 +28,14 @@ export class ImagesService {
 
     const stream = bucket.file(gcsFileName).createWriteStream(options)
     console.log('stream', stream)
-    stream.on('error', (err) => {
-      console.error(err);
+    stream.on('error', (error) => {
+      console.error(error)
     })
     stream.on('finish', async () => {
       await bucket.file(gcsFileName).makePublic()
-    });
+    })
 
-    stream.end(file.buffer);
+    stream.end(file.buffer)
 
     const imageUrl = await new Promise<string>((resolve, reject) => {
       stream.on('finish', () => {
