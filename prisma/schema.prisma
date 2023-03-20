@@ -274,6 +274,7 @@ model Widget {
   type         String?
   image        String?
   nft_metadata String?
+  oauthToken   String?
   userId       String     @db.ObjectId
   user         User       @relation(fields: [userId], references: [id])
   createdAt    DateTime   @default(now())
