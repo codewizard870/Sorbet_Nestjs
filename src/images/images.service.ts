@@ -17,7 +17,7 @@ export class ImagesService {
     console.log('bucketName', bucketName)
     console.log('userId', userId)
     const bucket = this.storage.bucket(bucketName)
-    console.log('storage', this.storage)
+    // console.log('storage', this.storage)
     console.log('bucket', bucket)
     const gcsFileName = `${userId}.png`
     const options = {
