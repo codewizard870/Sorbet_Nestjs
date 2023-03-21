@@ -1,18 +1,27 @@
 import { Injectable } from "@nestjs/common";
 import { StorageClass } from 'src/utils/gcp/storage';
+import { Storage as GCPStorage } from '@google-cloud/storage';
 
 
 @Injectable()
 export class ImagesService {
-  constructor() { }
-  storage = new StorageClass().storage;
+  storageInstance: StorageClass | null = null;
 
+  constructor() {
+    StorageClass.getInstance().then((instance) => {
+      this.storageInstance = instance;
+    }).catch((error) => {
+      // handle error
+    });
+  }
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
     console.log('file', file)
     console.log('bucketName', bucketName)
     console.log('userId', userId)
-    const bucket = this.storage.bucket(bucketName)
-    console.log('storage', this.storage)
+    const storage = this.storageInstance.storage;
+    const bucket = storage.bucket(bucketName);
+    // const bucket = this.storageInstance.storage.bucket(bucketName)
+    console.log('storage', storage)
     console.log('bucket', bucket)
     const gcsFileName = `${userId}.png`
     const options = {
@@ -50,7 +59,7 @@ export class ImagesService {
     try {
       console.log('bucketName', bucketName)
       console.log('userId', userId)
-      const bucket = this.storage.bucket(bucketName)
+      const bucket = this.storageInstance.storage.bucket(bucketName)
       console.log('bucket', bucket)
       const gcsFileName = `${userId}.png`
 
@@ -70,7 +79,7 @@ export class ImagesService {
     try {
       console.log('bucketName', bucketName)
       console.log('userId', userId)
-      const bucket = this.storage.bucket(bucketName)
+      const bucket = this.storageInstance.storage.bucket(bucketName)
       console.log('bucket', bucket)
       const gcsFileName = `${userId}.png`
 
@@ -101,7 +110,7 @@ export class ImagesService {
       const deleteFile = async () => {
         const fileName = userId + '.png'
         console.log('fileName', fileName)
-        const bucket = await this.storage.bucket(bucketName)
+        const bucket = await this.storageInstance.storage.bucket(bucketName)
         console.log('bucket', bucket)
         const file = bucket.file(fileName)
         console.log('file', file)

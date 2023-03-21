@@ -4,6 +4,9 @@ import { accessSecretVersion } from './secrets';
 
 export class StorageClass {
   storage: Storage | null = null;
+  private static instance: StorageClass;
+
+  private constructor() { }
 
   private async initStorage(): Promise<Storage> {
     try {
@@ -22,16 +25,11 @@ export class StorageClass {
     }
   }
 
-  constructor() { }
-
-  static async createInstance(): Promise<StorageClass> {
-    const instance = new StorageClass();
-    const storage = instance.initStorage().then((storage) => {
-      return instance;
-    }).catch((error) => {
-      return error;
-      // handle error
-    });
-    return storage;
+  static async getInstance(): Promise<StorageClass> {
+    if (!StorageClass.instance) {
+      StorageClass.instance = new StorageClass();
+      await StorageClass.instance.initStorage();
+    }
+    return StorageClass.instance;
   }
 }
