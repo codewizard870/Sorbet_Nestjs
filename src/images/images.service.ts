@@ -18,15 +18,6 @@ export class ImagesService {
       .catch((error) => {
         console.error(error)
       })
-    const secretFilePath = '/secrets/aerobic-badge-379110-bcaae1f06e2b'
-    const secretContent = fs.readFileSync(secretFilePath, 'utf-8')
-    const keyFilename = secretContent
-    // const keyFilename = '../../aerobic-badge-379110-bcaae1f06e2b.json'
-    
-    // this.storage = new GCPStorage({
-    //   projectId: 'aerobic-badge-379110',
-    //   keyFilename: keyFilename,
-    // })
   }
   
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
@@ -37,7 +28,7 @@ export class ImagesService {
     // const storage = this.storage
     const bucket = storage.bucket(bucketName);
     // const bucket = this.storageInstance.storage.bucket(bucketName)
-    console.log('storage', storage)
+    // console.log('storage', storage)
     console.log('bucket', bucket)
     const gcsFileName = `${userId}.png`
     const options = {
@@ -45,9 +36,7 @@ export class ImagesService {
         contentType: 'image/png',
       },
     }
-
     const stream = bucket.file(gcsFileName).createWriteStream(options)
-    console.log('stream', stream)
     stream.on('error', (error) => {
       console.error(error)
     })
@@ -76,7 +65,6 @@ export class ImagesService {
       console.log('bucketName', bucketName)
       console.log('userId', userId)
       const bucket = this.storageInstance.storage.bucket(bucketName)
-      console.log('bucket', bucket)
       const gcsFileName = `${userId}.png`
 
       const file = bucket.file(gcsFileName)

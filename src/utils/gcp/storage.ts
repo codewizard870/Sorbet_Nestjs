@@ -14,6 +14,7 @@ export class StorageClass {
     try {
       const secretFilePath = '/secrets/aerobic-badge-379110-bcaae1f06e2b'
       const secretContent = fs.readFileSync(secretFilePath, 'utf-8')
+      console.log('secretContent', secretContent)
       const keyFilename = secretContent
         // process.env.NODE_ENV === 'production'
         //   ? 
