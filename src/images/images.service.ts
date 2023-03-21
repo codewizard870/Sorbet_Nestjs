@@ -8,6 +8,8 @@ import path from "path";
 @Injectable()
 export class ImagesService {
   storageInstance: StorageClass | null = null;
+  secretFilePath: string = '/secrets/aerobic-badge-379110-bcaae1f06e2b'
+  secretContent = fs.readFileSync(this.secretFilePath, 'utf-8')
 
   constructor() {
     StorageClass.getInstance()
@@ -20,14 +22,12 @@ export class ImagesService {
       })
   }
 
-  secretFilePath = '/secrets/aerobic-badge-379110-bcaae1f06e2b'
-  secretContent = fs.readFileSync(this.secretFilePath, 'utf-8')
 
-  storage = new GCPStorage({
-    // keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
-    keyFilename: this.secretContent,
-    projectId: 'aerobic-badge-379110',
-  })
+  // storage = new GCPStorage({
+  //   // keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
+  //   keyFilename: this.secretContent,
+  //   projectId: 'aerobic-badge-379110',
+  // })
   
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
     console.log('secretContent', this.secretContent)
@@ -35,8 +35,8 @@ export class ImagesService {
     console.log('bucketName', bucketName)
     console.log('userId', userId)
     // const storage = this.storageInstance.storage;
-    const storage = this.storage
-    const bucket = storage.bucket(bucketName);
+    const storage = this.storageInstance.storage
+    const bucket = storage.bucket(bucketName)
     // const bucket = this.storageInstance.storage.bucket(bucketName)
     // console.log('storage', storage)
     console.log('bucket', bucket)
