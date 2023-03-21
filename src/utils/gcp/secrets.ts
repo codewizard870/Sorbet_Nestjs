@@ -6,6 +6,8 @@ export async function accessSecretVersion(): Promise<string> {
   const [version] = await client.accessSecretVersion({
     name: secretName,
   });
-  const secretContent = version.payload.data.toString();
-  return secretContent;
+  console.log('version', version)
+  const secretContent = version.payload.data.toString()
+  console.log('secretContent', secretContent)
+  return secretContent
 }
