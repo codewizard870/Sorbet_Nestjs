@@ -26,12 +26,7 @@ export class UsersService {
         const result = await this.prisma.user.create({
           data: {
             nearWallet: address,
-            firstName: null,
-            lastName: null,
-            title: null,
             email: email,
-            bio: null,
-            profileImage: null,
             confirmationCode: (Math.random() * 10000).toString(),
           },
         })
@@ -129,10 +124,12 @@ export class UsersService {
             nearWallet: data.nearWallet,
             firstName: data.firstName,
             lastName: data.lastName,
+            title: data.title,
             email: data.email,
             bio: data.bio,
             profileImage: data.profileImage,
             profileBannerImage: data.profileBannerImage,
+            tempLocation: data.tempLocation,
             tags: data.tags,
             updatedAt: new Date(Date.now())
           },

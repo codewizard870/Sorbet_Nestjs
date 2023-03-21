@@ -35,5 +35,5 @@ export class CreateUserDto {
 
   @IsOptional()
   @ApiProperty()
-  location: String
+  tempLocation: String
 }
