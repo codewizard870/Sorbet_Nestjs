@@ -1,28 +1,26 @@
 import { Injectable } from "@nestjs/common";
-import { StorageClass } from 'src/utils/gcp/storage';
 import { Storage as GCPStorage } from '@google-cloud/storage';
+import path from "path";
 
 
 @Injectable()
 export class ImagesService {
-  storageInstance: StorageClass | null = null;
+  constructor() {}
 
-  constructor() {
-    StorageClass.getInstance().then((instance) => {
-      this.storageInstance = instance;
-    }).catch((error) => {
-      // handle error
-    });
-  }
+  secretContent = process.env['aerobic-badge-379110-bcaae1f06e2b']
+  localPath = path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json')
+
+  // keyFilename = process.env.NODE_ENV === 'production' ? this.secretContent : this.localPath
+  keyFilename = this.secretContent
+
+  storage = new GCPStorage({
+    keyFilename: this.keyFilename,
+    projectId: 'aerobic-badge-379110',
+  })
+  
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
-    console.log('file', file)
-    console.log('bucketName', bucketName)
-    console.log('userId', userId)
-    const storage = this.storageInstance.storage;
-    const bucket = storage.bucket(bucketName);
-    // const bucket = this.storageInstance.storage.bucket(bucketName)
-    console.log('storage', storage)
-    console.log('bucket', bucket)
+    const storage = this.storage
+    const bucket = storage.bucket(bucketName)
     const gcsFileName = `${userId}.png`
     const options = {
       metadata: {
@@ -31,10 +29,10 @@ export class ImagesService {
     }
 
     const stream = bucket.file(gcsFileName).createWriteStream(options)
-    console.log('stream', stream)
     stream.on('error', (error) => {
       console.error(error)
     })
+
     stream.on('finish', async () => {
       await bucket.file(gcsFileName).makePublic()
     })
@@ -57,16 +55,11 @@ export class ImagesService {
 
   getFileMetadata = async (bucketName: string, userId: string) => {
     try {
-      console.log('bucketName', bucketName)
-      console.log('userId', userId)
-      const bucket = this.storageInstance.storage.bucket(bucketName)
-      console.log('bucket', bucket)
+      const bucket = this.storage.bucket(bucketName)
       const gcsFileName = `${userId}.png`
 
       const file = bucket.file(gcsFileName)
-      console.log('file', file)
       const [metadata] = await file.getMetadata()
-      console.log('metadata', metadata)
 
       return metadata
     }
@@ -77,10 +70,7 @@ export class ImagesService {
 
   downloadFile = async (bucketName: string, userId: string) => {
     try {
-      console.log('bucketName', bucketName)
-      console.log('userId', userId)
-      const bucket = this.storageInstance.storage.bucket(bucketName)
-      console.log('bucket', bucket)
+      const bucket = this.storage.bucket(bucketName)
       const gcsFileName = `${userId}.png`
 
       const file = bucket.file(gcsFileName)
@@ -105,23 +95,13 @@ export class ImagesService {
 
   deleteFile = async (bucketName: string, userId: string) => {
     try {
-      console.log('bucketName', bucketName)
-      console.log('userId', userId)
-      const deleteFile = async () => {
         const fileName = userId + '.png'
-        console.log('fileName', fileName)
-        const bucket = await this.storageInstance.storage.bucket(bucketName)
-        console.log('bucket', bucket)
+        const bucket = await this.storage.bucket(bucketName)
         const file = bucket.file(fileName)
-        console.log('file', file)
         await file.delete()
 
         console.log(`gs://${bucketName}/${fileName} deleted`)
         return { message: `Successfully deleted file: ${fileName} from bucket: ${bucketName}` }
-      }
-      deleteFile()
-        .then(result => console.log('deletedFile', result))
-        .catch(error => console.error(error))
     }
     catch (error) {
       console.error(error)
@@ -130,9 +110,6 @@ export class ImagesService {
 
   async uploadImage(file: Express.Multer.File, bucketName: string, userId: string) {
     try {
-      console.log("bucketName", bucketName)
-      console.log("file", file)
-      console.log("userId", userId)
       return await this.uploadFile(
         file,
         bucketName,
@@ -140,7 +117,7 @@ export class ImagesService {
       )
     }
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occurred. Please try again.")
     }
   }
