@@ -32,4 +32,8 @@ export class CreateUserDto {
   @IsOptional()
   @ApiProperty()
   profileBannerImage: String
+
+  @IsOptional()
+  @ApiProperty()
+  location: String
 }
