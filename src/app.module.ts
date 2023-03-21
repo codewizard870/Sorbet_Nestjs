@@ -22,6 +22,7 @@ import { GroupsModule } from "./models/groups/groups.module";
 import { WidgetsModule } from "./models/widgets/widgets.module";
 import { LikeModule } from "./utils/like/like.module";
 import { CommentModule } from "./utils/comment/comment.module";
+import { FollowModule } from "./utils/follow/follow.module";
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { CommentModule } from "./utils/comment/comment.module";
     GroupsModule,
     WidgetsModule,
     LikeModule,
-    CommentModule
+    CommentModule,
+    FollowModule
   ],
   controllers: [AppController],
   providers: [

@@ -12,7 +12,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 export class UsersService {
   constructor(
     private prisma: PrismaService,
-  ) { }
+  ) {}
 
   async create(address: string, email: string, token: string) {
     try {
@@ -28,14 +28,15 @@ export class UsersService {
             nearWallet: address,
             firstName: null,
             lastName: null,
+            title: null,
             email: email,
             bio: null,
             profileImage: null,
             confirmationCode: (Math.random() * 10000).toString(),
           },
-        });
+        })
         if (result) {
-          return result;
+          return result
         }
       }
     }
@@ -49,7 +50,7 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { email: email },
-        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
+        include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
       })
       if (result) {
         return result
@@ -69,7 +70,7 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { nearWallet: nearWallet },
-        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
+        include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
       })
       if (result) {
         return result
@@ -85,11 +86,11 @@ export class UsersService {
     }
   }
 
-  async getUserFromId(_id: string) {
+  async getUserFromId(id: string) {
     try {
       const user = await this.prisma.user.findFirst({
-        where: { id: _id },
-        include: { jobProfile: true, location: true, post: true, groups: true, widgets: true },
+        where: { id: id },
+        include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
       });
       return user;
     } catch (error) {
@@ -100,7 +101,7 @@ export class UsersService {
   async getAll() {
     try {
       const allUsers = await this.prisma.user.findMany({
-        include: { jobProfile: true, location: true, post: true, groups: true, followers: true, widgets: true }
+        include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
       })
       if (allUsers) {
         return allUsers
@@ -116,14 +117,14 @@ export class UsersService {
     }
   }
 
-  async updateUserProfile(_id: string, data: any) {
+  async updateUserProfile(id: string, data: any) {
     try {
       const user = await this.prisma.user.findFirst({
-        where: { id: _id },
+        where: { id: id },
       })
       if (user) {
         const result = await this.prisma.user.update({
-          where: { id: _id },
+          where: { id: id },
           data: {
             nearWallet: data.nearWallet,
             firstName: data.firstName,
@@ -150,10 +151,10 @@ export class UsersService {
     }
   }
 
-  async remove(_id: string) {
+  async remove(id: string) {
     try {
       const result = await this.prisma.user.delete({
-        where: { id: _id },
+        where: { id: id },
       });
       if (result) {
         return { message: "Deleted Successfully" };
@@ -439,11 +440,14 @@ export class UsersService {
       })
       if (user) {
         console.log("Failed to update user or userToFollow")
-        return { message: `alreay followed from ${userId} to ${userToFollowId}` }
+        return { message: `already followed from ${userId} to ${userToFollowId}` }
       }
-      return await this.prisma.follow.create({
+      const follow =  await this.prisma.follow.create({
         data: { fromUserId: userId, toUserId: userToFollowId }
       })
+      if (follow) {
+        return follow
+      }
     }
     catch (error) {
       console.log(error)

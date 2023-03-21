@@ -14,6 +14,10 @@ export class CreateUserDto {
   @ApiProperty()
   lastName: String
 
+  @IsOptional()
+  @ApiProperty()
+  title: String
+
   @ApiProperty()
   email: String
 
@@ -25,5 +29,11 @@ export class CreateUserDto {
   @ApiProperty()
   profileImage: String
 
-  
+  @IsOptional()
+  @ApiProperty()
+  profileBannerImage: String
+
+  @IsOptional()
+  @ApiProperty()
+  location: String
 }

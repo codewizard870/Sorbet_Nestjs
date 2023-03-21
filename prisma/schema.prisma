@@ -21,6 +21,7 @@ model User {
   confirmationCode    String?
   profileImage        String?
   profileBannerImage  String?
+  tempLocation        String?
   tags                String[] @default([])
   connections         String[] @default([]) @db.ObjectId
   connection_requests String[] @default([]) @db.ObjectId

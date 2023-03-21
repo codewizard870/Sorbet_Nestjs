@@ -29,7 +29,7 @@ export class ImagesController {
       type: 'object',
       properties: {
         bucketName: { type: 'string' },
-        userid: { type: 'string' },
+        userId: { type: 'string' },
         file: {
           type: 'string',
           format: 'binary',

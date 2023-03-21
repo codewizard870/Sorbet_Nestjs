@@ -13,15 +13,18 @@ export class StorageClass {
       const keyFilename =
         process.env.NODE_ENV === 'production'
           ? await accessSecretVersion()
-          : path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json');
+          : path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json')
 
+      console.log('keyFilename', keyFilename)
       this.storage = new Storage({
         keyFilename: keyFilename,
-      });
+      })
 
-      return this.storage;
-    } catch (error) {
-      // handle error
+      return this.storage
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error('Error initializing Google Cloud Storage')
     }
   }
 
