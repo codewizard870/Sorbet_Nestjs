@@ -442,9 +442,12 @@ export class UsersService {
         console.log("Failed to update user or userToFollow")
         return { message: `already followed from ${userId} to ${userToFollowId}` }
       }
-      return await this.prisma.follow.create({
+      const follow =  await this.prisma.follow.create({
         data: { fromUserId: userId, toUserId: userToFollowId }
       })
+      if (follow) {
+        return follow
+      }
     }
     catch (error) {
       console.log(error)

@@ -12,7 +12,7 @@ import {
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags, ApiBody } from "@nestjs/swagger";
 
 @ApiTags("Users")
 @Controller("/user")
@@ -105,6 +105,15 @@ export class UsersController {
   }
 
   @Post("addFollowerToUser")
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string' },
+        userToFollowId: { type: 'string' }
+      },
+    },
+  })
   async addFollowerToUser(@Body("userId") userId: string, @Body("userToFollowId") userToFollowId: string) {
     return await this.usersService.addFollowerToUser(
       userId,
