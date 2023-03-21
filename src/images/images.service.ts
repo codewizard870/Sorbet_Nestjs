@@ -8,11 +8,12 @@ export class ImagesService {
   storageInstance: StorageClass | null = null;
 
   constructor() {
-    StorageClass.getInstance().then((instance) => {
+    StorageClass.createInstance().then((instance) => {
       this.storageInstance = instance;
-    }).catch((error) => {
-      // handle error
-    });
+    })
+      .catch((error) => {
+        console.error(error)
+      })
   }
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
     console.log('file', file)
