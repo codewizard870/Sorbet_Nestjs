@@ -121,7 +121,8 @@ export class UsersController {
     )
   }
 
-  @Post("removeFollowerFromUser")
+
+  @Delete("removeFollowerFromUser")
   async removeFollowerFromUser(@Body("userId") userId: string, @Body("userToUnfollowId") userToUnfollowId: string) {
     return await this.usersService.removeFollowerFromUser(
       userId,
