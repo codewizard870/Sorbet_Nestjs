@@ -9,7 +9,8 @@ import path from "path";
 export class ImagesService {
   storageInstance: StorageClass | null = null;
   secretFilePath: string = '/secrets/aerobic-badge-379110-bcaae1f06e2b'
-  secretContent = fs.readFileSync(this.secretFilePath, 'utf-8')
+  // secretContent = fs.readFileSync(this.secretFilePath, 'utf-8')
+  secretContent = process.env['aerobic-badge-379110-bcaae1f06e2b']
 
   constructor() {
     StorageClass.getInstance()
@@ -23,11 +24,12 @@ export class ImagesService {
   }
 
 
-  // storage = new GCPStorage({
-  //   // keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
-  //   keyFilename: this.secretContent,
-  //   projectId: 'aerobic-badge-379110',
-  // })
+  storage = new GCPStorage({
+    // keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
+    // keyFilename: this.secretContent ? this.secretContent : path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
+    keyFilename: this.secretContent,
+    projectId: 'aerobic-badge-379110',
+  })
   
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
     console.log('secretContent', this.secretContent)
@@ -35,7 +37,7 @@ export class ImagesService {
     console.log('bucketName', bucketName)
     console.log('userId', userId)
     // const storage = this.storageInstance.storage;
-    const storage = this.storageInstance.storage
+    const storage = this.storage
     const bucket = storage.bucket(bucketName)
     // const bucket = this.storageInstance.storage.bucket(bucketName)
     // console.log('storage', storage)
@@ -74,7 +76,7 @@ export class ImagesService {
     try {
       console.log('bucketName', bucketName)
       console.log('userId', userId)
-      const bucket = this.storageInstance.storage.bucket(bucketName)
+      const bucket = this.storage.bucket(bucketName)
       const gcsFileName = `${userId}.png`
 
       const file = bucket.file(gcsFileName)
@@ -93,7 +95,7 @@ export class ImagesService {
     try {
       console.log('bucketName', bucketName)
       console.log('userId', userId)
-      const bucket = this.storageInstance.storage.bucket(bucketName)
+      const bucket = this.storage.bucket(bucketName)
       console.log('bucket', bucket)
       const gcsFileName = `${userId}.png`
 
@@ -124,7 +126,7 @@ export class ImagesService {
       const deleteFile = async () => {
         const fileName = userId + '.png'
         console.log('fileName', fileName)
-        const bucket = await this.storageInstance.storage.bucket(bucketName)
+        const bucket = await this.storage.bucket(bucketName)
         console.log('bucket', bucket)
         const file = bucket.file(fileName)
         console.log('file', file)

@@ -25,7 +25,7 @@ export class StorageClass {
       console.log('keyFilename', keyFilename)
       this.storage = new Storage({
         projectId: 'aerobic-badge-379110',
-        keyFilename: keyFilename,
+        keyFilename: path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json'),
       })
 
       return this.storage
