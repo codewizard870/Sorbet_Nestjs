@@ -32,7 +32,7 @@ model User {
   comments   Comment[]
   jobProfile JobProfile[]
   token      Token?
-  location   Location?
+  location   String?
   post       Post[]
   groupIDs   String[]     @db.ObjectId
   groups     Group[]      @relation(name: "members", fields: [groupIDs], references: [id])
@@ -151,7 +151,7 @@ model Post {
   postType PostType
 
   //relations
-  location  Location[]
+  location  String[]
   likes     Like[]
   comments  Comment[]
   followers Follow[]
@@ -161,29 +161,29 @@ model Post {
   userId String @db.ObjectId
 }
 
-model Location {
-  id           String       @id @default(auto()) @map("_id") @db.ObjectId
-  locationType LocationType
-  address      String
-  latitude     Float?
-  langitude    Float?
+// model Location {
+//   id           String       @id @default(auto()) @map("_id") @db.ObjectId
+//   locationType LocationType
+//   address      String
+//   latitude     Float?
+//   langitude    Float?
 
-  // relation with post
-  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String? @db.ObjectId
+//   // relation with post
+//   post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+//   postId String? @db.ObjectId
 
-  // relation with user
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String? @unique @db.ObjectId
+//   // relation with user
+//   user   User?   @relation(fields: [userId], references: [id])
+//   userId String? @unique @db.ObjectId
 
-  // relation with group
-  group   Group?  @relation(fields: [groupId], references: [id])
-  groupId String? @db.ObjectId
+//   // relation with group
+//   group   Group?  @relation(fields: [groupId], references: [id])
+//   groupId String? @db.ObjectId
 
   // relation with collab
   // collab        Collab?   @relation(fields: [collabId], references: [id])
   // collabId      String?   @db.ObjectId
-}
+// }
 
 enum PostType {
   Gig   @map("gig")
@@ -238,7 +238,7 @@ model Group {
   group_owner String     @db.ObjectId
   userIDs     String[]   @db.ObjectId
   members     User[]     @relation(name: "members", fields: [userIDs], references: [id])
-  location    Location[]
+  location    String[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime?  @default(now())
 }
