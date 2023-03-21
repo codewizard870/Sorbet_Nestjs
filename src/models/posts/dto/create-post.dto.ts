@@ -33,7 +33,7 @@ export class CreatePostDto {
   //Gig only
   @ApiProperty()
   @IsOptional()
-  locationType: LocationType;
+  serviceType: LocationType;
 
   @ApiProperty()
   @IsOptional()

@@ -8,7 +8,7 @@ export class ImagesService {
   constructor() {}
 
   secretContent = process.env['aerobic-badge-379110-bcaae1f06e2b']
-  localPath = path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json')
+  // localPath = path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json')
 
   // keyFilename = process.env.NODE_ENV === 'production' ? this.secretContent : this.localPath
   keyFilename = this.secretContent
