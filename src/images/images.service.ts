@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { StorageClass } from 'src/utils/gcp/storage';
 import { Storage as GCPStorage } from '@google-cloud/storage';
+import fs from 'fs'
 
 
 @Injectable()
 export class ImagesService {
   storageInstance: StorageClass | null = null;
+  private readonly storage: GCPStorage;
 
   constructor() {
     StorageClass.getInstance()
@@ -16,12 +18,23 @@ export class ImagesService {
       .catch((error) => {
         console.error(error)
       })
+    const secretFilePath = '/secrets/aerobic-badge-379110-bcaae1f06e2b'
+    const secretContent = fs.readFileSync(secretFilePath, 'utf-8')
+    const keyFilename = secretContent
+    // const keyFilename = '../../aerobic-badge-379110-bcaae1f06e2b.json'
+    
+    // this.storage = new GCPStorage({
+    //   projectId: 'aerobic-badge-379110',
+    //   keyFilename: keyFilename,
+    // })
   }
+  
   uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
     console.log('file', file)
     console.log('bucketName', bucketName)
     console.log('userId', userId)
     const storage = this.storageInstance.storage;
+    // const storage = this.storage
     const bucket = storage.bucket(bucketName);
     // const bucket = this.storageInstance.storage.bucket(bucketName)
     console.log('storage', storage)
