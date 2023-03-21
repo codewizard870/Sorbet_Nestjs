@@ -10,7 +10,8 @@ export class ImagesService {
   constructor() {
     StorageClass.getInstance()
       .then((instance) => {
-        this.storageInstance = instance;
+        console.log('INSTANCE', instance)
+        this.storageInstance = instance
       })
       .catch((error) => {
         console.error(error)

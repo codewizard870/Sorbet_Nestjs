@@ -1,6 +1,8 @@
 import { Storage } from '@google-cloud/storage';
 import * as path from 'path';
-import { accessSecretVersion } from './secrets';
+import fs from 'fs';
+import { getSecretValue } from './secrets';
+
 
 export class StorageClass {
   storage: Storage | null = null;
@@ -10,10 +12,14 @@ export class StorageClass {
 
   private async initStorage(): Promise<Storage> {
     try {
-      const keyFilename =
-        process.env.NODE_ENV === 'production'
-          ? await accessSecretVersion()
-          : path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json')
+      const secretFilePath = '/secrets/aerobic-badge-379110-bcaae1f06e2b'
+      const secretContent = fs.readFileSync(secretFilePath, 'utf-8')
+      const keyFilename = secretContent
+        // process.env.NODE_ENV === 'production'
+        //   ? 
+          // await getSecretValue()
+        //   : 
+          // path.join(__dirname, '../../aerobic-badge-379110-bcaae1f06e2b.json')
 
       console.log('keyFilename', keyFilename)
       this.storage = new Storage({
@@ -30,6 +36,7 @@ export class StorageClass {
 
   static async getInstance(): Promise<StorageClass> {
     if (!StorageClass.instance) {
+    console.log('HEYY')
       StorageClass.instance = new StorageClass();
       await StorageClass.instance.initStorage();
     }
