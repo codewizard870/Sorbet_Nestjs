@@ -8,9 +8,10 @@ export class ImagesService {
   storageInstance: StorageClass | null = null;
 
   constructor() {
-    StorageClass.createInstance().then((instance) => {
-      this.storageInstance = instance;
-    })
+    StorageClass.getInstance()
+      .then((instance) => {
+        this.storageInstance = instance;
+      })
       .catch((error) => {
         console.error(error)
       })
