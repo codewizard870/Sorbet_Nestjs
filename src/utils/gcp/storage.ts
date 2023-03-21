@@ -23,6 +23,7 @@ export class StorageClass {
 
       console.log('keyFilename', keyFilename)
       this.storage = new Storage({
+        projectId: '351257798442',
         keyFilename: keyFilename,
       })
 
