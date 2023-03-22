@@ -30,12 +30,12 @@ import {
       return await this.likeService.findAll()
     }
   
-    @Get('/:postId/likes')
+    @Get('findAll/:postId')
     async findAllForPost(@Param("postId") postId: string) {
       return await this.likeService.findAllLikesForPost(postId)
     }
 
-    @Get('/:userId/likes')
+    @Get('/findAll/:userId')
     async findAllForUser(@Param("userId") userId: string) {
       return await this.likeService.findAllLikesForUser(userId)
     }

@@ -21,7 +21,16 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post("create")
-  async create(@Body() address: string, @Body() token: string) {
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        address: { type: 'string' },
+        token: { type: 'string' }
+      },
+    },
+  })
+  async create(@Body("address") address: string, @Body("token") token: string) {
     return await this.usersService.create(address, null, token)
   }
 
@@ -65,41 +74,86 @@ export class UsersController {
   }
 
   @Patch("addUserToGroup")
-  async addUserToGroup(@Request() req, @Body("groupId") groupId: string) {
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string' },
+        groupId: { type: 'string' }
+      },
+    },
+  })
+  async addUserToGroup(@Body('userId') userId: string, @Body("groupId") groupId: string) {
     return await this.usersService.addUserToGroup(
-      req.user.id,
+      userId,
       groupId
     )
   }
 
   @Patch("removeUserFromGroup")
-  async removeUserFromGroup(@Request() req, @Body() groupId: string) {
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string' },
+        groupId: { type: 'string' }
+      },
+    },
+  })
+  async removeUserFromGroup(@Body('userId') userId: string, @Body() groupId: string) {
     return await this.usersService.removeUserFromGroup(
-      req.user.id,
+      userId,
       groupId
     )
   }
 
   @Patch("addConnectionRequestToUser")
-  async addConnectionRequestToUser(@Request() req, @Body() userToConnectWithId: string) {
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string' },
+        userToConnectWithId: { type: 'string' }
+      },
+    },
+  })
+  async addConnectionRequestToUser(@Body('userId') userId, @Body('userToConnectWithId') userToConnectWithId: string) {
     return await this.usersService.addConnectionRequestToUser(
-      req.user.id,
+      userId,
       userToConnectWithId
     )
   }
 
   @Patch("approveConnectionRequest")
-  async approveConnectionRequest(@Request() req, @Body() userToConnectWithId: string) {
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string' },
+        userToConnectWithId: { type: 'string' }
+      },
+    },
+  })
+  async approveConnectionRequest(@Body('userId') userId, @Body('userToConnectWithId') userToConnectWithId: string) {
     return await this.usersService.approveConnectionRequest(
-      req.user.id,
+      userId,
       userToConnectWithId
     )
   }
 
   @Patch("removeConnection")
-  async removeConnection(@Request() req, @Body() userToUnconnectWithId: string) {
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string' },
+        userToUnconnectWithId: { type: 'string' }
+      },
+    },
+  })
+  async removeConnection(@Body('userId') userId, @Body('userToUnconnectWithId') userToUnconnectWithId: string) {
     return await this.usersService.removeConnection(
-      req.user.id,
+      userId,
       userToUnconnectWithId
     )
   }
@@ -123,6 +177,15 @@ export class UsersController {
 
 
   @Delete("removeFollowerFromUser")
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: { type: 'string' },
+        userToUnfollowId: { type: 'string' }
+      },
+    },
+  })
   async removeFollowerFromUser(@Body("userId") userId: string, @Body("userToUnfollowId") userToUnfollowId: string) {
     return await this.usersService.removeFollowerFromUser(
       userId,
@@ -130,19 +193,19 @@ export class UsersController {
     )
   }
 
-  @Get("getMutualFollowers/:userId")
-  async getMutualFollowers(@Param("userId") userId: string, @Body() user2_Id: string) {
+  @Get("getMutualFollowers/:userId/:user2Id")
+  async getMutualFollowers(@Param("userId") userId: string, @Param('user2Id') user2Id: string) {
     return await this.usersService.followerIntersection(
       userId,
-      user2_Id
+      user2Id
     )
   }
 
-  @Get("getMutualConnections/:userId")
-  async getMutualConnections(@Param("userId") userId: string, @Body() user2_Id: string) {
+  @Get("getMutualConnections/:userId/:user2Id")
+  async getMutualConnections(@Param("userId") userId: string, @Param('user2Id') user2Id: string) {
     return await this.usersService.connectionIntersection(
       userId,
-      user2_Id
+      user2Id
     )
   }
 

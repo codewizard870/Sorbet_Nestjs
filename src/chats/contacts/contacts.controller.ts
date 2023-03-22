@@ -12,6 +12,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ContactsService } from "./contacts.service";
 import { CreateContactDto } from "./dto/create-contact.dto";
 import { UpdateContactDto } from "./dto/update-contact.dto";
+
 @ApiBearerAuth()
 @ApiTags("Contacts")
 @Controller("/contacts")
@@ -24,8 +25,6 @@ export class ContactsController {
     @Request() req
   ) {
     const userId = req.user.id;
-    console.log("userId", userId);
-
     return await this.contactsService.create(userId, contacted_userId);
   }
 

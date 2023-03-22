@@ -26,7 +26,7 @@ export class CollabService {
         return result
       } 
       else {
-        throw new BadRequestException()
+        throw new BadRequestException('Failed creating collab')
       } 
     } 
     catch (error) {
@@ -42,8 +42,7 @@ export class CollabService {
         return allCollabs
       }
       else {
-        console.log("Failed to find all collabs")
-        throw new Error("Failed to find all collabs")
+        throw new BadRequestException('Failed to find all collabs')
       }
     } 
     catch (error) {
@@ -61,8 +60,7 @@ export class CollabService {
         return collab
       }
       else {
-        console.log("Failed to find collab")
-        throw new Error('Failed to find collab')
+        throw new BadRequestException('Failed to find collab')
       }
     } 
     catch (error) {
@@ -80,8 +78,7 @@ export class CollabService {
         return collab
       }
       else {
-        console.log("Failed to find collab")
-        throw new Error('Failed to find collab')
+        throw new BadRequestException('Failed to find collab by userId')
       }
     } 
     catch (error) {
@@ -99,8 +96,7 @@ export class CollabService {
         return collab
       }
       else {
-        console.log("Failed to find collab")
-        throw new Error('Failed to find collab')
+        throw new BadRequestException('Failed to find collab by wallet address')
       }
     } 
     catch (error) {
@@ -118,8 +114,7 @@ export class CollabService {
         return collab
       }
       else {
-        console.log("Failed to find collab")
-        throw new Error('Failed to find collab')
+        throw new BadRequestException('Failed to find collab by public key')
       }
     } 
     catch (error) {
@@ -138,8 +133,7 @@ export class CollabService {
         return { message: `Successfully updated collab` }
       }
       else {
-        console.log(`Failed to update collab ${id}`)
-        throw new Error('Failed to update collab')
+        throw new BadRequestException('Failed to updarte collab')
       }
     } 
     catch (error) {
@@ -157,7 +151,6 @@ export class CollabService {
         return { message: `Successfully deleted collab` }
       }
       else {
-        console.log(`Failed to delete collab ${id}`)
         return { message: `Failed to delete collab` }
       }
     } 

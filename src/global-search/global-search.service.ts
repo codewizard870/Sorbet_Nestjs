@@ -26,8 +26,8 @@ export class GlobalSearchService {
       return { users, posts, locations, groups };
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -40,8 +40,8 @@ export class GlobalSearchService {
       return { users, posts, locations, groups };
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -49,55 +49,49 @@ export class GlobalSearchService {
     try {
       const filteredLocation = [];
       const locations = await this.findmatchingLocation(text);
-      console.log("locations", locations);
       if (locations) {
         for (let i = 0; i < locations.length; i++) {
-          const element = locations[i];
-          const locationId = element.id;
-          const data = { locationId, distance };
-          const result = await this.findLocationDistance(userId, data);
-          console.log("location", result);
+          const element = locations[i]
+          const locationId = element.id
+          const data = { locationId, distance }
+          const result = await this.findLocationDistance(userId, data)
 
           if (result) {
-            filteredLocation.push(element);
+            filteredLocation.push(element)
           }
-          console.log("filteredLocation", filteredLocation);
         }
 
-        return filteredLocation;
+        return filteredLocation
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
   async globalSearchLocationByDistanceWithoutText(userId: string, distance: any) {
     try {
-      const filteredLocation = [];
-      const locations = await this.locationService.findAll();
-      console.log("locations", locations);
+      const filteredLocation = []
+      const locations = await this.locationService.findAll()
       if (locations) {
         for (let i = 0; i < locations.length; i++) {
-          const element = locations[i];
-          const locationId = element.id;
-          const data = { locationId, distance };
-          const result = await this.findLocationDistance(userId, data);
-          console.log("location", result);
+          const element = locations[i]
+          const locationId = element.id
+          const data = { locationId, distance }
+          const result = await this.findLocationDistance(userId, data)
 
           if (result) {
-            filteredLocation.push(element);
+            filteredLocation.push(element)
           }
-          console.log("filteredLocation", filteredLocation);
         }
 
-        return filteredLocation;
+        return filteredLocation
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -105,55 +99,49 @@ export class GlobalSearchService {
     try {
       const filteredPost = [];
       const posts = await this.findmatchingPost(text);
-      console.log("posts", posts);
       if (posts) {
         for (let i = 0; i < posts.length; i++) {
-          const element = posts[i];
-          const postId = element.id;
-          const data = { postId, distance };
-          const result = await this.findPostDistance(userId, data);
-          console.log("post", result);
+          const element = posts[i]
+          const postId = element.id
+          const data = { postId, distance }
+          const result = await this.findPostDistance(userId, data)
 
           if (result) {
-            filteredPost.push(element);
+            filteredPost.push(element)
           }
-          console.log("filteredPost", filteredPost);
         }
 
-        return filteredPost;
+        return filteredPost
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
   async globalSearchUserByDistance(userId: string, distance: any, text: string) {
     try {
-      const filteredUser = [];
-      const users = await this.findmatchingUser(text);
-      console.log("result", users);
+      const filteredUser = []
+      const users = await this.findmatchingUser(text)
       if (users) {
         for (let i = 0; i < users.length; i++) {
-          const element = users[i];
+          const element = users[i]
           const newUserId = element.id;
-          const data = { newUserId, distance };
-          const result = await this.findUserDistance(userId, data);
-          console.log("result", result);
+          const data = { newUserId, distance }
+          const result = await this.findUserDistance(userId, data)
 
           if (result) {
-            filteredUser.push(element);
+            filteredUser.push(element)
           }
-          console.log("filteredUser", filteredUser);
         }
 
-        return filteredUser;
+        return filteredUser
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -161,27 +149,24 @@ export class GlobalSearchService {
     try {
       const filteredGroup = [];
       const groups = await this.findmatchingGroup(text);
-      console.log("groups", groups);
       if (groups) {
         for (let i = 0; i < groups.length; i++) {
-          const element = groups[i];
+          const element = groups[i]
           const newUserId = element.id;
-          const data = { newUserId, distance };
-          const result = await this.findUserDistance(userId, data);
-          console.log("result", result);
+          const data = { newUserId, distance }
+          const result = await this.findUserDistance(userId, data)
 
           if (result) {
-            filteredGroup.push(element);
+            filteredGroup.push(element)
           }
-          console.log("filteredGroup", filteredGroup);
         }
 
-        return filteredGroup;
+        return filteredGroup
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -202,8 +187,8 @@ export class GlobalSearchService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -234,8 +219,8 @@ export class GlobalSearchService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -244,15 +229,15 @@ export class GlobalSearchService {
       const post = await this.prismaService.post.findMany({
         where: { title: text },
         include: { location: true },
-      });
+      })
 
       if (post.length === 0 || post.length > 0) {
-        return post;
+        return post
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -272,14 +257,13 @@ export class GlobalSearchService {
         },
         include: { members: true, location: true },
       })
-      console.log('group', group)
       if (group.length === 0 || group.length > 0) {
         return group;
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -287,13 +271,11 @@ export class GlobalSearchService {
     try {
       const myUser = await this.userService.getUserFromId(myuserId);
       const otherUser = await this.userService.getUserFromId(data.userId);
-      console.log("otherUser", otherUser);
-      console.log("myUser", myUser);
       if (!myUser || !otherUser) {
         return false
       }
       if (!myUser.location || !otherUser.location)
-        return false;
+        return false
 
       const a = {
         latitude: myUser.location.latitude,
@@ -314,8 +296,8 @@ export class GlobalSearchService {
       return false;
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -324,7 +306,6 @@ export class GlobalSearchService {
     try {
       const user = await this.userService.getUserFromId(userId);
       const location = await this.locationService.findOne(data.postId);
-      console.log("location", location);
       if (!user || !location) {
         return false
       }
@@ -343,28 +324,27 @@ export class GlobalSearchService {
         b
       );
       if (calculatedDistance === data.distance) {
-        const message = "location exists inside the distance";
+        const message = "location exists inside the distance"
         return message;
       }
       else if (data.distance > calculatedDistance) {
-        const message = "location exists inside the distance";
-        return message;
+        const message = "location exists inside the distance"
+        return message
       }
       else {
-        return false;
+        return false
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
   async findPostDistance(userId: string, data: any) {
     try {
-      const user = await this.userService.getUserFromId(userId);
-      const post = await this.postsService.findOne(data.postId);
-      console.log("post", post);
+      const user = await this.userService.getUserFromId(userId)
+      const post = await this.postsService.findOne(data.postId)
       if (!user || !post) {
         return false
       }
@@ -383,62 +363,61 @@ export class GlobalSearchService {
         b
       );
       if (calculatedDistance === data.distance) {
-        const message = "post exists inside the distance";
-        return message;
+        const message = "post exists inside the distance"
+        return message
       }
       else if (data.distance > calculatedDistance) {
-        const message = "post exists inside the distance";
-        return message;
+        const message = "post exists inside the distance"
+        return message
       }
       else {
-        return false;
+        return false
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
   async findGroupDistance(userId: string, data: any) {
     try {
-      const user = await this.userService.getUserFromId(userId);
-      const group = await this.groupsService.findOne(data.groupId);
-      console.log("group", group);
+      const user = await this.userService.getUserFromId(userId)
+      const group = await this.groupsService.findOne(data.groupId)
       if (!user || !group) {
         return false
       }
       const a = {
         latitude: user.location[0].latitude,
         longitude: user.location[0].langitude,
-      };
+      }
 
       const b = {
         // @ts-ignore
         latitude: group.location[0].latitude,
         // @ts-ignore
         longitude: group.location[0].langitude,
-      };
+      }
 
       const calculatedDistance = this.locationService.getDistanceUsingHaversine(
         a,
         b
-      );
+      )
       if (calculatedDistance === data.distance) {
-        const message = "group exists inside the distance";
-        return message;
+        const message = "group exists inside the distance"
+        return message
       }
       else if (data.distance > calculatedDistance) {
-        const message = "group exists inside the distance";
-        return message;
+        const message = "group exists inside the distance"
+        return message
       }
       else {
-        return false;
+        return false
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 }

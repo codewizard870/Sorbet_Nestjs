@@ -36,7 +36,7 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -50,13 +50,9 @@ export class UsersService {
       if (result) {
         return result
       }
-      else {
-        console.log("Could not find user by email")
-        return
-      }
     }
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -70,45 +66,41 @@ export class UsersService {
       if (result) {
         return result
       }
-      else {
-        console.log("Could not find user by near wallet address")
-        throw new Error(`Could not find user by near wallet address: ${nearWallet}`);
-      }
     }
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
 
   async getUserFromId(id: string) {
     try {
-      const user = await this.prisma.user.findFirst({
+      const result = await this.prisma.user.findFirst({
         where: { id: id },
         include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
-      });
-      return user;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+      })
+      if (result) {
+        return result
+      }
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
   async getAll() {
     try {
-      const allUsers = await this.prisma.user.findMany({
+      const result = await this.prisma.user.findMany({
         include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
       })
-      if (allUsers) {
-        return allUsers
-      }
-      else {
-        console.log("Could not get all users")
-        throw new Error("Could not get all users")
+      if (result) {
+        return result
       }
     }
     catch (error) {
-      console.log(`Error Occured, ${error}`);
-      throw new Error("Error getting all users.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -133,17 +125,14 @@ export class UsersService {
             tags: data.tags,
             updatedAt: new Date(Date.now())
           },
-        });
+        })
         if (result) {
           return result
-        }
-        else {
-          return { message: "Something went wrong" };
         }
       }
     }
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -154,10 +143,10 @@ export class UsersService {
         where: { id: id },
       });
       if (result) {
-        return { message: "Deleted Successfully" };
+        return { message: "Deleted Successfully" }
       }
       else {
-        return { message: "Something went wrong" };
+        return { message: "Something went wrong" }
       }
     }
     catch (error) {
@@ -207,7 +196,7 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -258,7 +247,7 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -305,8 +294,8 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("Unable to send connection request to this user. Please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -377,8 +366,8 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("Unable to connect with this user. Please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -425,8 +414,8 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("Unable to remove this connection. Please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -447,8 +436,8 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("Unable to follow this user. Please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -466,8 +455,8 @@ export class UsersService {
       })
     }
     catch (error) {
-      console.log(error)
-      throw new Error("Unable to unfollow this user. Please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -499,8 +488,8 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("Unable to check for mutual followers. Please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -532,8 +521,8 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("Unable to check for mutual connections. Please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -569,8 +558,8 @@ export class UsersService {
       }
     }
     catch (error) {
-      console.log(error)
-      throw new Error("Unable to recommend users. Please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
