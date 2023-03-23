@@ -19,12 +19,8 @@ import { UpdateContactDto } from "./dto/update-contact.dto";
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
-  @Post(":contacted_userId")
-  async create(
-    @Param("contacted_userId") contacted_userId: string,
-    @Request() req
-  ) {
-    const userId = req.user.id;
+  @Post("create")
+  async create(@Body("contacted_userId") contacted_userId: string, @Body("userId") userId: string) {
     return await this.contactsService.create(userId, contacted_userId);
   }
 
@@ -33,18 +29,14 @@ export class ContactsController {
     return await this.contactsService.getAll();
   }
 
-  @Get("myContacts")
-  async findOneByUserId(@Request() req) {
-    return await this.contactsService.getContactByUserId(req.user.id);
+  @Get("myContacts/:userId")
+  async findOneByUserId(@Param("userId") userId: string) {
+    return await this.contactsService.getContactByUserId(userId);
   }
 
   @Get(":contactedUserId")
-  async findContactByContactedUserId(
-    @Param("contactedUserId") contactedUserId: string
-  ) {
-    return await this.contactsService.getContactByContactedUserId(
-      contactedUserId
-    );
+  async findContactByContactedUserId(@Param("contactedUserId") contactedUserId: string) {
+    return await this.contactsService.getContactByContactedUserId(contactedUserId);
   }
 
   @Get("/findByContactId/:contactId")

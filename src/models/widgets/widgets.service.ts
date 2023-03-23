@@ -232,8 +232,7 @@ const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
           mode: 'no-cors',
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*'
+              'Accept': 'application/json'
           },
           body: JSON.stringify(null),
       })
