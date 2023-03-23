@@ -61,4 +61,9 @@ import {
     createDribbbleAccessToken(@Body("dribbbleCode") dribbbleCode: string ) {
       return this.widgetsService.createDribbbleAccessToken(dribbbleCode)
     }
+
+    @Post("createGithubAccessToken")
+    createGithubAccessToken(@Body("githubCode") githubCode: string ) {
+      return this.widgetsService.createGithubAccessToken(githubCode)
+    }
   }
