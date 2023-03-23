@@ -5,7 +5,7 @@ import { UpdateContactDto } from "./dto/update-contact.dto";
 
 @Injectable()
 export class ContactsService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
   async create(userId: string, contacted_userId: string) {
     try {
@@ -17,7 +17,7 @@ export class ContactsService {
       })
 
       return result
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -32,11 +32,11 @@ export class ContactsService {
       });
       if (contact) {
         return contact
-      } 
+      }
       else {
         throw new BadRequestException("contact not found");
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -46,17 +46,17 @@ export class ContactsService {
   async getContactByUserId(id: string) {
     try {
       const contact = await this.prismaService.contact.findMany({
-        where: { userId: id },
-        include: { chat: true },
+        where: { OR: [{ userId: id }, { contacted_userId: id }] },
+        include: { chat: true, user: true, contacted_user: true },
       })
-      console.log("contact", contact);
+
       if (contact) {
         return contact;
-      } 
+      }
       else {
         throw new BadRequestException("contact not found");
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -71,11 +71,11 @@ export class ContactsService {
       })
       if (contact) {
         return contact
-      } 
+      }
       else {
         throw new BadRequestException("contact not found");
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -89,11 +89,11 @@ export class ContactsService {
       })
       if (contacts) {
         return contacts
-      } 
+      }
       else {
         throw new BadRequestException("contacts not found")
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -107,11 +107,11 @@ export class ContactsService {
       })
       if (result) {
         return { message: "deleted Successfully" };
-      } 
+      }
       else {
         return { message: "Something went wrong" };
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
