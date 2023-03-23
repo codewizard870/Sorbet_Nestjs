@@ -9,6 +9,9 @@ import { UpdateWidgetDto } from "./dto/update-widgets-dto";
 
 const DRIBBLE_CLIENT_ID = process.env.DRIBBLE_CLIENT_ID
 const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
+
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
   
   @Injectable()
   export class WidgetsService {
@@ -215,6 +218,28 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
     
         const data = await response.json()
         console.log(data)
+        return data.access_token
+      } 
+      catch (error) {
+        console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }
+
+    async createGithubAccessToken(githubCode: string) {
+      try {
+        const response = await fetch(`https://github.com/login/oauth/access_token?client_id=${DRIBBLE_CLIENT_ID}&client_secret=${DRIBBLE_CLIENT_SECRET}&code=${githubCode}`, {
+          mode: 'no-cors',
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify(null),
+      })
+    
+        const data = await response.json()
+        console.log('createGithubAccessToken data', data)
         return data.access_token
       } 
       catch (error) {
