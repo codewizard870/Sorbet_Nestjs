@@ -20,8 +20,8 @@ export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
   @Post("create")
-  async create(@Body() createChatDto: CreateChatDto, @Request() req) {
-    return await this.chatsService.create(createChatDto, req.user.id);
+  async create(@Body('createChatDto') createChatDto: CreateChatDto, @Body('userId') userId: string) {
+    return await this.chatsService.create(createChatDto, userId);
   }
 
   @Get("findAll")
@@ -45,7 +45,7 @@ export class ChatsController {
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateChatsDto: UpdateChatDto) {
+  update(@Param("id") id: string, @Body('updateChatsDto') updateChatsDto: UpdateChatDto) {
     return this.chatsService.update(id, updateChatsDto);
   }
 
