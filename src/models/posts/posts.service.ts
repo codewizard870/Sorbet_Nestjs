@@ -29,7 +29,7 @@ export class PostsService {
           description: data.description,
           imageUrl: data.imageUrl,
           videoUrl: data.videoUrl,
-          serviceType: data.locationType,
+          serviceType: data.serviceType,
           category: data.category,
           subCategory: data.subCategory,
           seachTags: data.seachTags,
@@ -49,7 +49,7 @@ export class PostsService {
           try {
             const res = await this.prismaService.location.create({
               data: {
-                locationType: data.locationType,
+                locationType: data.serviceType,
                 address: data.address,
                 langitude: data.langitude,
                 latitude: data.latitude,

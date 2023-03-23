@@ -21,11 +21,10 @@ export class ChatsService {
       } 
       else {
         throw new BadRequestException("Result not found")
-
       }
     } 
     catch (error) {
-      console.error(`Error Occured, ${error}`)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -43,8 +42,8 @@ export class ChatsService {
       }
     } 
     catch (error) {
-      console.log(`Error Occured, ${error}`)
-      throw new Error("Could not find all chats")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -53,7 +52,7 @@ export class ChatsService {
       const chat = await this.prismaService.chat.findMany({
         where: { id: id },
         // include: { contact: true },
-      });
+      })
       if (chat) {
         return chat
       } 
@@ -62,7 +61,7 @@ export class ChatsService {
       }
     } 
     catch (error) {
-      console.log(`Error Occured, ${error}`)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -81,7 +80,7 @@ export class ChatsService {
         throw new BadRequestException("contact not found");
       }
     } catch (error) {
-      console.log(`Error Occured, ${error}`);
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -100,7 +99,7 @@ export class ChatsService {
       }
     } 
     catch (error) {
-      console.log(`Error Occured, ${error}`)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -115,12 +114,11 @@ export class ChatsService {
         return result
       }
       else {
-        console.log("Could not update chat")
-        throw new Error("Could not update chat")
-      } 
+        throw new BadRequestException("error updating chat")
+      }
     } 
     catch (error) {
-      console.log(`Error Occured, ${error}`)
+      console.error(error)
       throw new Error("An error occured. Please try again.")
     }
   }
@@ -134,13 +132,12 @@ export class ChatsService {
         return { message: "Deleted Successfully" }
       } 
       else {
-        console.log('delete chat error', result)
-        return { message: "Something went wrong" }
+        throw new BadRequestException("error deleting chat")
       }
     } 
     catch (error) {
-      console.log(`Error Occured, ${error}`)
-      throw new Error("Could not delete chat")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -158,13 +155,13 @@ export class ChatsService {
         return messages
       }
       else {
-        console.log("Could not search messages")
-        return
+        console.log("No messages found")
+        return { message: 'No messages found' }
       }
     }
     catch (error) {
-      console.log(`Error Occured, ${error}`)
-      throw new Error("Could not search chats")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 }

@@ -25,7 +25,7 @@ import {
       return await this.commentService.createComment(createCommentDto)
     }
   
-    @Get('post/:postId/commments')
+    @Get('comments/:postId')
     async findAllForPost (@Param("postId") postId: string) {
       return await this.commentService.findAllCommentsForPost(postId)
     }

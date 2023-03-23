@@ -7,98 +7,114 @@ import { UpdateContactDto } from "./dto/update-contact.dto";
 export class ContactsService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(userId, contacted_userId) {
+  async create(userId: string, contacted_userId: string) {
     try {
       const result = await this.prismaService.contact.create({
         data: {
           userId: userId,
           contacted_userId: contacted_userId,
         },
-      });
+      })
 
-      return result;
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+      return result
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async getContactByContactId(id) {
+  async getContactByContactId(id: string) {
     try {
       const contact = await this.prismaService.contact.findFirst({
         where: { id: id },
         include: { chat: true },
       });
-      console.log("contact", contact);
       if (contact) {
-        return contact;
-      } else {
+        return contact
+      } 
+      else {
         throw new BadRequestException("contact not found");
       }
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async getContactByUserId(id) {
+  async getContactByUserId(id: string) {
     try {
       const contact = await this.prismaService.contact.findMany({
         where: { userId: id },
         include: { chat: true },
-      });
+      })
       console.log("contact", contact);
       if (contact) {
         return contact;
-      } else {
+      } 
+      else {
         throw new BadRequestException("contact not found");
       }
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async getContactByContactedUserId(id) {
-    console.log("id", id);
-
+  async getContactByContactedUserId(id: string) {
     try {
       const contact = await this.prismaService.contact.findMany({
         where: { contacted_userId: id },
         include: { chat: true },
-      });
-      console.log("contact", contact);
+      })
       if (contact) {
-        return contact;
-      } else {
+        return contact
+      } 
+      else {
         throw new BadRequestException("contact not found");
       }
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
   async getAll() {
     try {
-      const contact = await this.prismaService.contact.findMany({
+      const contacts = await this.prismaService.contact.findMany({
         include: { chat: true },
-      });
-      console.log("contact", contact);
-      if (contact) {
-        return contact;
-      } else {
-        throw new BadRequestException("contact not found");
+      })
+      if (contacts) {
+        return contacts
+      } 
+      else {
+        throw new BadRequestException("contacts not found")
       }
-    } catch (error) {
-      console.log(`Error Occured, ${error}`);
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
-  async remove(id) {
-    const result = await this.prismaService.contact.delete({
-      where: { id: id },
-    });
-    if (result) {
-      return { message: "deleted Successfully" };
-    } else {
-      return { message: "Something went wrong" };
+  async remove(id: string) {
+    try {
+      const result = await this.prismaService.contact.delete({
+        where: { id: id },
+      })
+      if (result) {
+        return { message: "deleted Successfully" };
+      } 
+      else {
+        return { message: "Something went wrong" };
+      }
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 }

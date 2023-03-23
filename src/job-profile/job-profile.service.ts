@@ -21,11 +21,12 @@ export class JobProfileService {
         return result
       } 
       else {
-        throw new BadRequestException("Error occured");
+        throw new BadRequestException("Error creating job profile")
       }
     } 
     catch (error) {
-      throw new BadRequestException("Unable to create User", error)
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -34,16 +35,16 @@ export class JobProfileService {
       const result = this.prismaService.jobProfile.findMany({
         include: {user: true},
       })
-      if(result) {
+      if (result) {
         return result
       }
       else {
-        throw new Error("No job profiles were found.");
+        throw new BadRequestException("No job profiles were found")
       }
     } 
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -57,12 +58,12 @@ export class JobProfileService {
         return result
       } 
       else {
-        throw new Error("Job profile not found.");
+        throw new BadRequestException("Job profile not found")
       }  
     } 
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -76,12 +77,12 @@ export class JobProfileService {
         return result
       }
       else {
-        throw new Error("Job profile not found.")
+        throw new BadRequestException("Job profile not found")
       }
     } 
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -95,12 +96,12 @@ export class JobProfileService {
         return result
       } 
       else {
-        throw new Error("Job profile not found.")
+        throw new BadRequestException("Job profile not found")
       }
     } 
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -114,12 +115,12 @@ export class JobProfileService {
         return result
       } 
       else {
-        throw new Error("Job profile not found.")
+        throw new BadRequestException("Job profile not found")
       }
     } 
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -133,13 +134,12 @@ export class JobProfileService {
         return result
       }
       else {
-        console.log("Failed to updated job profile")
-        throw new Error("Failed to updated job profile")
+        throw new BadRequestException("Failed to updated job profile")
       }
     } 
     catch (error) {
       console.error(error)
-      throw new Error("An error occured, please try again.")
+      throw new Error("An error occured. Please try again.")
     }
   }
 
@@ -156,8 +156,8 @@ export class JobProfileService {
       }
     } 
     catch (error) {
-      console.log(error)
-      throw new Error("An error occured, please try again.")
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 }

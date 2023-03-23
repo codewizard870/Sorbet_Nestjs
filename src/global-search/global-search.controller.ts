@@ -39,7 +39,7 @@ export class GlobalSearchController {
       req.user.id,
       distance,
       text
-    );
+    )
   }
 
   
@@ -53,7 +53,7 @@ export class GlobalSearchController {
       req.user.id,
       distance,
       text
-    );
+    )
   }
 
   @Post("globalSearchPostByDistance/:text/:distance")
@@ -66,7 +66,7 @@ export class GlobalSearchController {
       req.user.id,
       distance,
       text
-    );
+    )
   }
 
   @Post("globalSearchUserByDistance/:text/:distance")
@@ -79,7 +79,7 @@ export class GlobalSearchController {
       req.user.id,
       distance,
       text
-    );
+    )
   }
 
   @Post("globalSearchLocationByDistanceWithoutText/:distance")
@@ -90,19 +90,19 @@ export class GlobalSearchController {
     return await this.globalSearchService.globalSearchLocationByDistanceWithoutText(
       req.user.id,
       distance
-    );
+    )
   }
 
   ///to check distance between a loged in user and using eventID postID gigID userId
   //that the eventID postID gigID userId exists inside the inputted range or not from the loggedIn user
   @Post("findUserInDistance")
   async findUserInDistance(@Request() req, @Body() data: FindUserDistanceDto) {
-    return await this.globalSearchService.findUserDistance(req.user.id, data);
+    return await this.globalSearchService.findUserDistance(req.user.id, data)
   }
 
   @Post("findPostInDistance")
   async findPostInDistance(@Request() req, @Body() data: FindPostDistanceDto) {
-    return await this.globalSearchService.findPostDistance(req.user.id, data);
+    return await this.globalSearchService.findPostDistance(req.user.id, data)
   }
 
   // @Get()
