@@ -228,7 +228,7 @@ const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
 
     async createGithubAccessToken(githubCode: string) {
       try {
-        const response = await fetch(`https://github.com/login/oauth/access_token?client_id=${DRIBBLE_CLIENT_ID}&client_secret=${DRIBBLE_CLIENT_SECRET}&code=${githubCode}`, {
+        const response = await fetch(`https://github.com/login/oauth/access_token?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}&code=${githubCode}`, {
           mode: 'no-cors',
           method: 'POST',
           headers: {

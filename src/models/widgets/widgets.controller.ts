@@ -11,7 +11,7 @@ import {
   import { WidgetsService } from "./widgets.service";
   import { CreateWidgetDto } from "./dto/create-widgets-dto";
   import { UpdateWidgetDto } from "./dto/update-widgets-dto";
-  import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+  import { ApiBearerAuth, ApiTags, ApiBody } from "@nestjs/swagger";
 
     @ApiTags("Widgets")
     @Controller("/widgets")
@@ -58,11 +58,27 @@ import {
     }
 
     @Post("createDribbbleAccessToken")
+    @ApiBody({
+      schema: {
+        type: 'object',
+        properties: {
+          dribbbleCode: { type: 'string' }
+        },
+      },
+    })
     createDribbbleAccessToken(@Body("dribbbleCode") dribbbleCode: string ) {
       return this.widgetsService.createDribbbleAccessToken(dribbbleCode)
     }
 
     @Post("createGithubAccessToken")
+    @ApiBody({
+      schema: {
+        type: 'object',
+        properties: {
+          githubCode: { type: 'string' }
+        },
+      },
+    })
     createGithubAccessToken(@Body("githubCode") githubCode: string ) {
       return this.widgetsService.createGithubAccessToken(githubCode)
     }
