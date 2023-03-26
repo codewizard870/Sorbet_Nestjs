@@ -183,7 +183,7 @@ export class PostsService {
   async findAllGigs() {
     try {
       const gigs = await this.prismaService.post.findMany({
-        where: { postType: 'Gig' },
+        // where: { postType: "Gig" },
         orderBy: [
           {
             createdAt: 'desc',
@@ -221,8 +221,8 @@ export class PostsService {
 
   async findAllEvents() {
     try {
-      const gigs = await this.prismaService.post.findMany({
-        where: { postType: 'Event' },
+      const events = await this.prismaService.post.findMany({
+        // where: { postType: "Event" },
         orderBy: [
           {
             createdAt: 'desc',
@@ -244,12 +244,12 @@ export class PostsService {
           followers: true,
         },
       })
-      if (gigs) {
-        return gigs
+      if (events) {
+        return events
       }
       else {
-        console.log("Could not find gigs")
-        throw new Error("Could not find gigs")
+        console.log("Could not find events")
+        throw new Error("Could not find events")
       }
     }
     catch (error) {
