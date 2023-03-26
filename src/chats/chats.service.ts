@@ -5,24 +5,24 @@ import { UpdateChatDto } from "./dto/update-chat.dto";
 
 @Injectable()
 export class ChatsService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
-  async create(data: any, userId: string) {
+  async create(data: any) {
     try {
       const result = await this.prismaService.chat.create({
         data: {
           message: data.message,
-          creatorId: userId,
+          creatorId: data.userId,
           contactId: data.contactId,
         },
       })
       if (result) {
         return result
-      } 
+      }
       else {
         throw new BadRequestException("Result not found")
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -36,11 +36,11 @@ export class ChatsService {
       })
       if (allChats) {
         return allChats
-      } 
+      }
       else {
         throw new BadRequestException("chats not found")
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -55,11 +55,11 @@ export class ChatsService {
       })
       if (chat) {
         return chat
-      } 
+      }
       else {
         throw new BadRequestException("chat not found");
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -74,7 +74,31 @@ export class ChatsService {
       })
       if (chat) {
         return chat
-      } 
+      }
+      else {
+        console.log("contact not found")
+        throw new BadRequestException("contact not found");
+      }
+    } catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async getChatByContactIdWithTime(contactId: string, time: number) {
+    try {
+      const chat = await this.prismaService.chat.findMany({
+        where: {
+          contactId: contactId,
+          createdAt: {
+            gte: new Date(time)
+          },
+        },
+      })
+
+      if (chat) {
+        return chat
+      }
       else {
         console.log("contact not found")
         throw new BadRequestException("contact not found");
@@ -93,11 +117,11 @@ export class ChatsService {
       })
       if (chat) {
         return chat
-      } 
+      }
       else {
         throw new BadRequestException("chat not found")
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -116,7 +140,7 @@ export class ChatsService {
       else {
         throw new BadRequestException("error updating chat")
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -130,11 +154,11 @@ export class ChatsService {
       })
       if (result) {
         return { message: "Deleted Successfully" }
-      } 
+      }
       else {
         throw new BadRequestException("error deleting chat")
       }
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
@@ -144,13 +168,13 @@ export class ChatsService {
   async searchMessages(text: string) {
     try {
       const messages = await this.prismaService.chat.findMany({
-        where: { 
+        where: {
           message: {
             contains: text
-          } 
+          }
         }
       })
-  
+
       if (messages.length === 0 || messages.length > 0) {
         return messages
       }

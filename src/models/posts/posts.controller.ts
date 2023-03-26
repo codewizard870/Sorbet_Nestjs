@@ -42,6 +42,16 @@ export class PostsController {
     return this.postsService.findAllByUserId(userId)
   }
 
+  @Get("findAllGigs")
+  findAllGigs() {
+    return this.postsService.findAllGigs()
+  }
+
+  @Get("findAllEvents")
+  findAllEvents() {
+    return this.postsService.findAllEvents()
+  }
+
   @Patch(":id")
   update(@Param("id") id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto)

@@ -20,8 +20,8 @@ export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
   @Post("create")
-  async create(@Body('createChatDto') createChatDto: CreateChatDto, @Body('userId') userId: string) {
-    return await this.chatsService.create(createChatDto, userId);
+  async create(@Body() createChatDto: CreateChatDto) {
+    return await this.chatsService.create(createChatDto);
   }
 
   @Get("findAll")
@@ -37,6 +37,11 @@ export class ChatsController {
   @Get("findBycontactId/:contactId")
   async findByContactId(@Param("contactId") contactId: string) {
     return await this.chatsService.getChatByContactId(contactId);
+  }
+
+  @Post("findBycontactIdWithTime")
+  async findByContactIdWithTime(@Body("contactId") contactId: string, @Body("time") time: number) {
+    return await this.chatsService.getChatByContactIdWithTime(contactId, time);
   }
 
   @Get("findByuserId/:userId")

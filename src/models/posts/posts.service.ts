@@ -180,6 +180,84 @@ export class PostsService {
     }
   }
 
+  async findAllGigs() {
+    try {
+      const gigs = await this.prismaService.post.findMany({
+        where: { postType: 'Gig' },
+        orderBy: [
+          {
+            createdAt: 'desc',
+          },
+        ],
+        include: {
+          user: true,
+          location: true,
+          likes: {
+            include: {
+              user: true,
+            },
+          },
+          comments: {
+            include: {
+              user: true,
+            },
+          },
+          followers: true,
+        },
+      })
+      if (gigs) {
+        return gigs
+      }
+      else {
+        console.log("Could not find gigs")
+        throw new Error("Could not find gigs")
+      }
+    }
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async findAllEvents() {
+    try {
+      const gigs = await this.prismaService.post.findMany({
+        where: { postType: 'Event' },
+        orderBy: [
+          {
+            createdAt: 'desc',
+          },
+        ],
+        include: {
+          user: true,
+          location: true,
+          likes: {
+            include: {
+              user: true,
+            },
+          },
+          comments: {
+            include: {
+              user: true,
+            },
+          },
+          followers: true,
+        },
+      })
+      if (gigs) {
+        return gigs
+      }
+      else {
+        console.log("Could not find gigs")
+        throw new Error("Could not find gigs")
+      }
+    }
+    catch (error) {
+      console.log(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
   async update(id: string, updatePostDto: UpdatePostDto) {
     try {
       const updatedPost = await this.prismaService.post.update({
