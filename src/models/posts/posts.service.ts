@@ -9,6 +9,7 @@ import { UsersService } from "../users/users.service";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { LocationsService } from "../locations/locations.service";
+import { PostType } from "@prisma/client";
 
 @Injectable()
 export class PostsService {
@@ -180,10 +181,10 @@ export class PostsService {
     }
   }
 
-  async findAllGigs() {
+  async findPostsByPostType(postType: PostType) {
     try {
-      const gigs = await this.prismaService.post.findMany({
-        // where: { postType: "Gig" },
+      const posts = await this.prismaService.post.findMany({
+        where: { postType: postType },
         orderBy: [
           {
             createdAt: 'desc',
@@ -205,51 +206,12 @@ export class PostsService {
           followers: true,
         },
       })
-      if (gigs) {
-        return gigs
+      if (posts) {
+        return posts
       }
       else {
-        console.log("Could not find gigs")
-        throw new Error("Could not find gigs")
-      }
-    }
-    catch (error) {
-      console.log(error)
-      throw new Error("An error occured. Please try again.")
-    }
-  }
-
-  async findAllEvents() {
-    try {
-      const events = await this.prismaService.post.findMany({
-        // where: { postType: "Event" },
-        orderBy: [
-          {
-            createdAt: 'desc',
-          },
-        ],
-        include: {
-          user: true,
-          location: true,
-          likes: {
-            include: {
-              user: true,
-            },
-          },
-          comments: {
-            include: {
-              user: true,
-            },
-          },
-          followers: true,
-        },
-      })
-      if (events) {
-        return events
-      }
-      else {
-        console.log("Could not find events")
-        throw new Error("Could not find events")
+        console.log("Could not find posts")
+        throw new Error("Could not find posts")
       }
     }
     catch (error) {
