@@ -218,6 +218,7 @@ model Contact {
   contacted_user   User   @relation(name: "contacted_user", fields: [contacted_userId], references: [id])
   contacted_userId String @db.ObjectId
   chat             Chat[]
+  @@unique([userId, contacted_userId])
 }
 
 model Chat {
