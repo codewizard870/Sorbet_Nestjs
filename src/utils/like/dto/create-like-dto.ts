@@ -7,5 +7,4 @@ export class CreateLikeDto {
 
   @ApiProperty()
   userId: string
-
 }

@@ -23,6 +23,7 @@ import { WidgetsModule } from "./models/widgets/widgets.module";
 import { LikeModule } from "./utils/like/like.module";
 import { CommentModule } from "./utils/comment/comment.module";
 import { FollowModule } from "./utils/follow/follow.module";
+import { NotificationModule } from "./utils/notifications/notification.module";
 
 @Module({
   imports: [
@@ -43,7 +44,8 @@ import { FollowModule } from "./utils/follow/follow.module";
     WidgetsModule,
     LikeModule,
     CommentModule,
-    FollowModule
+    FollowModule,
+    NotificationModule
   ],
   controllers: [AppController],
   providers: [
