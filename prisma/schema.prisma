@@ -26,23 +26,24 @@ model User {
   connections         String[] @default([]) @db.ObjectId
   connection_requests String[] @default([]) @db.ObjectId
 
-  followers Follow[] @relation("followers")
-  following Follow[] @relation("following")
+  followers    Follow[] @relation("followers")
+  following    Follow[] @relation("following")
 
-  likes      Like[]
-  comments   Comment[]
-  jobProfile JobProfile[]
-  token      Token?
-  location   Location?
-  post       Post[]
-  groupIDs   String[]     @db.ObjectId
-  groups     Group[]      @relation(name: "members", fields: [groupIDs], references: [id])
-  widgets    Widget[]
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime?
+  likes        Like[]
+  comments     Comment[]
+  notification Notification[]
+  jobProfile   JobProfile[]
+  token        Token?
+  location     Location?
+  post         Post[]
+  groupIDs     String[]     @db.ObjectId
+  groups       Group[]      @relation(name: "members", fields: [groupIDs], references: [id])
+  widgets      Widget[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime?
 
-  mycontacts Contact[] @relation("user")
-  contacted  Contact[] @relation("contacted_user")
+  mycontacts   Contact[] @relation("user")
+  contacted    Contact[] @relation("contacted_user")
 }
 
 model JobProfile {
@@ -82,6 +83,7 @@ model Token {
 model Like {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime
+  notification   Notification[]
 
   // relation with user
   user   User   @relation(fields: [userId], references: [id])
@@ -99,17 +101,19 @@ model Comment {
   content   String    @map("text")
   createdAt DateTime
   updatedAt DateTime?
+  notification   Notification[]
 
   // relation with user
   user   User   @relation(fields: [userId], references: [id])
   userId String @db.ObjectId
   // realtion with Post
   post   Post   @relation(fields: [postId], references: [id])
-  postId String @db.ObjectId
+  postId String @db.ObjectId  
 }
 
 model Follow {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  notification   Notification[]
 
   // relation with user
   fromUser   User   @relation(name: "following", fields: [fromUserId], references: [id])
@@ -159,6 +163,7 @@ model Post {
   likes     Like[]
   comments  Comment[]
   followers Follow[]
+  notification   Notification[]
 
   //relation with user
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -222,9 +227,12 @@ model Chat {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @default(now())
 
-  //relation with contact
+  // relation with contact
   contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
   contactId String  @db.ObjectId
+
+  // relation with notification
+  notification   Notification[]
 }
 
 model Collab {
@@ -235,6 +243,9 @@ model Collab {
   public_key     String
   createdAt      DateTime
   updatedAt      DateTime?
+
+  // relation with notification
+  notification   Notification[]
 }
 
 model Group {
@@ -286,4 +297,42 @@ model Widget {
   user        User      @relation(fields: [userId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @default(now())
+}
+
+model Notification {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  type        String
+  message     String?
+  link        String
+  read        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  readAt      DateTime?
+
+  // relation with user
+  user   User     @relation(fields: [userId], references: [id])
+  userId String   @db.ObjectId
+  
+  // relation with post
+  post   Post?     @relation(fields: [postId], references: [id])
+  postId String?   @db.ObjectId
+
+  // relation with comment
+  comment   Comment?   @relation(fields: [commentId], references: [id])
+  commentId String?    @db.ObjectId
+
+  // relation with like
+  like   Like?     @relation(fields: [likeId], references: [id])
+  likeId String?   @db.ObjectId
+
+  // relation with follow
+  follow   Follow?   @relation(fields: [followId], references: [id])
+  followId String?   @db.ObjectId
+
+  //relation with chat
+  chat   Chat?     @relation(fields: [chatId], references: [id])
+  chatId String?   @db.ObjectId
+
+  // relation with collab
+  collab   Collab?   @relation(fields: [collabId], references: [id])
+  collabId String?   @db.ObjectId
 }

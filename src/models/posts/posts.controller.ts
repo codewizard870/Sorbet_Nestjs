@@ -15,6 +15,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateLikeDto } from "src/utils/like/dto/create-like-dto";
 import { CreateCommentDto } from "src/utils/comment/dto/create-comment-dto";
 import { UpdateCommentDto } from "src/utils/comment/dto/update-comment-dto";
+import { PostType } from "@prisma/client";
 @ApiBearerAuth()
 @ApiTags("Posts")
 @Controller("/posts")
@@ -23,7 +24,6 @@ export class PostsController {
 
   @Post("create")
   async create(@Body() createPostDto: CreatePostDto) {
-    console.log(createPostDto);
     return await this.postsService.create(createPostDto)
   }
 
@@ -42,14 +42,9 @@ export class PostsController {
     return this.postsService.findAllByUserId(userId)
   }
 
-  @Get("findAllGigs")
-  findAllGigs() {
-    return this.postsService.findAllGigs()
-  }
-
-  @Get("findAllEvents")
-  findAllEvents() {
-    return this.postsService.findAllEvents()
+  @Get("findAllByPostType/:postType")
+  findAllGigs(@Param("postType") postType: PostType) {
+    return this.postsService.findPostsByPostType(postType)
   }
 
   @Patch(":id")
