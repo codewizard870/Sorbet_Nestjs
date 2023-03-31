@@ -28,7 +28,7 @@ export class ContactsService {
     try {
       const contact = await this.prismaService.contact.findFirst({
         where: { id: id },
-        include: { chat: true },
+        include: { chat: true, user: true, contacted_user: true },
       });
       if (contact) {
         return contact
