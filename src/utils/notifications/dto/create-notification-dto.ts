@@ -9,13 +9,14 @@ export class CreateNotificationDto {
   @ApiProperty()
   message: string
 
+  @IsOptional()
   @ApiProperty()
   link: string
 
   @ApiProperty({ default: false })
   read: boolean
 
-  @ApiProperty({ default: Date.now() })
+  @ApiProperty()
   createdAt: Date
 
   @IsOptional()
@@ -23,6 +24,7 @@ export class CreateNotificationDto {
   readAt: Date
 
   // relations
+  @IsOptional()
   @ApiProperty()
   userId: string
 

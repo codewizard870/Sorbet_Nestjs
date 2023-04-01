@@ -15,7 +15,7 @@ export class NotificationService {
             message: data.message,
             link: data.link,
             read: false,
-            createdAt: new Date(Date.now()),
+            createdAt: data.createdAt,
             readAt: data.readAt,
             userId: data.userId,
             postId: data.postId,
