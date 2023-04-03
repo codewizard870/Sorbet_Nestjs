@@ -82,4 +82,18 @@ import {
     createGithubAccessToken(@Body("githubCode") githubCode: string ) {
       return this.widgetsService.createGithubAccessToken(githubCode)
     }
+
+    @Post("createSpotifyAccessToken")
+    @ApiBody({
+      schema: {
+        type: 'object',
+        properties: {
+          spotifyCode: { type: 'string' },
+          redirect_uri: { type: "string" }
+        },
+      },
+    })
+    createSpotifyAccessToken(@Body("spotifyCode") spotifyCode: string, @Body("redirect_uri") redirect_uri?: string ) {
+      return this.widgetsService.createSpotifyAccessToken(spotifyCode, redirect_uri)
+    }
   }

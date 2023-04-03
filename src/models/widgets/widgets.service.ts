@@ -4,6 +4,7 @@ import {
     UnauthorizedException,
   } from "@nestjs/common";
 import { PrismaService } from "src/utils/prisma/prisma.service";
+import axios from "axios";
 import { CreateWidgetDto } from "./dto/create-widgets-dto";
 import { UpdateWidgetDto } from "./dto/update-widgets-dto";
 
@@ -12,6 +13,9 @@ const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
+
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
   
   @Injectable()
   export class WidgetsService {
@@ -243,6 +247,30 @@ const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
       } 
       catch (error) {
         console.log(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }
+
+    async createSpotifyAccessToken(spotifyCode: string, redirect_uri?: string) {
+      try {
+        const url = 'https://accounts.spotify.com/api/token';
+        const data = new URLSearchParams({
+          grant_type: 'authorization_code',
+          code: spotifyCode,
+          redirect_uri: redirect_uri,
+        });
+
+        const config = {
+          headers: {
+            'Authorization': `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        };
+        const response = await axios.post(url, data, config);
+        return response.data.access_token;
+      }
+      catch (error) {
+        console.error(error)
         throw new Error("An error occured. Please try again.")
       }
     }
