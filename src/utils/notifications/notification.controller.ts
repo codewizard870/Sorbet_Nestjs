@@ -30,6 +30,16 @@ import {
       return await this.notificationService.findAll()
     }
 
+    @Get('findAllByType/:type')
+    async findAllByType(@Param("type") type: string) {
+      return await this.notificationService.findAllByType(type)
+    }
+
+    @Get('findAllByUserId/:userId')
+    async findAllByUserId(@Param("userId") userId: string) {
+      return await this.notificationService.findAllByUserId(userId)
+    }
+
     @Get(':id')
     async findOne(@Param("id") id: string) {
       return await this.notificationService.findOne(id)

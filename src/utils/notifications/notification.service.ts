@@ -59,6 +59,54 @@ export class NotificationService {
     }
   }
 
+  async findAllByType(type: string) {
+    try {
+      const allNotification = await this.prismaService.notification.findMany({
+        where: { type: type },
+        include: { 
+          user: true, 
+          post: true, 
+          comment: true, 
+          like: true, 
+          follow: true, 
+          chat: true, 
+          collab: true 
+        }
+      })
+      if (allNotification) {
+        return allNotification
+      } 
+    } 
+  catch (error) {
+    console.error(error)
+    throw new Error("An error occured. Please try again.")
+  }
+  }
+
+  async findAllByUserId(userId: string) {
+    try {
+      const allNotification = await this.prismaService.notification.findMany({
+        where: { userId: userId },
+        include: { 
+          user: true, 
+          post: true, 
+          comment: true, 
+          like: true, 
+          follow: true, 
+          chat: true, 
+          collab: true 
+        }
+      })
+      if (allNotification) {
+        return allNotification
+      } 
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
   async findOne(id: string) {
     try {
       const notification = await this.prismaService.notification.findUnique({
