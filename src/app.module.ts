@@ -24,6 +24,7 @@ import { LikeModule } from "./utils/like/like.module";
 import { CommentModule } from "./utils/comment/comment.module";
 import { FollowModule } from "./utils/follow/follow.module";
 import { NotificationModule } from "./utils/notifications/notification.module";
+import { NearModule } from "./utils/near/near.module";
 
 @Module({
   imports: [
@@ -45,7 +46,8 @@ import { NotificationModule } from "./utils/notifications/notification.module";
     LikeModule,
     CommentModule,
     FollowModule,
-    NotificationModule
+    NotificationModule,
+    NearModule
   ],
   controllers: [AppController],
   providers: [
