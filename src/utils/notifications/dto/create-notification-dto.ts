@@ -7,11 +7,11 @@ export class CreateNotificationDto {
 
   @IsOptional()
   @ApiProperty()
-  message: string
+  message?: string
 
   @IsOptional()
   @ApiProperty()
-  link: string
+  link?: string
 
   @ApiProperty({ default: false })
   read: boolean
@@ -21,34 +21,34 @@ export class CreateNotificationDto {
 
   @IsOptional()
   @ApiProperty()
-  readAt: Date
+  readAt?: Date
 
   // relations
   @IsOptional()
   @ApiProperty()
-  userId: string
+  userId?: string
 
   @IsOptional()
   @ApiProperty()
-  postId: string
+  postId?: string
 
   @IsOptional()
   @ApiProperty()
-  commentId: string
+  commentId?: string
 
   @IsOptional()
   @ApiProperty()
-  likeId: string
+  likeId?: string
 
   @IsOptional()
   @ApiProperty()
-  followId: string
+  followId?: string
 
   @IsOptional()
   @ApiProperty()
-  chatId: string
+  chatId?: string
 
   @IsOptional()
   @ApiProperty()
-  collabId: string
+  collabId?: string
 }

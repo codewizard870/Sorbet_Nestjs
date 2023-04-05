@@ -2,12 +2,38 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateNotificationDto } from "./dto/create-notification-dto";
 import { UpdateNotificationDto } from "./dto/update-notification-dto";
+import { NotificationGateway } from "../websocket/websocket-gateway";
+
+interface CreateNotification extends CreateNotificationDto, Notification {
+  id: string;
+  type: string;
+  message: string;
+  link?: string;
+  read: boolean;
+  createdAt: Date;
+  readAt?: Date;
+  userId?: string;
+  postId?: string;
+  commentId?: string;
+  likeId?: string;
+  followId?: string;
+  chatId?: string;
+  collabId?: string;
+}
 
 @Injectable()
 export class NotificationService {
-  constructor(private prismaService: PrismaService) { }
+  constructor(
+    private prismaService: PrismaService,
+    private readonly notificationGateway: NotificationGateway
+  ) {}
 
-  async create(data: CreateNotificationDto) {
+  sendNotificationToUser(userId: string, notification: CreateNotification) {
+    // Send the notification to the user via WebSocket
+    this.notificationGateway.sendNotificationToUser(userId, notification);
+  }
+
+  async create(data: CreateNotification) {
     try {
         const newNotification = await this.prismaService.notification.create({
           data: {
@@ -27,6 +53,8 @@ export class NotificationService {
           }
         })
         if (newNotification) {
+          // Send the notification to the user via WebSocket
+          this.sendNotificationToUser(data.userId, data)
           return newNotification
         }
     }
