@@ -1087,6 +1087,14 @@
     multer "1.4.4-lts.1"
     tslib "2.5.0"
 
+"@nestjs/platform-socket.io@^9.3.12":
+  version "9.3.12"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-socket.io/-/platform-socket.io-9.3.12.tgz#e93beba943eb17d4efc47bf5ba595ff17a203212"
+  integrity sha512-Zx992XJ9gUWjyxu48qfPXD+vVFWilMyoO/8M70eTKywQvst6Ch03rtdkGsQ1JDR2REAhPdiHlCx2UBXgPdEcmw==
+  dependencies:
+    socket.io "4.6.1"
+    tslib "2.5.0"
+
 "@nestjs/platform-ws@^9.3.12":
   version "9.3.12"
   resolved "https://registry.yarnpkg.com/@nestjs/platform-ws/-/platform-ws-9.3.12.tgz#913636dcfc1bb8352418d9f97b0d05fd84abcb71"
@@ -7526,7 +7534,7 @@ socket.io-parser@~4.2.1:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.1"
 
-socket.io@^4.6.1:
+socket.io@4.6.1, socket.io@^4.6.1:
   version "4.6.1"
   resolved "https://registry.yarnpkg.com/socket.io/-/socket.io-4.6.1.tgz#62ec117e5fce0692fa50498da9347cfb52c3bc70"
   integrity sha512-KMcaAi4l/8+xEjkRICl6ak8ySoxsYG+gG6/XfRCPJPQ/haCRIJBTL4wIl8YCsmtaBovcAXGLOShyVWQ/FG8GZA==
