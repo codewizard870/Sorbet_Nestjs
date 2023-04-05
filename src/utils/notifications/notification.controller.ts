@@ -13,6 +13,23 @@ import {
   import { UpdateNotificationDto } from "./dto/update-notification-dto";
   import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
   import { Public } from "src/utils/auth/constants";
+
+  interface CreateNotification extends CreateNotificationDto, Notification {
+    id: string;
+    type: string;
+    message: string;
+    link?: string;
+    read: boolean;
+    createdAt: Date;
+    readAt?: Date;
+    userId?: string;
+    postId?: string;
+    commentId?: string;
+    likeId?: string;
+    followId?: string;
+    chatId?: string;
+    collabId?: string;
+  }
   
   @ApiBearerAuth()
   @ApiTags("Notification")
@@ -21,8 +38,8 @@ import {
     constructor(private readonly notificationService: NotificationService) {}
   
     @Post('create')
-    async create(@Body() createNotificationDto: CreateNotificationDto) {
-      return await this.notificationService.create(createNotificationDto)
+    async create(@Body() createNotification: CreateNotification) {
+      return await this.notificationService.create(createNotification)
     }
 
     @Get('findAll')
