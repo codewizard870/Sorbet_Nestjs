@@ -88,6 +88,56 @@ export class NotificationService {
     }
   }
 
+  async findAllUnread() {
+    try {
+      const allNotification = await this.prismaService.notification.findMany({
+        where: { read: false },
+        include: { 
+          sender: true,
+          receiver: true,
+          post: true, 
+          comment: true, 
+          like: true, 
+          follow: true, 
+          chat: true, 
+          collab: true 
+        }
+      })
+      if (allNotification) {
+        return allNotification
+      } 
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async findAllRead() {
+    try {
+      const allNotification = await this.prismaService.notification.findMany({
+        where: { read: true },
+        include: { 
+          sender: true,
+          receiver: true,
+          post: true, 
+          comment: true, 
+          like: true, 
+          follow: true, 
+          chat: true, 
+          collab: true 
+        }
+      })
+      if (allNotification) {
+        return allNotification
+      } 
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
   async findAllByType(type: string) {
     try {
       const allNotification = await this.prismaService.notification.findMany({

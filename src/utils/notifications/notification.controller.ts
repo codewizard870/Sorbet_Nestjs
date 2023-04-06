@@ -47,6 +47,16 @@ import {
       return await this.notificationService.findAll()
     }
 
+    @Get('findAllUnread')
+    async findAllUnread() {
+      return await this.notificationService.findAllUnread()
+    }
+
+    @Get('findAllRead')
+    async findAllRead() {
+      return await this.notificationService.findAllRead()
+    }
+
     @Get('findAllByType/:type')
     async findAllByType(@Param("type") type: string) {
       return await this.notificationService.findAllByType(type)
