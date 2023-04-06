@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateNotificationDto } from "./dto/create-notification-dto";
 import { UpdateNotificationDto } from "./dto/update-notification-dto";
-import { NotificationGateway } from "../websocket/notification.gateway";
+// import { NotificationGateway } from "../websocket/notification.gateway";
 
 interface CreateNotification extends CreateNotificationDto, Notification {
   id: string;
@@ -26,7 +26,7 @@ interface CreateNotification extends CreateNotificationDto, Notification {
 export class NotificationService {
   constructor(
     private prismaService: PrismaService,
-    private readonly notificationGateway: NotificationGateway
+    // private readonly notificationGateway: NotificationGateway
   ) {}
 
   async create(data: CreateNotificationDto) {
@@ -50,11 +50,11 @@ export class NotificationService {
           }
         })
         if (newNotification) {
-          await this.notificationGateway.handleSendNotification(
-            newNotification.senderId, 
-            newNotification.receiverId, 
-            newNotification.type
-          )
+          // await this.notificationGateway.handleSendNotification(
+          //   newNotification.senderId, 
+          //   newNotification.receiverId, 
+          //   newNotification.type
+          // )
           return newNotification
         }
     }
