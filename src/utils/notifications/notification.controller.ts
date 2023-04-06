@@ -38,8 +38,8 @@ import {
     constructor(private readonly notificationService: NotificationService) {}
   
     @Post('create')
-    async create(@Body() createNotification: CreateNotification) {
-      return await this.notificationService.create(createNotification)
+    async create(@Body() createNotificationDto: CreateNotificationDto) {
+      return await this.notificationService.create(createNotificationDto)
     }
 
     @Get('findAll')
@@ -47,14 +47,29 @@ import {
       return await this.notificationService.findAll()
     }
 
+    @Get('findAllUnread')
+    async findAllUnread() {
+      return await this.notificationService.findAllUnread()
+    }
+
+    @Get('findAllRead')
+    async findAllRead() {
+      return await this.notificationService.findAllRead()
+    }
+
     @Get('findAllByType/:type')
     async findAllByType(@Param("type") type: string) {
       return await this.notificationService.findAllByType(type)
     }
 
-    @Get('findAllByUserId/:userId')
-    async findAllByUserId(@Param("userId") userId: string) {
-      return await this.notificationService.findAllByUserId(userId)
+    @Get('findAllBySenderId/:senderId')
+    async findAllBySenderId(@Param("senderId") senderId: string) {
+      return await this.notificationService.findAllBySenderId(senderId)
+    }
+
+    @Get('findAllByReceiverId/:receiverId')
+    async findAllByReceiverId(@Param("receiverId") receiverId: string) {
+      return await this.notificationService.findAllByReceiverId(receiverId)
     }
 
     @Get(':id')
