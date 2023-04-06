@@ -25,7 +25,7 @@ import { CommentModule } from "./utils/comment/comment.module";
 import { FollowModule } from "./utils/follow/follow.module";
 import { NotificationModule } from "./utils/notifications/notification.module";
 import { NearModule } from "./utils/near/near.module";
-// import { NotificationGateway } from './utils/websocket/notification.gateway';
+import { NotificationGateway } from './utils/websocket/notification.gateway';
 
 @Module({
   imports: [
@@ -66,7 +66,7 @@ import { NearModule } from "./utils/near/near.module";
       provide: APP_PIPE,
       useClass: ValidationPipe,
     },
-    // NotificationGateway,
+    NotificationGateway,
   ],
 })
 export class AppModule {}
