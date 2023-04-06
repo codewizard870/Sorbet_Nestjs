@@ -313,12 +313,12 @@ model Notification {
   readAt      DateTime?
 
   // relation with user
-  sender   User     @relation(name: "sender", fields: [senderId], references: [id])
-  senderId String   @db.ObjectId
+  sender   User?     @relation(name: "sender", fields: [senderId], references: [id])
+  senderId String?   @db.ObjectId
 
   // relation with user
-  receiver   User     @relation(name: "receiver", fields: [receiverId], references: [id])
-  receiverId String   @db.ObjectId
+  receiver   User?     @relation(name: "receiver", fields: [receiverId], references: [id])
+  receiverId String?   @db.ObjectId
   
   // relation with post
   post   Post?     @relation(fields: [postId], references: [id])

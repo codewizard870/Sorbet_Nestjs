@@ -3,7 +3,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { filter } from "rxjs";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -45,7 +44,21 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { email: email },
-        include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
+        include: { 
+          jobProfile: true, 
+          post: true, 
+          groups: true, 
+          location: true, 
+          widgets: true, 
+          followers: true, 
+          following: true, 
+          likes: true, 
+          comments: true,
+          sender: true,
+          receiver: true,
+          mycontacts: true,
+          contacted: true
+        },
       })
       if (result) {
         return result
@@ -61,7 +74,21 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { nearWallet: nearWallet },
-        include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
+        include: { 
+          jobProfile: true, 
+          post: true, 
+          groups: true, 
+          location: true, 
+          widgets: true, 
+          followers: true, 
+          following: true, 
+          likes: true, 
+          comments: true,
+          sender: true,
+          receiver: true,
+          mycontacts: true,
+          contacted: true
+        },
       })
       if (result) {
         return result
@@ -77,7 +104,21 @@ export class UsersService {
     try {
       const result = await this.prisma.user.findFirst({
         where: { id: id },
-        include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
+        include: { 
+          jobProfile: true, 
+          post: true, 
+          groups: true, 
+          location: true, 
+          widgets: true, 
+          followers: true, 
+          following: true, 
+          likes: true, 
+          comments: true,
+          sender: true,
+          receiver: true,
+          mycontacts: true,
+          contacted: true
+        },
       })
       if (result) {
         return result
@@ -92,7 +133,21 @@ export class UsersService {
   async getAll() {
     try {
       const result = await this.prisma.user.findMany({
-        include: { jobProfile: true, post: true, groups: true, location: true, widgets: true, followers: true, following: true, likes: true, comments: true },
+        include: { 
+          jobProfile: true, 
+          post: true, 
+          groups: true, 
+          location: true, 
+          widgets: true, 
+          followers: true, 
+          following: true, 
+          likes: true, 
+          comments: true,
+          sender: true,
+          receiver: true,
+          mycontacts: true,
+          contacted: true
+        },
       })
       if (result) {
         return result
@@ -124,6 +179,21 @@ export class UsersService {
             tempLocation: data.tempLocation,
             tags: data.tags,
             updatedAt: new Date(Date.now())
+          },
+          include: { 
+            jobProfile: true, 
+            post: true, 
+            groups: true, 
+            location: true, 
+            widgets: true, 
+            followers: true, 
+            following: true, 
+            likes: true, 
+            comments: true,
+            sender: true,
+            receiver: true,
+            mycontacts: true,
+            contacted: true
           },
         })
         if (result) {

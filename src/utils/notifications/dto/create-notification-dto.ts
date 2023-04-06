@@ -26,7 +26,11 @@ export class CreateNotificationDto {
   // relations
   @IsOptional()
   @ApiProperty()
-  userId?: string
+  senderId?: string
+
+  @IsOptional()
+  @ApiProperty()
+  receiverId?: string
 
   @IsOptional()
   @ApiProperty()

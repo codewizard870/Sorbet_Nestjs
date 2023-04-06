@@ -38,8 +38,8 @@ import {
     constructor(private readonly notificationService: NotificationService) {}
   
     @Post('create')
-    async create(@Body() createNotification: CreateNotification) {
-      return await this.notificationService.create(createNotification)
+    async create(@Body() createNotificationDto: CreateNotificationDto) {
+      return await this.notificationService.create(createNotificationDto)
     }
 
     @Get('findAll')

@@ -29,7 +29,7 @@ export class NotificationService {
     private readonly notificationGateway: NotificationGateway
   ) {}
 
-  async create(data: CreateNotification) {
+  async create(data: CreateNotificationDto) {
     try {
         const newNotification = await this.prismaService.notification.create({
           data: {
