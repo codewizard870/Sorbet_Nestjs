@@ -4,12 +4,19 @@ import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
 import * as session from 'express-session'
 import * as passport from 'passport';
+import { NotificationGateway } from "./utils/websocket/notification.gateway";
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   // controller validation
   app.useGlobalPipes(new ValidationPipe())
   app.enableCors()
+
+  // Add the WebSocket gateway
+  // const notificationGateway: any = app.get(NotificationGateway);
+  // app.useWebSocketAdapter(notificationGateway);
+  
   // passport initialization
   app.use(session({
     secret: 'thesecret',

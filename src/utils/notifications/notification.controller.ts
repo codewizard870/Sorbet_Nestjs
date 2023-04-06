@@ -52,9 +52,14 @@ import {
       return await this.notificationService.findAllByType(type)
     }
 
-    @Get('findAllByUserId/:userId')
-    async findAllByUserId(@Param("userId") userId: string) {
-      return await this.notificationService.findAllByUserId(userId)
+    @Get('findAllBySenderId/:senderId')
+    async findAllBySenderId(@Param("senderId") senderId: string) {
+      return await this.notificationService.findAllBySenderId(senderId)
+    }
+
+    @Get('findAllByReceiverId/:receiverId')
+    async findAllByReceiverId(@Param("receiverId") receiverId: string) {
+      return await this.notificationService.findAllByReceiverId(receiverId)
     }
 
     @Get(':id')

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateNotificationDto } from "./dto/create-notification-dto";
 import { UpdateNotificationDto } from "./dto/update-notification-dto";
-import { NotificationGateway } from "../websocket/websocket-gateway";
+import { NotificationGateway } from "../websocket/notification.gateway";
 
 interface CreateNotification extends CreateNotificationDto, Notification {
   id: string;
@@ -12,7 +12,8 @@ interface CreateNotification extends CreateNotificationDto, Notification {
   read: boolean;
   createdAt: Date;
   readAt?: Date;
-  userId?: string;
+  senderId?: string;
+  receiverId?: string
   postId?: string;
   commentId?: string;
   likeId?: string;
@@ -28,11 +29,6 @@ export class NotificationService {
     private readonly notificationGateway: NotificationGateway
   ) {}
 
-  sendNotificationToUser(userId: string, notification: CreateNotification) {
-    // Send the notification to the user via WebSocket
-    this.notificationGateway.sendNotificationToUser(userId, notification);
-  }
-
   async create(data: CreateNotification) {
     try {
         const newNotification = await this.prismaService.notification.create({
@@ -43,7 +39,8 @@ export class NotificationService {
             read: false,
             createdAt: data.createdAt,
             readAt: data.readAt,
-            userId: data.userId,
+            senderId: data.senderId,
+            receiverId: data.receiverId,
             postId: data.postId,
             commentId: data.commentId,
             likeId: data.likeId,
@@ -53,8 +50,11 @@ export class NotificationService {
           }
         })
         if (newNotification) {
-          // Send the notification to the user via WebSocket
-          this.sendNotificationToUser(data.userId, data)
+          await this.notificationGateway.handleSendNotification(
+            newNotification.senderId, 
+            newNotification.receiverId, 
+            newNotification.type
+          )
           return newNotification
         }
     }
@@ -68,7 +68,8 @@ export class NotificationService {
     try {
         const allNotification = await this.prismaService.notification.findMany({
           include: { 
-            user: true, 
+            sender: true,
+            receiver: true,
             post: true, 
             comment: true, 
             like: true, 
@@ -92,7 +93,8 @@ export class NotificationService {
       const allNotification = await this.prismaService.notification.findMany({
         where: { type: type },
         include: { 
-          user: true, 
+          sender: true,
+          receiver: true,
           post: true, 
           comment: true, 
           like: true, 
@@ -111,12 +113,38 @@ export class NotificationService {
   }
   }
 
-  async findAllByUserId(userId: string) {
+  async findAllBySenderId(senderId: string) {
     try {
       const allNotification = await this.prismaService.notification.findMany({
-        where: { userId: userId },
+        where: { senderId: senderId },
         include: { 
-          user: true, 
+          sender: true,
+          receiver: true,
+          post: true, 
+          comment: true, 
+          like: true, 
+          follow: true, 
+          chat: true, 
+          collab: true 
+        }
+      })
+      if (allNotification) {
+        return allNotification
+      } 
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async findAllByReceiverId(receiverId: string) {
+    try {
+      const allNotification = await this.prismaService.notification.findMany({
+        where: { receiverId: receiverId },
+        include: { 
+          sender: true,
+          receiver: true,
           post: true, 
           comment: true, 
           like: true, 
@@ -140,14 +168,15 @@ export class NotificationService {
       const notification = await this.prismaService.notification.findUnique({
         where: { id: id },
         include: { 
-            user: true, 
-            post: true, 
-            comment: true, 
-            like: true, 
-            follow: true, 
-            chat: true, 
-            collab: true 
-          }
+          sender: true,
+          receiver: true,
+          post: true, 
+          comment: true, 
+          like: true, 
+          follow: true, 
+          chat: true, 
+          collab: true 
+        }
       })
       if (notification) {
         return notification
@@ -164,14 +193,15 @@ export class NotificationService {
         const updatedNotification = await this.prismaService.notification.update({
             where: { id: id },
             data: updateNotificationDto,
-            include: {
-                user: true,
-                post: true,
-                comment: true,
-                like: true,
-                follow: true,
-                chat: true,
-                collab: true
+            include: { 
+              sender: true,
+              receiver: true,
+              post: true, 
+              comment: true, 
+              like: true, 
+              follow: true, 
+              chat: true, 
+              collab: true 
             }
         })
 
