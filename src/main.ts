@@ -4,7 +4,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
 import * as session from 'express-session'
 import * as passport from 'passport';
-import { NotificationGateway } from "./utils/websocket/notification.gateway";
+// import { NotificationGateway } from "./utils/websocket/notification.gateway";
 
 
 async function bootstrap() {
