@@ -265,6 +265,23 @@ export class NotificationService {
     }
   }
 
+  async updateMany(updateNotificationDto: UpdateNotificationDto) {
+    try {
+        const updatedNotifications = await this.prismaService.notification.updateMany({
+            where: { read: false },
+            data: updateNotificationDto,
+        })
+
+        if (updatedNotifications) {
+            return updatedNotifications
+        }
+    } 
+    catch (error) {
+        console.error(error)
+        throw new Error("An error occured. Please try again.") 
+    }
+  }
+
   async remove(id: string) {
     try {
       const result = await this.prismaService.notification.delete({
