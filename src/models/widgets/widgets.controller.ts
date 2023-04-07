@@ -6,7 +6,8 @@ import {
     Delete,
     Post,
     Param,
-    Query
+    Query,
+    Header
   } from "@nestjs/common";
   import { WidgetsService } from "./widgets.service";
   import { CreateWidgetDto } from "./dto/create-widgets-dto";
@@ -93,7 +94,7 @@ import {
         },
       },
     })
-    createSpotifyAccessToken(@Body("spotifyCode") spotifyCode: string, @Body("redirect_uri") redirect_uri?: string ) {
+    createSpotifyAccessToken(@Body("spotifyCode") spotifyCode: string, @Body("redirect_uri") redirect_uri?: string): Promise<any> {
       return this.widgetsService.createSpotifyAccessToken(spotifyCode, redirect_uri)
     }
   }

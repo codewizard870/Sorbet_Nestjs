@@ -255,11 +255,10 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
       try {
         const url = 'https://accounts.spotify.com/api/token';
         const data = new URLSearchParams({
-          grant_type: 'authorization_code',
-          code: spotifyCode,
-          redirect_uri: redirect_uri,
+          'grant_type': 'authorization_code',
+          'code': spotifyCode,
+          'redirect_uri': redirect_uri,
         });
-
         const config = {
           headers: {
             'Authorization': `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
@@ -267,7 +266,7 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
           },
         };
         const response = await axios.post(url, data, config);
-        return response.data.access_token;
+        return response.data;
       }
       catch (error) {
         console.error(error)
