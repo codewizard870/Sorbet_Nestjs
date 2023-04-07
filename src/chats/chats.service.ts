@@ -94,10 +94,60 @@ export class ChatsService {
             gte: new Date(time)
           },
         },
+        orderBy: {
+          createdAt: "desc"
+        }
       })
 
       if (chat) {
         return chat
+      }
+      else {
+        console.log("contact not found")
+        throw new BadRequestException("contact not found");
+      }
+    } catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+  async getChatByUserIdWithTime(userId: string, time: number) {
+    try {
+      const contacts = await this.prismaService.contact.findMany({
+        where: {
+          OR: [{ userId: userId }, { contacted_userId: userId }],
+          chat: {
+            some: {
+              createdAt: {
+                gte: new Date(time)
+              },
+            }
+          }
+        },
+        include: {
+          chat: {
+            where: {
+              createdAt: {
+                gte: new Date(time)
+              },
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }, user: true, contacted_user: true
+        }
+      })
+      contacts.sort((a,b) => {
+        if(a.chat[0].createdAt > b.chat[0].createdAt)
+          return 1;
+        else if(a.chat[0].createdAt > b.chat[0].createdAt)
+          return 0;
+        else 
+          return -1;
+      });
+
+      if (contacts) {
+        return contacts
       }
       else {
         console.log("contact not found")
