@@ -55,6 +55,7 @@ export class NotificationGateway
     // client: any,
     senderId: string, receiverId: string, type: string ,
   ) {
+    console.log("SENDING NOTIFICATION...")
     const receiver = this.getUser(receiverId);
     if (receiver) {
       this.server.to(receiver.socketId).emit('getNotification', {
@@ -62,5 +63,6 @@ export class NotificationGateway
         type: type,
       });
     }
+    console.log("NOTIFICATION SENT!")
   }
 }

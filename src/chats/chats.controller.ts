@@ -43,6 +43,11 @@ export class ChatsController {
   async findByContactIdWithTime(@Body("contactId") contactId: string, @Body("time") time: number) {
     return await this.chatsService.getChatByContactIdWithTime(contactId, time);
   }
+  
+  @Post("findByUserIdWithTime")
+  async findByUserIdWithTime(@Body("userId") userId: string, @Body("time") time: number) {
+    return await this.chatsService.getChatByUserIdWithTime(userId, time);
+  }
 
   @Get("findByuserId/:userId")
   async findByUserId(@Param("userId") userId: string) {

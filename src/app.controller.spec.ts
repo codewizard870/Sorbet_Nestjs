@@ -2,7 +2,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { PrismaService } from "./utils/prisma/prisma.service";
-import { MagicAuthGuard } from "./utils/magic/guards/magic.guard";
 
 describe("AppController", () => {
   let appController: AppController;
