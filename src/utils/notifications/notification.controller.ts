@@ -47,14 +47,14 @@ import {
       return await this.notificationService.findAll()
     }
 
-    @Get('findAllUnread')
-    async findAllUnread() {
-      return await this.notificationService.findAllUnread()
+    @Get('findAllUnreadByReceiverId/:receiverId')
+    async findAllUnreadByReceiverId(@Param("receiverId") receiverId: string) {
+      return await this.notificationService.findAllUnread(receiverId)
     }
 
-    @Get('findAllRead')
-    async findAllRead() {
-      return await this.notificationService.findAllRead()
+    @Get('findAllReadByReceiverId/:receiverId')
+    async findAllReadByReceiverId(@Param("receiverId") receiverId: string) {
+      return await this.notificationService.findAllRead(receiverId)
     }
 
     @Get('findAllByType/:type')
