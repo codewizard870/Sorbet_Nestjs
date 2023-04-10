@@ -265,11 +265,11 @@ export class NotificationService {
     }
   }
 
-  async updateMany(updateNotificationDto: UpdateNotificationDto) {
+  async updateMany(receiverId: string) {
     try {
         const updatedNotifications = await this.prismaService.notification.updateMany({
-            where: { read: false },
-            data: updateNotificationDto,
+            where: { receiverId: receiverId, read: false },
+            data: { read: true },
         })
 
         if (updatedNotifications) {

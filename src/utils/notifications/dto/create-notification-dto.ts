@@ -2,8 +2,9 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional } from "class-validator";
 
 export class CreateNotificationDto {
+  @IsOptional()
   @ApiProperty()
-  type: string
+  type?: string
 
   @IsOptional()
   @ApiProperty()
@@ -13,11 +14,13 @@ export class CreateNotificationDto {
   @ApiProperty()
   link?: string
 
+  @IsOptional()
   @ApiProperty({ default: false })
-  read: boolean
+  read?: boolean
 
+  @IsOptional()
   @ApiProperty()
-  createdAt: Date
+  createdAt?: Date
 
   @IsOptional()
   @ApiProperty()

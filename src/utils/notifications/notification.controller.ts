@@ -82,9 +82,9 @@ import {
       return await this.notificationService.update(id, updateNotificationDto)
     }
 
-    @Patch('updateAll')
-    async updateAll(@Body() updateNotificationDto: UpdateNotificationDto) {
-      return await this.notificationService.updateMany(updateNotificationDto)
+    @Patch('updateAllToRead/:receiverId')
+    async updateAll(@Param("receiverId") receiverId: string) {
+      return await this.notificationService.updateMany(receiverId)
     }
 
     @Delete(':id')
