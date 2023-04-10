@@ -88,10 +88,13 @@ export class NotificationService {
     }
   }
 
-  async findAllUnread() {
+  async findAllUnread(receiverId: string) {
     try {
       const allNotification = await this.prismaService.notification.findMany({
-        where: { read: false },
+        where: { 
+          receiverId: receiverId,
+          read: false 
+        },
         include: { 
           sender: true,
           receiver: true,
@@ -113,10 +116,13 @@ export class NotificationService {
     }
   }
 
-  async findAllRead() {
+  async findAllRead(receiverId: string) {
     try {
       const allNotification = await this.prismaService.notification.findMany({
-        where: { read: true },
+        where: { 
+          receiverId: receiverId,
+          read: false 
+        },
         include: { 
           sender: true,
           receiver: true,
@@ -268,8 +274,14 @@ export class NotificationService {
   async updateMany(receiverId: string) {
     try {
         const updatedNotifications = await this.prismaService.notification.updateMany({
-            where: { receiverId: receiverId, read: false },
-            data: { read: true },
+            where: { 
+              receiverId: receiverId,
+              read: false 
+            },
+            data: { 
+              read: true,
+              readAt: new Date(Date.now())
+            },
         })
 
         if (updatedNotifications) {
