@@ -58,6 +58,11 @@ import {
       return this.widgetsService.deleteByIndex(userId, widgetIndex)
     }
 
+    @Get("/getSoundcloudTrackId/:soundcloudUrl")
+    getSoundcloudTrackId(@Param("soundcloudUrl") soundcloudUrl: string) {
+      return this.widgetsService.getSoundcloudTrackId(soundcloudUrl)
+    }
+
     @Post("createDribbbleAccessToken")
     @ApiBody({
       schema: {
@@ -96,5 +101,19 @@ import {
     })
     createSpotifyAccessToken(@Body("spotifyCode") spotifyCode: string, @Body("redirect_uri") redirect_uri?: string): Promise<any> {
       return this.widgetsService.createSpotifyAccessToken(spotifyCode, redirect_uri)
+    }
+
+    @Post("createInstagramAccessToken")
+    @ApiBody({
+      schema: {
+        type: 'object',
+        properties: {
+          instagramCode: { type: 'string' },
+          redirect_uri: { type: "string" }
+        },
+      },
+    })
+    createInstagramAccessToken(@Body("instagramCode") instagramCode: string, @Body("redirect_uri") redirect_uri?: string): Promise<any> {
+      return this.widgetsService.createInstagramAccessToken(instagramCode, redirect_uri)
     }
   }
