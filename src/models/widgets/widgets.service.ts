@@ -7,6 +7,7 @@ import { PrismaService } from "src/utils/prisma/prisma.service";
 import axios from "axios";
 import { CreateWidgetDto } from "./dto/create-widgets-dto";
 import { UpdateWidgetDto } from "./dto/update-widgets-dto";
+import cheerio from 'cheerio';
 
 const DRIBBLE_CLIENT_ID = process.env.DRIBBLE_CLIENT_ID
 const DRIBBLE_CLIENT_SECRET = process.env.DRIBBLE_CLIENT_SECRET
@@ -16,6 +17,11 @@ const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
 
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
+
+const INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID
+const INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET
+const INSTAGRAM_BASIC_DISPLAY_APP_ID = process.env.INSTAGRAM_BASIC_DISPLAY_APP_ID
+const INSTAGRAM_BASIC_DISPLAY_APP_SECRET = process.env.INSTAGRAM_BASIC_DISPLAY_APP_SECRET
   
   @Injectable()
   export class WidgetsService {
@@ -208,6 +214,23 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
       }
     }
 
+    async getSoundcloudTrackId(soundcloudUrl: string) {
+      try {
+        const { data } = await axios.get(soundcloudUrl);
+        const $ = cheerio.load(data);
+        const audioUrl = $('meta[property="al:ios:url"]')
+        const content = audioUrl.attr('content');
+        const trackId = content.split(':')[2]
+  
+        if (trackId) {
+          return trackId
+        }
+      } 
+      catch (error) {
+        console.error(error)
+      }
+    }
+
     async createDribbbleAccessToken(dribbbleCode: string) {
       try {
         const response = await fetch(`https://dribbble.com/oauth/token?client_id=${DRIBBLE_CLIENT_ID}&client_secret=${DRIBBLE_CLIENT_SECRET}&code=${dribbbleCode}`, {
@@ -266,6 +289,25 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
           },
         };
         const response = await axios.post(url, data, config);
+        return response.data;
+      }
+      catch (error) {
+        console.error(error)
+        throw new Error("An error occured. Please try again.")
+      }
+    }
+
+    async createInstagramAccessToken(instagramCode: string, redirect_uri?: string) {
+      try {
+        const url = 'https://api.instagram.com/oauth/access_token';
+        const data = new URLSearchParams({
+          'client_id': INSTAGRAM_BASIC_DISPLAY_APP_ID,
+          'client_secret': INSTAGRAM_BASIC_DISPLAY_APP_SECRET,
+          'code': instagramCode,
+          'grant_type': 'authorization_code',
+          'redirect_uri': redirect_uri
+        });
+        const response = await axios.post(url, data);
         return response.data;
       }
       catch (error) {
