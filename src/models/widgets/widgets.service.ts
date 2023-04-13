@@ -300,6 +300,10 @@ const INSTAGRAM_BASIC_DISPLAY_APP_SECRET = process.env.INSTAGRAM_BASIC_DISPLAY_A
     async createInstagramAccessToken(instagramCode: string, redirect_uri?: string) {
       try {
         const url = 'https://api.instagram.com/oauth/access_token';
+        console.log('INSTAGRAM_BASIC_DISPLAY_APP_ID', INSTAGRAM_BASIC_DISPLAY_APP_ID)
+        console.log('INSTAGRAM_BASIC_DISPLAY_APP_SECRET', INSTAGRAM_BASIC_DISPLAY_APP_SECRET)
+        console.log('instagramCode', instagramCode)
+        console.log('redirect_uri', redirect_uri)
         const data = new URLSearchParams({
           'client_id': INSTAGRAM_BASIC_DISPLAY_APP_ID,
           'client_secret': INSTAGRAM_BASIC_DISPLAY_APP_SECRET,
@@ -308,6 +312,8 @@ const INSTAGRAM_BASIC_DISPLAY_APP_SECRET = process.env.INSTAGRAM_BASIC_DISPLAY_A
           'redirect_uri': redirect_uri
         });
         const response = await axios.post(url, data);
+        console.log('response', response)
+        console.log('data', data)
         return response.data;
       }
       catch (error) {
