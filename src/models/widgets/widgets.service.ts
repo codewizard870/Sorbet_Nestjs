@@ -20,6 +20,8 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
 
 const INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID
 const INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET
+const INSTAGRAM_BASIC_DISPLAY_APP_ID = process.env.INSTAGRAM_BASIC_DISPLAY_APP_ID
+const INSTAGRAM_BASIC_DISPLAY_APP_SECRET = process.env.INSTAGRAM_BASIC_DISPLAY_APP_SECRET
   
   @Injectable()
   export class WidgetsService {
@@ -299,15 +301,13 @@ const INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET
       try {
         const url = 'https://api.instagram.com/oauth/access_token';
         const data = new URLSearchParams({
-          'client_id': INSTAGRAM_CLIENT_ID,
-          'client_secret': INSTAGRAM_CLIENT_SECRET,
+          'client_id': INSTAGRAM_BASIC_DISPLAY_APP_ID,
+          'client_secret': INSTAGRAM_BASIC_DISPLAY_APP_SECRET,
           'code': instagramCode,
           'grant_type': 'authorization_code',
           'redirect_uri': redirect_uri
         });
         const response = await axios.post(url, data);
-        console.log('response', response);
-        console.log('data', response.data);
         return response.data;
       }
       catch (error) {
