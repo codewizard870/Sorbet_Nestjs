@@ -30,6 +30,8 @@ model User {
   followers    Follow[] @relation("followers")
   following    Follow[] @relation("following")
 
+  attendings   Attend[] @relation("attending")
+
   sender       Notification[] @relation("sender")
   receiver     Notification[] @relation("receiver")
 
@@ -132,6 +134,24 @@ model Follow {
   @@unique([fromUserId, toUserId, toPostId])
 }
 
+model Attend {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  type String
+  
+
+  // relation with user
+  attendingUser   User   @relation(name: "attending", fields: [attendingUserId], references: [id])
+  attendingUserId String @db.ObjectId
+
+  // relation with Post
+  event   Post   @relation(fields: [eventId], references: [id])
+  eventId String @db.ObjectId
+
+  notification   Notification[]
+
+  @@unique([attendingUserId, eventId])
+}
+
 model Post {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt   DateTime
@@ -157,6 +177,7 @@ model Post {
   endTime      String?
   venue        String?
   externalLink String?
+  attending    Attend[]
 
   //post type
   postType PostType
@@ -218,7 +239,7 @@ model Contact {
   id               String @id @default(auto()) @map("_id") @db.ObjectId
   user             User   @relation(name: "user", fields: [userId], references: [id])
   userId           String @db.ObjectId
-  contacted_user   User   @relation(name: "contacted_user", fields: [contacted_userId], references: [id])
+  contacted_user   User?   @relation(name: "contacted_user", fields: [contacted_userId], references: [id])
   contacted_userId String @db.ObjectId
   chat             Chat[]
   @@unique([userId, contacted_userId])
@@ -343,4 +364,8 @@ model Notification {
   // relation with collab
   collab   Collab?   @relation(fields: [collabId], references: [id])
   collabId String?   @db.ObjectId
+
+  // relation with attending
+  attending    Attend?  @relation(fields: [attendingId], references: [id])
+  attendingId  String?  @db.ObjectId
 }
