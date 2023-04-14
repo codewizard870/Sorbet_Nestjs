@@ -7,16 +7,27 @@ import { UpdateContactDto } from "./dto/update-contact.dto";
 export class ContactsService {
   constructor(private prismaService: PrismaService) { }
 
-  async create(userId: string, contacted_userId: string) {
+  async create(data: CreateContactDto) {
     try {
+      const userIdCheck = await this.prismaService.contact.findFirst({
+        where: { userId: data.userId }
+      })
+      const contacted_userIdIdCheck = await this.prismaService.contact.findFirst({
+        where: { contacted_userId: data.contacted_userId }
+      })
+      if (userIdCheck || contacted_userIdIdCheck) {
+        console.log(`User ${data.contacted_userId} is already contact with ${data.userId}`)
+        throw new Error(`User ${data.contacted_userId} is already contact with ${data.userId}`)
+      }
       const result = await this.prismaService.contact.create({
         data: {
-          userId: userId,
-          contacted_userId: contacted_userId,
+          userId: data.userId,
+          contacted_userId: data.contacted_userId,
         },
       })
-
-      return result
+      if (result) {
+        return result
+      }
     }
     catch (error) {
       console.error(error)
@@ -46,7 +57,12 @@ export class ContactsService {
   async getContactByUserId(id: string) {
     try {
       const contact = await this.prismaService.contact.findMany({
-        where: { OR: [{ userId: id }, { contacted_userId: id }] },
+        where: {
+          OR: [{ userId: id }, { contacted_userId: id }],
+          NOT: [
+            { contacted_user: null }
+          ]
+        },
         include: { chat: true, user: true, contacted_user: true },
       })
 
