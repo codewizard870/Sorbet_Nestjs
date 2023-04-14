@@ -20,8 +20,8 @@ export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
   @Post("create")
-  async create(@Body("contacted_userId") contacted_userId: string, @Body("userId") userId: string) {
-    return await this.contactsService.create(userId, contacted_userId);
+  async create(@Body() createContactDto: CreateContactDto) {
+    return await this.contactsService.create(createContactDto);
   }
 
   @Get()
