@@ -46,7 +46,12 @@ export class ContactsService {
   async getContactByUserId(id: string) {
     try {
       const contact = await this.prismaService.contact.findMany({
-        where: { OR: [{ userId: id }, { contacted_userId: id }] },
+        where: {
+          OR: [{ userId: id }, { contacted_userId: id }],
+          NOT: [
+            { contacted_user: null }
+          ]
+        },
         include: { chat: true, user: true, contacted_user: true },
       })
 
