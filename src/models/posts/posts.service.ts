@@ -92,6 +92,7 @@ export class PostsService {
             },
           },
           followers: true,
+          attending: true,
         },
       })
       if (posts) {
@@ -126,6 +127,7 @@ export class PostsService {
             }
           },
           followers: true,
+          attending: true,
         },
       })
       if (post) {
@@ -165,6 +167,7 @@ export class PostsService {
             }
           },
           followers: true,
+          attending: true,
         },
       })
       if (userPosts) {
@@ -204,6 +207,7 @@ export class PostsService {
             },
           },
           followers: true,
+          attending: true
         },
       })
       if (posts) {
