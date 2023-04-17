@@ -10,12 +10,14 @@ export class ContactsService {
   async create(data: CreateContactDto) {
     try {
       const userIdCheck = await this.prismaService.contact.findFirst({
-        where: { userId: data.userId }
+        where: {
+          OR: [
+            { userId: data.userId, contacted_userId: data.contacted_userId },
+            { userId: data.contacted_userId, contacted_userId: data.userId }
+          ]
+        }
       })
-      const contacted_userIdIdCheck = await this.prismaService.contact.findFirst({
-        where: { contacted_userId: data.contacted_userId }
-      })
-      if (userIdCheck || contacted_userIdIdCheck) {
+      if (userIdCheck) {
         console.log(`User ${data.contacted_userId} is already contact with ${data.userId}`)
         throw new Error(`User ${data.contacted_userId} is already contact with ${data.userId}`)
       }

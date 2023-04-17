@@ -57,7 +57,8 @@ export class UsersService {
           sender: true,
           receiver: true,
           mycontacts: true,
-          contacted: true
+          contacted: true,
+          attendings: true
         },
       })
       if (result) {
@@ -87,7 +88,8 @@ export class UsersService {
           sender: true,
           receiver: true,
           mycontacts: true,
-          contacted: true
+          contacted: true,
+          attendings: true,
         },
       })
       if (result) {
@@ -117,7 +119,8 @@ export class UsersService {
           sender: true,
           receiver: true,
           mycontacts: true,
-          contacted: true
+          contacted: true,
+          attendings: true,
         },
       })
       if (result) {
@@ -146,7 +149,8 @@ export class UsersService {
           sender: true,
           receiver: true,
           mycontacts: true,
-          contacted: true
+          contacted: true,
+          attendings: true,
         },
       })
       if (result) {
@@ -193,7 +197,8 @@ export class UsersService {
             sender: true,
             receiver: true,
             mycontacts: true,
-            contacted: true
+            contacted: true,
+            attendings: true,
           },
         })
         if (result) {
