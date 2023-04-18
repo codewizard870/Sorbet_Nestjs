@@ -93,6 +93,11 @@ export class PostsService {
           },
           followers: true,
           attending: true,
+          applications: {
+            include: {
+              notification: true
+            }
+          }
         },
       })
       if (posts) {
@@ -128,6 +133,11 @@ export class PostsService {
           },
           followers: true,
           attending: true,
+          applications: {
+            include: {
+              notification: true
+            }
+          }
         },
       })
       if (post) {
@@ -168,6 +178,11 @@ export class PostsService {
           },
           followers: true,
           attending: true,
+          applications: {
+            include: {
+              notification: true
+            }
+          }
         },
       })
       if (userPosts) {
@@ -207,7 +222,12 @@ export class PostsService {
             },
           },
           followers: true,
-          attending: true
+          attending: true,
+          applications: {
+            include: {
+              notification: true
+            }
+          },
         },
       })
       if (posts) {
@@ -228,7 +248,28 @@ export class PostsService {
     try {
       const updatedPost = await this.prismaService.post.update({
         where: { id: id },
-        data: updatePostDto
+        data: updatePostDto,
+        include: {
+          user: true,
+          location: true,
+          likes: {
+            include: {
+              user: true,
+            },
+          },
+          comments: {
+            include: {
+              user: true,
+            },
+          },
+          followers: true,
+          attending: true,
+          applications: {
+            include: {
+              notification: true
+            }
+          },
+        },
       })
       if (updatedPost) {
         return { message: `Successfully updated post` }

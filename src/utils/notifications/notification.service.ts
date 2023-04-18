@@ -75,7 +75,9 @@ export class NotificationService {
             like: true, 
             follow: true, 
             chat: true, 
-            collab: true 
+            collab: true,
+            attending: true,
+            applied: true,
           }
         })
         if (allNotification) {
@@ -103,7 +105,9 @@ export class NotificationService {
           like: true, 
           follow: true, 
           chat: true, 
-          collab: true 
+          collab: true,
+          attending: true,
+          applied: true,
         }
       })
       if (allNotification) {
@@ -131,7 +135,9 @@ export class NotificationService {
           like: true, 
           follow: true, 
           chat: true, 
-          collab: true 
+          collab: true,
+          attending: true,
+          applied: true,
         }
       })
       if (allNotification) {
@@ -156,7 +162,9 @@ export class NotificationService {
           like: true, 
           follow: true, 
           chat: true, 
-          collab: true 
+          collab: true,
+          attending: true,
+          applied: true,
         }
       })
       if (allNotification) {
@@ -181,7 +189,9 @@ export class NotificationService {
           like: true, 
           follow: true, 
           chat: true, 
-          collab: true 
+          collab: true,
+          attending: true,
+          applied: true,
         }
       })
       if (allNotification) {
@@ -206,7 +216,9 @@ export class NotificationService {
           like: true, 
           follow: true, 
           chat: true, 
-          collab: true 
+          collab: true,
+          attending: true,
+          applied: true,
         }
       })
       if (allNotification) {
@@ -231,7 +243,9 @@ export class NotificationService {
           like: true, 
           follow: true, 
           chat: true, 
-          collab: true 
+          collab: true,
+          attending: true,
+          applied: true,
         }
       })
       if (notification) {
@@ -257,7 +271,9 @@ export class NotificationService {
               like: true, 
               follow: true, 
               chat: true, 
-              collab: true 
+              collab: true,
+              attending: true,
+              applied: true,
             }
         })
 

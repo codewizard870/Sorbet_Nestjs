@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/utils/prisma/prisma.service";
-import { CreateAttendDto } from "./dto/create-attending-dto";
-import { UpdateAttendDto } from "./dto/update-attending-dto";
+import { CreateAttendDto } from "./dto/create-attend-dto";
+import { UpdateAttendDto } from "./dto/update-attend-dto";
 
 @Injectable()
 export class AttendService {

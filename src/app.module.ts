@@ -27,6 +27,7 @@ import { NotificationModule } from "./utils/notifications/notification.module";
 import { NearModule } from "./utils/near/near.module";
 import { NotificationGateway } from './utils/websocket/notification.gateway';
 import { AttendModule } from "./utils/attend/attend.module";
+import { ApplyModule } from "./utils/apply/apply.module";
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { AttendModule } from "./utils/attend/attend.module";
     FollowModule,
     NotificationModule,
     NearModule,
-    AttendModule
+    AttendModule,
+    ApplyModule,
   ],
   controllers: [AppController],
   providers: [
