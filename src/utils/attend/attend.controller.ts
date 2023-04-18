@@ -9,8 +9,8 @@ import {
     Request
   } from "@nestjs/common";
   import { AttendService } from "./attend.service";
-  import { CreateAttendDto } from "./dto/create-attending-dto";
-  import { UpdateAttendDto } from "./dto/update-attending-dto";
+  import { CreateAttendDto } from "./dto/create-attend-dto";
+  import { UpdateAttendDto } from "./dto/update-attend-dto";
   import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
   
   @ApiBearerAuth()
@@ -54,4 +54,3 @@ import {
       return await this.attendService.removeAttend(id)
     }
   }
-  
