@@ -16,6 +16,7 @@ import { CreateLikeDto } from "src/utils/like/dto/create-like-dto";
 import { CreateCommentDto } from "src/utils/comment/dto/create-comment-dto";
 import { UpdateCommentDto } from "src/utils/comment/dto/update-comment-dto";
 import { PostType } from "@prisma/client";
+
 @ApiBearerAuth()
 @ApiTags("Posts")
 @Controller("/posts")
