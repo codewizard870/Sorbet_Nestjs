@@ -53,7 +53,10 @@ export class NotificationGateway
   @SubscribeMessage('sendNotification')
   handleSendNotification(
     // client: any,
-    senderId: string, receiverId: string, type: string ,
+    senderId: string, 
+    receiverId: string, 
+    type: string,
+    postId?: string
   ) {
     console.log("SENDING NOTIFICATION...")
     const receiver = this.getUser(receiverId);
@@ -61,6 +64,7 @@ export class NotificationGateway
       this.server.to(receiver.socketId).emit('getNotification', {
         senderId: senderId,
         type: type,
+        postId: postId ? postId : null
       });
     }
     console.log("NOTIFICATION SENT!")
