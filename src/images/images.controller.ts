@@ -28,37 +28,38 @@ export class ImagesController {
     schema: {
       type: 'object',
       properties: {
-        bucketName: { type: 'string' },
-        userId: { type: 'string' },
         file: {
           type: 'string',
           format: 'binary',
         },
+        isVideo: { type: 'boolean' },
+        bucketName: { type: 'string' },
+        userId: { type: 'string' },
       },
     },
   })
   @ApiConsumes('multipart/form-data')
-  async uploadImage
+  async uploadFile
     (
       @Body() body: CreateImageDto,
       @UploadedFile() file: Express.Multer.File,
-    ): Promise<{ imageUrl: string }> {
-    return await this.imagesService.uploadImage(file, body.bucketName, body.userId);
+    ): Promise<{ fileUrl: string }> {
+    return await this.imagesService.upload(file, body.isVideo, body.bucketName, body.userId);
 
   }
 
-  @Get("getMetadata/:bucketName/:userId")
-  async getMetadata(@Param("bucketName") bucketName: string, @Param("userId") userId: string): Promise<any> {
-    return await this.imagesService.getImageMetadata(bucketName, userId)
+  @Get("getMetadata/:isVideo/:bucketName/:userId")
+  async getMetadata(@Param("isVideo") isVideo: boolean, @Param("bucketName") bucketName: string, @Param("userId") userId: string): Promise<any> {
+    return await this.imagesService.getMetadata(isVideo, bucketName, userId)
   }
 
-  @Get("download/:bucketName/:userId")
-  async downloadImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
-    return await this.imagesService.downloadImage(bucketName, userId)
+  @Get("download/:isVideo/:bucketName/:userId")
+  async downloadFile(@Param("isVideo") isVideo: boolean, @Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+    return await this.imagesService.download(isVideo, bucketName, userId)
   }
 
-  @Delete('delete/:bucketName/:userId')
-  async deleteImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
-    return await this.imagesService.deleteImage(bucketName, userId)
+  @Delete('delete/:isVideo/:bucketName/:userId')
+  async deleteFile(@Param("isVideo") isVideo: boolean, @Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+    return await this.imagesService.delete(isVideo, bucketName, userId)
   }
 }
