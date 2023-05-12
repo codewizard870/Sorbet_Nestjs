@@ -18,14 +18,14 @@ export class ImagesService {
     projectId: 'aerobic-badge-379110',
   })
   
-  uploadFile = async (file: Express.Multer.File, fileType: string, bucketName: string, userId: string) => {
-    const fileExtention = fileType === 'image' ? '.png' : fileType === 'video' ? '.mp4' : null;
+  uploadFile = async (file: Express.Multer.File, isVideo: boolean, bucketName: string, userId: string) => {
+    const fileExtention = isVideo ? '.mp4' : '.png'
     const storage = this.storage;
     const bucket = storage.bucket(bucketName);
     const gcsFileName = `${userId}${fileExtention}`;
     const options = {
       metadata: {
-        contentType: fileType === 'image' ? 'image/png' : 'video/mp4',
+        contentType: isVideo ? 'video/mp4' : 'image/png',
       },
     };
   
@@ -54,9 +54,9 @@ export class ImagesService {
     return { fileUrl };
   }
 
-  getFileMetadata = async (fileType: string, bucketName: string, userId: string) => {
+  getFileMetadata = async (isVideo: boolean, bucketName: string, userId: string) => {
     try {
-      const fileExtention = fileType === 'image' ? '.png' : fileType === 'video' ? '.mp4' : null;
+      const fileExtention = isVideo ? '.mp4' : '.png'
       const bucket = this.storage.bucket(bucketName)
       const gcsFileName = `${userId}${fileExtention}`;
 
@@ -70,9 +70,9 @@ export class ImagesService {
     }
   }
 
-  downloadFile = async (fileType: string, bucketName: string, userId: string) => {
+  downloadFile = async (isVideo: boolean, bucketName: string, userId: string) => {
     try {
-      const fileExtention = fileType === 'image' ? '.png' : fileType === 'video' ? '.mp4' : null;
+      const fileExtention = isVideo ? '.mp4' : '.png'
       const bucket = this.storage.bucket(bucketName)
       const gcsFileName = `${userId}${fileExtention}`;
 
@@ -96,9 +96,9 @@ export class ImagesService {
     }
   }
 
-  deleteFile = async (fileType: string, bucketName: string, userId: string) => {
+  deleteFile = async (isVideo: boolean, bucketName: string, userId: string) => {
     try {
-        const fileExtention = fileType === 'image' ? '.png' : fileType === 'video' ? '.mp4' : null;
+      const fileExtention = isVideo ? '.mp4' : '.png'
         const gcsFileName = `${userId}${fileExtention}`;
         const bucket = await this.storage.bucket(bucketName)
         const file = bucket.file(gcsFileName)
@@ -112,11 +112,11 @@ export class ImagesService {
     }
   }
 
-  async upload(file: Express.Multer.File, fileType: string, bucketName: string, userId: string) {
+  async upload(file: Express.Multer.File, isVideo: boolean, bucketName: string, userId: string) {
     try {
       return await this.uploadFile(
         file,
-        fileType,
+        isVideo,
         bucketName,
         userId
       )
@@ -127,25 +127,25 @@ export class ImagesService {
     }
   }
 
-  async getMetadata(fileType: string, bucketName: string, userId: string) {
+  async getMetadata(isVideo: boolean, bucketName: string, userId: string) {
     return await this.getFileMetadata(
-      fileType,
+      isVideo,
       bucketName,
       userId
     )
   }
 
-  async download(fileType: string, bucketName: string, userId: string) {
+  async download(isVideo: boolean, bucketName: string, userId: string) {
     return await this.downloadFile(
-      fileType,
+      isVideo,
       bucketName,
       userId
     )
   }
 
-  async delete(fileType: string, bucketName: string, userId: string) {
+  async delete(isVideo: boolean, bucketName: string, userId: string) {
     return await this.deleteFile(
-      fileType,
+      isVideo,
       bucketName,
       userId
     )
