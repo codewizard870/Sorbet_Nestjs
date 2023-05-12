@@ -18,45 +18,47 @@ export class ImagesService {
     projectId: 'aerobic-badge-379110',
   })
   
-  uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string) => {
-    const storage = this.storage
-    const bucket = storage.bucket(bucketName)
-    const gcsFileName = `${userId}.png`
+  uploadFile = async (file: Express.Multer.File, fileType: string, bucketName: string, userId: string) => {
+    const fileExtention = fileType === 'image' ? '.png' : fileType === 'video' ? '.mp4' : null;
+    const storage = this.storage;
+    const bucket = storage.bucket(bucketName);
+    const gcsFileName = `${userId}${fileExtention}`;
     const options = {
       metadata: {
-        contentType: 'image/png',
+        contentType: fileType === 'image' ? 'image/png' : 'video/mp4',
       },
-    }
-
-    const stream = bucket.file(gcsFileName).createWriteStream(options)
+    };
+  
+    const stream = bucket.file(gcsFileName).createWriteStream(options);
     stream.on('error', (error) => {
-      console.error(error)
-    })
-
+      console.error(error);
+    });
+  
     stream.on('finish', async () => {
-      await bucket.file(gcsFileName).makePublic()
-    })
-
-    stream.end(file.buffer)
-
-    const imageUrl = await new Promise<string>((resolve, reject) => {
+      await bucket.file(gcsFileName).makePublic();
+    });
+  
+    stream.end(file.buffer);
+  
+    const fileUrl = await new Promise<string>((resolve, reject) => {
       stream.on('finish', () => {
-        const publicUrl = `https://storage.googleapis.com/${bucketName}/${gcsFileName}`
-        resolve(publicUrl)
-      })
-
+        const publicUrl = `https://storage.googleapis.com/${bucketName}/${gcsFileName}`;
+        resolve(publicUrl);
+      });
+  
       stream.on('error', (error) => {
-        reject(error)
-      })
-    })
-
-    return { imageUrl }
+        reject(error);
+      });
+    });
+  
+    return { fileUrl };
   }
 
-  getFileMetadata = async (bucketName: string, userId: string) => {
+  getFileMetadata = async (fileType: string, bucketName: string, userId: string) => {
     try {
+      const fileExtention = fileType === 'image' ? '.png' : fileType === 'video' ? '.mp4' : null;
       const bucket = this.storage.bucket(bucketName)
-      const gcsFileName = `${userId}.png`
+      const gcsFileName = `${userId}${fileExtention}`;
 
       const file = bucket.file(gcsFileName)
       const [metadata] = await file.getMetadata()
@@ -68,10 +70,11 @@ export class ImagesService {
     }
   }
 
-  downloadFile = async (bucketName: string, userId: string) => {
+  downloadFile = async (fileType: string, bucketName: string, userId: string) => {
     try {
+      const fileExtention = fileType === 'image' ? '.png' : fileType === 'video' ? '.mp4' : null;
       const bucket = this.storage.bucket(bucketName)
-      const gcsFileName = `${userId}.png`
+      const gcsFileName = `${userId}${fileExtention}`;
 
       const file = bucket.file(gcsFileName)
       const stream = file.createReadStream()
@@ -93,25 +96,27 @@ export class ImagesService {
     }
   }
 
-  deleteFile = async (bucketName: string, userId: string) => {
+  deleteFile = async (fileType: string, bucketName: string, userId: string) => {
     try {
-        const fileName = userId + '.png'
+        const fileExtention = fileType === 'image' ? '.png' : fileType === 'video' ? '.mp4' : null;
+        const gcsFileName = `${userId}${fileExtention}`;
         const bucket = await this.storage.bucket(bucketName)
-        const file = bucket.file(fileName)
+        const file = bucket.file(gcsFileName)
         await file.delete()
 
-        console.log(`gs://${bucketName}/${fileName} deleted`)
-        return { message: `Successfully deleted file: ${fileName} from bucket: ${bucketName}` }
+        console.log(`gs://${bucketName}/${gcsFileName} deleted`)
+        return { message: `Successfully deleted file: ${gcsFileName} from bucket: ${bucketName}` }
     }
     catch (error) {
       console.error(error)
     }
   }
 
-  async uploadImage(file: Express.Multer.File, bucketName: string, userId: string) {
+  async upload(file: Express.Multer.File, fileType: string, bucketName: string, userId: string) {
     try {
       return await this.uploadFile(
         file,
+        fileType,
         bucketName,
         userId
       )
@@ -122,22 +127,25 @@ export class ImagesService {
     }
   }
 
-  async getImageMetadata(bucketName: string, userId: string) {
+  async getMetadata(fileType: string, bucketName: string, userId: string) {
     return await this.getFileMetadata(
+      fileType,
       bucketName,
       userId
     )
   }
 
-  async downloadImage(bucketName: string, userId: string) {
+  async download(fileType: string, bucketName: string, userId: string) {
     return await this.downloadFile(
+      fileType,
       bucketName,
       userId
     )
   }
 
-  async deleteImage(bucketName: string, userId: string) {
+  async delete(fileType: string, bucketName: string, userId: string) {
     return await this.deleteFile(
+      fileType,
       bucketName,
       userId
     )

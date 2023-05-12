@@ -8,13 +8,21 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  fileType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   bucketName: string;
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   userId: string;
 
-  constructor(file: Express.Multer.File, bucketName: string, userId: string) {
+  constructor(file: Express.Multer.File, fileType: string, bucketName: string, userId: string) {
     this.file = file;
+    this.fileType = fileType;
     this.bucketName = bucketName;
     this.userId = userId;
   }

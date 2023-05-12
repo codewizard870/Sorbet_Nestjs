@@ -28,6 +28,7 @@ export class ImagesController {
     schema: {
       type: 'object',
       properties: {
+        fileType: { type: 'string' },
         bucketName: { type: 'string' },
         userId: { type: 'string' },
         file: {
@@ -38,27 +39,27 @@ export class ImagesController {
     },
   })
   @ApiConsumes('multipart/form-data')
-  async uploadImage
+  async uploadFile
     (
       @Body() body: CreateImageDto,
       @UploadedFile() file: Express.Multer.File,
-    ): Promise<{ imageUrl: string }> {
-    return await this.imagesService.uploadImage(file, body.bucketName, body.userId);
+    ): Promise<{ fileUrl: string }> {
+    return await this.imagesService.upload(file, body.fileType, body.bucketName, body.userId);
 
   }
 
-  @Get("getMetadata/:bucketName/:userId")
-  async getMetadata(@Param("bucketName") bucketName: string, @Param("userId") userId: string): Promise<any> {
-    return await this.imagesService.getImageMetadata(bucketName, userId)
+  @Get("getMetadata/:fileType/:bucketName/:userId")
+  async getMetadata(@Param("fileType") fileType: string, @Param("bucketName") bucketName: string, @Param("userId") userId: string): Promise<any> {
+    return await this.imagesService.getMetadata(fileType, bucketName, userId)
   }
 
-  @Get("download/:bucketName/:userId")
-  async downloadImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
-    return await this.imagesService.downloadImage(bucketName, userId)
+  @Get("download/:fileType/:bucketName/:userId")
+  async downloadFile(@Param("fileType") fileType: string, @Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+    return await this.imagesService.download(fileType, bucketName, userId)
   }
 
-  @Delete('delete/:bucketName/:userId')
-  async deleteImage(@Param("bucketName") bucketName: string, @Param("userId") userId: string) {
-    return await this.imagesService.deleteImage(bucketName, userId)
+  @Delete('delete/:fileType/:bucketName/:userId')
+  async deleteFile(@Param("fileType") fileType: string, @Param("bucketName") bucketName: string, @Param("userId") userId: string) {
+    return await this.imagesService.delete(fileType, bucketName, userId)
   }
 }
