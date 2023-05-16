@@ -18,39 +18,37 @@ export class ImagesService {
     projectId: 'aerobic-badge-379110',
   })
   
-  uploadFile = async (file: Express.Multer.File, isVideo: boolean, bucketName: string, userId: string) => {
-    const fileExtention = isVideo ? '.mp4' : '.png'
+  uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string, isVideo?: boolean) => {
+    const fileExtention = isVideo ? '.mp4' : '.png';
     const storage = this.storage;
     const bucket = storage.bucket(bucketName);
     const gcsFileName = `${userId}${fileExtention}`;
-    const options = {
-      metadata: {
-        contentType: isVideo ? 'video/mp4' : 'image/png',
-      },
-    };
-  
-    const stream = bucket.file(gcsFileName).createWriteStream(options);
+    const contentType = isVideo ? 'video/mp4' : 'image/png';
+    const metadata = { contentType };
+    const stream = bucket.file(gcsFileName).createWriteStream({ metadata });
+    
+    // Set up stream event listeners
     stream.on('error', (error) => {
       console.error(error);
     });
-  
+    
     stream.on('finish', async () => {
       await bucket.file(gcsFileName).makePublic();
     });
-  
+    
     stream.end(file.buffer);
-  
+    
     const fileUrl = await new Promise<string>((resolve, reject) => {
       stream.on('finish', () => {
         const publicUrl = `https://storage.googleapis.com/${bucketName}/${gcsFileName}`;
         resolve(publicUrl);
       });
-  
+    
       stream.on('error', (error) => {
         reject(error);
       });
     });
-  
+    
     return { fileUrl };
   }
 
@@ -112,13 +110,13 @@ export class ImagesService {
     }
   }
 
-  async upload(file: Express.Multer.File, isVideo: boolean, bucketName: string, userId: string) {
+  async upload(file: Express.Multer.File, bucketName: string, userId: string, isVideo?: boolean) {
     try {
       return await this.uploadFile(
         file,
-        isVideo,
         bucketName,
-        userId
+        userId,
+        isVideo
       )
     }
     catch (error) {
