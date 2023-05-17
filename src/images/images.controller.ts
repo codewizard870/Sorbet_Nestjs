@@ -44,7 +44,7 @@ export class ImagesController {
       @Body() body: CreateImageDto,
       @UploadedFile() file: Express.Multer.File,
     ): Promise<{ fileUrl: string }> {
-    return await this.imagesService.upload(file, body.fileType, body.bucketName, body.userId);
+    return await this.imagesService.upload(file, body.bucketName, body.userId, body.fileType);
 
   }
 
