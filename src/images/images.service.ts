@@ -18,12 +18,12 @@ export class ImagesService {
     projectId: 'aerobic-badge-379110',
   })
   
-  uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string, isVideo?: boolean) => {
-    const fileExtention = isVideo ? '.mp4' : '.png';
+  uploadFile = async (file: Express.Multer.File, bucketName: string, userId: string, fileType?: string) => {
+    const fileExtention = fileType === 'video' ? '.mp4' : '.png';
     const storage = this.storage;
     const bucket = storage.bucket(bucketName);
     const gcsFileName = `${userId}${fileExtention}`;
-    const contentType = isVideo ? 'video/mp4' : 'image/png';
+    const contentType = fileType === 'video' ? 'video/mp4' : 'image/png';
     const metadata = { contentType };
     const stream = bucket.file(gcsFileName).createWriteStream({ metadata });
     
@@ -110,13 +110,13 @@ export class ImagesService {
     }
   }
 
-  async upload(file: Express.Multer.File, bucketName: string, userId: string, isVideo?: boolean) {
+  async upload(file: Express.Multer.File, bucketName: string, userId: string, fileType?: string) {
     try {
       return await this.uploadFile(
         file,
         bucketName,
         userId,
-        isVideo
+        fileType
       )
     }
     catch (error) {
