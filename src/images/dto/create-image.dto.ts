@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateImageDto {
   @ApiProperty({ type: 'string', format: 'binary' })
@@ -7,8 +7,8 @@ export class CreateImageDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  isVideo: boolean;
+  @IsOptional()
+  fileType?: string;
 
   @ApiProperty()
   @IsString()
@@ -20,9 +20,9 @@ export class CreateImageDto {
   @IsNotEmpty()
   userId: string;
 
-  constructor(file: Express.Multer.File, isVideo: boolean, bucketName: string, userId: string) {
+  constructor(file: Express.Multer.File, fileType: string, bucketName: string, userId: string) {
     this.file = file;
-    this.isVideo = isVideo;
+    this.fileType = fileType;
     this.bucketName = bucketName;
     this.userId = userId;
   }

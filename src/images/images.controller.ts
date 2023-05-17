@@ -24,27 +24,27 @@ export class ImagesController {
   @Post("upload")
   @UseInterceptors(FileExtender)
   @UseInterceptors(FileInterceptor('file'))
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-        isVideo: { type: 'boolean' },
-        bucketName: { type: 'string' },
-        userId: { type: 'string' },
-      },
-    },
-  })
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       file: {
+  //         type: 'string',
+  //         format: 'binary',
+  //       },
+  //       fileType: { type: 'string' },
+  //       bucketName: { type: 'string' },
+  //       userId: { type: 'string' },
+  //     },
+  //   },
+  // })
   @ApiConsumes('multipart/form-data')
   async uploadFile
     (
       @Body() body: CreateImageDto,
       @UploadedFile() file: Express.Multer.File,
     ): Promise<{ fileUrl: string }> {
-    return await this.imagesService.upload(file, body.bucketName, body.userId, body.isVideo);
+    return await this.imagesService.upload(file, body.fileType, body.bucketName, body.userId);
 
   }
 
