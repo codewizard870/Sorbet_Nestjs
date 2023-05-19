@@ -39,5 +39,5 @@ export class CreateUserDto {
 
   @IsOptional()
   @ApiProperty()
-  widgets: String
+  widgets: Object[]
 }

@@ -186,6 +186,7 @@ export class UsersService {
             profileBannerImage: data.profileBannerImage,
             tempLocation: data.tempLocation,
             tags: data.tags,
+            widgets: data.widgets,
             updatedAt: new Date(Date.now())
           },
           include: { 
