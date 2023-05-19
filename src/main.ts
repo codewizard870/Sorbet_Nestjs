@@ -28,7 +28,7 @@ async function bootstrap() {
   app.use(passport.session())
   // openapi
   const config = new DocumentBuilder()
-    .setTitle("Conversion App")
+    .setTitle("ThriveIN API")
     .setDescription("...")
     .setVersion("1.0")
     .addBearerAuth()
