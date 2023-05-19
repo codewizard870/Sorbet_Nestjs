@@ -36,4 +36,8 @@ export class CreateUserDto {
   @IsOptional()
   @ApiProperty()
   tempLocation: String
+
+  @IsOptional()
+  @ApiProperty()
+  widgets: String
 }
