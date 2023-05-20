@@ -12,7 +12,9 @@ import {
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { ApiBearerAuth, ApiTags, ApiBody } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags, ApiBody, ApiOperation, ApiParam } from "@nestjs/swagger";
+import { CreateWidgetDto } from "../widgets/dto/create-widgets-dto";
+
 
 @ApiTags("Users")
 @Controller("/user")
@@ -68,9 +70,11 @@ export class UsersController {
     )
   }
 
-  @Delete(":id")
-  delete(@Param("id") id: string) {
-    return this.usersService.remove(id)
+  @Patch(':userId/reorder')
+  @ApiOperation({ summary: 'Reorder widgets for a user' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  async reorder(@Param('userId') userId: string, @Body() updatedWidgetOrder: string[]): Promise<any> {
+    await this.usersService.reorderWidgets(userId, updatedWidgetOrder);
   }
 
   @Patch("addUserToGroup")
