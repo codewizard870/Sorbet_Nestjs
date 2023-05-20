@@ -1,6 +1,7 @@
 import {
     BadRequestException,
     Injectable,
+    NotFoundException,
     UnauthorizedException,
   } from "@nestjs/common";
 import { PrismaService } from "src/utils/prisma/prisma.service";
@@ -211,6 +212,43 @@ const INSTAGRAM_BASIC_DISPLAY_APP_SECRET = process.env.INSTAGRAM_BASIC_DISPLAY_A
       catch (error) {
         console.error(error)
         throw new Error("An error occured. Please try again.")
+      }
+    }
+
+    async reorderWidgets(userId: string, updatedWidgetOrder: object[]) {
+      try {
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+  
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+  
+        const promises = updatedWidgetOrder.map(async (widget, index) => {
+          await this.prisma.widget.updateMany({
+            //@ts-ignore
+            where: { id: widget.id },
+            data: { order: index },
+          });
+        });
+    
+        await Promise.all(promises);
+    
+        const updatedUser = await this.prisma.user.findUnique({
+          where: { id: userId },
+          include: {
+            widgets: {
+              orderBy: {
+                order: 'asc',
+              },
+            },
+          },
+        });
+    
+        return updatedUser;
+      } 
+      catch (error) {
+        console.error(error);
+        throw new BadRequestException('An error occurred. Please try again.', error);
       }
     }
 

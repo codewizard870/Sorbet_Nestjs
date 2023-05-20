@@ -12,7 +12,7 @@ import {
   import { WidgetsService } from "./widgets.service";
   import { CreateWidgetDto } from "./dto/create-widgets-dto";
   import { UpdateWidgetDto } from "./dto/update-widgets-dto";
-  import { ApiBearerAuth, ApiTags, ApiBody } from "@nestjs/swagger";
+  import { ApiBearerAuth, ApiTags, ApiBody, ApiOperation, ApiParam } from "@nestjs/swagger";
 
     @ApiTags("Widgets")
     @Controller("/widgets")
@@ -56,6 +56,14 @@ import {
     @Delete("deleteByIndex/:userId/:widgetIndex")
     deleteWidgetByIndex(@Param("userId") userId: string, @Param("widgetIndex") widgetIndex: string) {
       return this.widgetsService.deleteByIndex(userId, widgetIndex)
+    }
+
+    @Patch(':userId/reorder')
+    @ApiOperation({ summary: 'Reorder widgets for a user' })
+    @ApiParam({ name: 'userId', description: 'User ID' })
+    @ApiBody({ schema: { type: 'array', items: { type: 'object' } } })
+    async reorder(@Param('userId') userId: string, @Body() updatedWidgetOrder: object[]): Promise<any> {
+      return await this.widgetsService.reorderWidgets(userId, updatedWidgetOrder);
     }
 
     @Get("/getSoundcloudTrackId/:soundcloudUrl")
