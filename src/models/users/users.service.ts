@@ -6,6 +6,7 @@ import {
 import { PrismaService } from "src/utils/prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { CreateWidgetDto } from "../widgets/dto/create-widgets-dto";
 
 @Injectable()
 export class UsersService {
@@ -186,7 +187,6 @@ export class UsersService {
             profileBannerImage: data.profileBannerImage,
             tempLocation: data.tempLocation,
             tags: data.tags,
-            widgets: data.widgets,
             updatedAt: new Date(Date.now())
           },
           include: { 
@@ -215,6 +215,56 @@ export class UsersService {
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async reorderWidgets(userId: string, updatedWidgetOrder: string[]) {
+    try {
+      console.log('updatedWidgetOrder', updatedWidgetOrder);
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { widgets: true },
+      });
+  
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      console.log('USER', user);
+  
+      // Create a mapping of widget IDs to their updated index
+      const widgetIndexMap = updatedWidgetOrder.reduce(
+        (map, widgetId, index) => {
+          map[widgetId] = index;
+          return map;
+        },
+        {}
+      );
+  
+      // Sort the widgets based on the updated index
+      const sortedWidgets = user.widgets.sort(
+        (a, b) => widgetIndexMap[a.id] - widgetIndexMap[b.id]
+      );
+  
+      console.log('WIDGETS', sortedWidgets);
+  
+      // Update the user object with the new widget order
+      const updatedUser = await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          widgets: {
+            set: sortedWidgets.map((widget) => ({ id: widget.id })),
+          },
+        },
+        include: { widgets: true },
+      });
+  
+      // Handle the updated user object as needed
+      console.log('User with reordered widgets:', updatedUser);
+      return updatedUser;
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException('An error occurred. Please try again.', error);
     }
   }
 

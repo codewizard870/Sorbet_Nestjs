@@ -11,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   // controller validation
   app.useGlobalPipes(new ValidationPipe())
-  app.enableCors()
+  app.enableCors({ origin: '*' })
 
   // Add the WebSocket gateway
   // const notificationGateway: any = app.get(NotificationGateway);

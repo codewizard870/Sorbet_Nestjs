@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-// import { WidgetType } from "@prisma/client";
 import { IsOptional } from "class-validator";
 
 export class CreateWidgetDto {
@@ -10,12 +9,6 @@ export class CreateWidgetDto {
   @IsOptional()
   @ApiProperty()
   url: string
-
-  // @ApiProperty({
-  //   description: "description of the Widget Type",
-  //   enum: WidgetType,
-  // })
-  // type: WidgetType;
 
   @IsOptional()
   @ApiProperty()
