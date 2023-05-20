@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Query,
+  Put,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -68,13 +69,6 @@ export class UsersController {
       id,
       updateUserDto
     )
-  }
-
-  @Patch(':userId/reorder')
-  @ApiOperation({ summary: 'Reorder widgets for a user' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
-  async reorder(@Param('userId') userId: string, @Body() updatedWidgetOrder: string[]): Promise<any> {
-    await this.usersService.reorderWidgets(userId, updatedWidgetOrder);
   }
 
   @Patch("addUserToGroup")
