@@ -1,0 +1,14 @@
+runtime: nodejs16
+env_variables:
+  DATABASE_URL: mongodb+srv://kitarusorbet:88j2vd1HB0jd12i8@cluster0.tekdwl9.mongodb.net/test?retryWrites=true&w=majority
+  JWTSECRET: "ABQWF"
+  EMAIL_USER: thrivein-nestjs@outlook.com
+  EMAIL_PASSWORD: J6e!VX7PAj!-dx.d7rmeqtq
+  HOST: http://thrivein.vangel.is/
+  PORT: 8000
+
+  GCP_PROFILE_BUCKET_NAME: 'sorbet_profile'
+  GCP_KEY_FILE_NAME: './sorbet-405010-948196898c80.json'
+
+  DRIBBLE_CLIENT_ID: "c7b662cbaac88af80d7a31776ffc8fe8c38c93389cfc175bfe31df3dcf556899"
+  DRIBBLE_CLIENT_SECRET: "afb0023e98acb965af32c1a174bf924da48975a7393780b1a45cb3ef51b3ae66"
