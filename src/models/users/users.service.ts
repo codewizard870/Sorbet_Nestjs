@@ -28,6 +28,8 @@ export class UsersService {
           data: {
             nearWallet: address,
             email: email,
+            firstName: 'John',
+            lastName: 'Smith',
             confirmationCode: (Math.random() * 10000).toString(),
           },
         })
@@ -127,7 +129,7 @@ export class UsersService {
             orderBy: {
               order: 'asc',
             },
-          }, 
+          },
           followers: true, 
           following: true, 
           likes: true, 
@@ -150,10 +152,25 @@ export class UsersService {
     }
   }
 
+  async getUserFromUserId(userId: string) {
+    try {
+      const result = await this.prisma.user.findFirst({
+        where: { id: userId },
+      })
+      if (result) {
+        return result
+      }
+    } 
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
   async getAll() {
     try {
       const result = await this.prisma.user.findMany({
-        include: { 
+        include: {
           jobProfile: true, 
           post: true, 
           groups: true, 
@@ -185,6 +202,56 @@ export class UsersService {
     }
   }
 
+  // async updateUserProfile(id: string, data: any) {
+  //   try {
+  //     const user = await this.prisma.user.findFirst({
+  //       where: { id: id },
+  //     })
+  //     if (user) {
+  //       const result = await this.prisma.user.update({
+  //         where: { id: id },
+  //         data: {
+  //           nearWallet: data.nearWallet,
+  //           firstName: data.firstName,
+  //           lastName: data.lastName,
+  //           title: data.title,
+  //           email: data.email,
+  //           bio: data.bio,
+  //           profileImage: data.profileImage,
+  //           profileBannerImage: data.profileBannerImage,
+  //           tempLocation: data.tempLocation,
+  //           tags: data.tags,
+  //           updatedAt: new Date(Date.now())
+  //         },
+  //         include: { 
+  //           jobProfile: true, 
+  //           post: true, 
+  //           groups: true, 
+  //           location: true, 
+  //           widgets: true, 
+  //           followers: true, 
+  //           following: true, 
+  //           likes: true, 
+  //           comments: true,
+  //           sender: true,
+  //           receiver: true,
+  //           mycontacts: true,
+  //           contacted: true,
+  //           attendings: true,
+  //           applications: true,
+  //         },
+  //       })
+  //       if (result) {
+  //         return result
+  //       }
+  //     }
+  //   }
+  //   catch (error) {
+  //     console.error(error)
+  //     throw new Error("An error occured. Please try again.")
+  //   }
+  // }
+
   async updateUserProfile(id: string, data: any) {
     try {
       const user = await this.prisma.user.findFirst({
@@ -205,24 +272,31 @@ export class UsersService {
             tempLocation: data.tempLocation,
             tags: data.tags,
             updatedAt: new Date(Date.now())
-          },
-          include: { 
-            jobProfile: true, 
-            post: true, 
-            groups: true, 
-            location: true, 
-            widgets: true, 
-            followers: true, 
-            following: true, 
-            likes: true, 
-            comments: true,
-            sender: true,
-            receiver: true,
-            mycontacts: true,
-            contacted: true,
-            attendings: true,
-            applications: true,
-          },
+          }
+        })
+        if (result) {
+          return result
+        }
+      }
+    }
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async deleteUserAvatar(id: string) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { id: id },
+      })
+      if (user) {
+        const result = await this.prisma.user.update({
+          where: { id: id },
+          data: {
+            profileImage: null,
+            updatedAt: new Date(Date.now())
+          }
         })
         if (result) {
           return result

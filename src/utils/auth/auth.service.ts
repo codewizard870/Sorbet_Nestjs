@@ -46,7 +46,7 @@ export class AuthService {
         const token = "";
         const newUser = await this.usersService.create(address, email, token);
         if (newUser) {
-          console.log("User successfully signed up")
+          console.log(newUser, "User successfully signed up")
           return newUser;
         }
         else
@@ -65,7 +65,8 @@ export class AuthService {
       })
       if (user) {
           console.log('User successfully signed in')
-          return user.confirmationCode;
+          return {user};
+          // return user.confirmationCode;
       } else {
         throw new Error('Error signing user in')
       }
@@ -73,6 +74,60 @@ export class AuthService {
     catch (error) {
       console.log(error)
       throw new Error('Error signing user in')
+    }
+  }
+
+  async signUpWithEmail(firstName: string, lastName: string, email: string, accountId: string) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { email: email },
+      })
+      if (!user) {        
+        const result = await this.prisma.user.create({
+          data: {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            accountId: accountId,
+          },
+        })
+        if (result) {
+          return result
+        }
+        } else {
+          throw new Error('User is aready exist')
+        }
+      }
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
+    }
+  }
+
+  async signInWithEmail(email: string) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { email: email},
+      })
+      if (user) {
+        // const token = "";
+        // console.log(token, typeof token, '!!!');
+        // const result = await this.prisma.user.update({
+        //   where: { email: email },
+        //   data: {
+        //     token: token,
+        //     updatedAt: new Date(Date.now())
+        //   }
+        // })
+        return {user};
+      }
+      else {
+        return {status: 'User is not exist'}
+      }
+    }
+    catch (error) {
+      console.error(error)
+      throw new Error("An error occured. Please try again.")
     }
   }
 

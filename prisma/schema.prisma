@@ -12,11 +12,12 @@ datasource db {
 
 model User {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
-  nearWallet          String?  @unique
+  nearWallet          String?  
   firstName           String?
   lastName            String?
+  accountId           String?
   title               String?
-  email               String?
+  email               String?  
   bio                 String?
   confirmationCode    String?
   profileImage        String?
@@ -48,8 +49,29 @@ model User {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime?
 
+  freelancer   Contract[] @relation("freelancer")
+  client       Contract[] @relation("client")
+
   mycontacts   Contact[] @relation("user")
   contacted    Contact[] @relation("contacted_user")
+
+  @@unique([nearWallet, email])
+}
+
+model Contract {
+  id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+  jobTitle            String?
+  jobDescription      String?
+  budget              String?
+  startTime           String?
+  status              String?
+  freelancer          User    @relation(name: "freelancer", fields: [freelancerId], references: [id])
+  freelancerId        String  @db.ObjectId
+  client              User?   @relation(name: "client", fields: [clientId], references: [id])
+  clientId            String  @db.ObjectId
+  projectId           String  @unique
+  createdAt           DateTime     @default(now())
+  
 }
 
 model JobProfile {

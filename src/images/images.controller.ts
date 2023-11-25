@@ -38,6 +38,14 @@ export class ImagesController {
   //     },
   //   },
   // })
+  async uploadAvatar
+    (
+      @Body() body: CreateImageDto,
+      @UploadedFile() file: Express.Multer.File,
+    ) {
+    return await this.imagesService.uploadAvatar(file, body.bucketName, body.userId, body.fileType);
+  }
+
   @ApiConsumes('multipart/form-data')
   async uploadFile
     (
@@ -45,7 +53,6 @@ export class ImagesController {
       @UploadedFile() file: Express.Multer.File,
     ): Promise<{ fileUrl: string }> {
     return await this.imagesService.upload(file, body.bucketName, body.userId, body.fileType);
-
   }
 
   @Get("getMetadata/:isVideo/:bucketName/:userId")

@@ -214,10 +214,15 @@ export class UsersController {
     )
   }
 
-  // @Get("userRecommendations")
-  // async userRecommendations(@Request() req) {
-  //   return await this.usersService.userRecommendations(
-  //     req.user.id
-  //   )
-  // }
+  @Get("getUserFromUserId/:userId")
+  async getUserFromUserId(@Param("userId") userId: string) {
+    return await this.usersService.getUserFromUserId(
+      userId
+    )
+  }
+
+  @Delete('deleteUserAvatar/:userId')
+  async deleteUserAvatar(@Param("userId") userId: string) {
+    return await this.usersService.deleteUserAvatar(userId)
+  }
 }

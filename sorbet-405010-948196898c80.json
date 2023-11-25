@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "sorbet-405010",
+  "private_key_id": "948196898c80197de913bc610f0bfbfd2f1b762e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCy0fEjbSl3YPUx\nnnZpj789wu4aRWPTrGp+xZassQFzNNKPxN2bvzszg/2JsVDPWEabnh85MLTNRrPE\nKbqaKqMUMiFt37lSkTaS8S5hbPoULb4iG8Z49TgAfiNbwW3sX6sJikSewy2MsNEH\nMt9l1JG5CzjCIuUZMvfv41FTaW43/TqV/MK/Rrg7WNHMJpL2jXuzZxjSMWgcl55E\n7bk+719arSZWfJ2YW4JQX6eJj9qey3h7vHB6x6H/X5zGar7ktKmNVk9qhYwW+LM1\nB8Oo/Zskwx/yh+gPoOCCLLzqErlnZd/UWMnLyEjNtcLTzF/+e6wpHDzI1XSjTBk/\ngnqPHdYJAgMBAAECggEAB8kY+gFC1swhhMxozKoJ6ikaZ4mpoeHN/bDB4Ykv3lmY\niNKqEOHDtLecknIGSg7GfThGVP28Q3s+cK4d7iAo20Re/PsKhTAmG4H1cl+1qCsB\nLhg+PQ41Jt1XEgPDEtFr/5V17SEjkq5wnWL/Q75cbV1yFk7BYYZc8eR4ahyrJDQX\nRAYxLf18mBo7JmFerWhxAEr+b3xkzDD/n1R8MuPNOaWV26TpSfmFf1R76VcIiEMp\n3csX6X7R+vGYSVrz3UCGaF13t3bTGS/+xJyB0m264QxN2ip4Gte5LRmk5w/82JHW\n6JH3taGe/k55N34mZK2TGMG1u6+VFmc2jU16LwjBIQKBgQDd9LEiJFtDSQzXKNOa\ne6nSkIA599Sviwm2b+T4XrUePwTg8SijWlg2nnccNmPR74vVx4SMI/7LKCGeYqHG\nNjlnl1nnRfszx3DcblS8/6X9VSIhUDa8by93rYoExIFU5/v+HXBr8OD0VfEIXi9v\nSlQ9Q9UshJds0i/xLQAbXNnbKQKBgQDOP3va59xXyo5ZFDXc8frOEWseBDhK1d7k\noP/HbOIm3ruu9mO9g1705+MG/rUIts/subeZSBsf00yNYgC77IU5eE1CExviiCgr\nanSWirLjcO/sDcgw7P/V6+ZmfAs3QIm+sAWOWaVdVYKgVP1uah3ruzpvxRVI/L4A\nTaGJ+tBf4QKBgQCsHCka43xNQaEOWp8zJH98QwbbbHzlHniKmlu/6JijepSK5RXx\nDYZn3BtaqiZfTVRukkcK8IKMAHOJQMxXSgbbeDaDqvVuolG27GsTH14UgmZz1KKN\nHd59+/iRV9s9/qGd3DAn02JstROxvG8l6kpGM4pi+fH9tULtzkpN7YMVeQKBgAOR\nmaUKCggC2z+zV9NA5KQYLRBR5l91H+w41PQwcCFYDUtTvBoVYdk/AfCnC57g+uwP\nspuWYdHFKDfyEC0wRIXgDQYtqnfa/0bxCp9oOvwwghZFjsc58ptS/6OaVd9Y4IlK\nJm52IqRgzGfV0KTOdUIU9Ufl0x52MRt0PG1Ux7JBAoGAGagrs+SNRumgWKW7BERg\nmfH3de6oe/5ODXHSBCuOHKh24DvK/LA+ThLCDV1HCHFBxmuVlCmpALO6jRvW3EFu\nsOgmRZZ/LmnxBgjcV9KWDqPKGx8KsTnkPSilpxpZxmlrQ+QHAXKBrs1Hq1ksAITW\nf2hLRvZoLSpW4W5/l9n8co8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "kitaru@sorbet-405010.iam.gserviceaccount.com",
+  "client_id": "111454083220585330047",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kitaru%40sorbet-405010.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -69,4 +69,20 @@ export class NotificationGateway
     }
     console.log("NOTIFICATION SENT!")
   }
+
+  @SubscribeMessage('milestoneChanged')
+  handleMilestone(
+    client: any,
+    data: any
+  ) {
+    console.log("Milestone changed...")
+    const receiver = this.getUser(data.receiverId);
+    if (receiver) {
+      this.server.to(receiver.socketId).emit('milestoneChanged', {
+        senderId: data.senderId,
+        type: data.type,
+      });
+      console.log(receiver, "mileStoneChanged SENT!")
+    }
+  }
 }

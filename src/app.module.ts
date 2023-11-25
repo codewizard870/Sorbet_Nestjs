@@ -28,11 +28,13 @@ import { NearModule } from "./utils/near/near.module";
 import { NotificationGateway } from './utils/websocket/notification.gateway';
 import { AttendModule } from "./utils/attend/attend.module";
 import { ApplyModule } from "./utils/apply/apply.module";
+import { ContractsModule } from "./chats/contracts/contracts.module";
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
+    ContractsModule,
     TokensModule,
     GoogleMapsModule,
     PostsModule,

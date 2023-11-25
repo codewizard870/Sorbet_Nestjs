@@ -28,7 +28,7 @@ export class CollabService {
       else {
         throw new BadRequestException('Failed creating collab')
       } 
-    } 
+    }
     catch (error) {
       console.error(error)
       throw new Error("An error occured. Please try again.")
