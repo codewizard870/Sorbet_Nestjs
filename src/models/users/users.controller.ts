@@ -225,4 +225,21 @@ export class UsersController {
   async deleteUserAvatar(@Param("userId") userId: string) {
     return await this.usersService.deleteUserAvatar(userId)
   }
+
+  @Post("searchUsers")
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        skills: { type: 'array' },
+        location: { type: 'string' }
+      },
+    },
+  })
+  async getUsersBySearch(@Body("skills") skills: string[], @Body('location') location: string) {
+    return await this.usersService.getUsersBySearch(
+      skills,
+      location
+    )
+  };
 }

@@ -735,6 +735,112 @@ export class UsersService {
     }
   }
 
+  async getUsersBySearch(skills: string[], location: string) {
+    console.log(skills, "skills");
+    try {
+      let users;
+      if (location == "" && skills.length === 0) {
+        users = await this.prisma.user.findMany({
+          include: {
+            jobProfile: true,
+            post: true,
+            groups: true,
+            location: true,
+            widgets: {
+              orderBy: {
+                order: "asc",
+              },
+            },
+            followers: true,
+            following: true,
+            likes: true,
+            comments: true,
+            sender: true,
+            receiver: true,
+            mycontacts: true,
+            contacted: true,
+            attendings: true,
+            applications: true,
+          },
+        });
+      } else if (location != "" && skills.length == 0) {
+        users = await this.prisma.user.findMany({
+          where: {
+            tempLocation: {
+              contains: location,
+            },
+          },
+          include: {
+            jobProfile: true,
+            post: true,
+            groups: true,
+            location: true,
+            widgets: {
+              orderBy: {
+                order: "asc",
+              },
+            },
+            followers: true,
+            following: true,
+            likes: true,
+            comments: true,
+            sender: true,
+            receiver: true,
+            mycontacts: true,
+            contacted: true,
+            attendings: true,
+            applications: true,
+          },
+        });
+      } else {
+        users = await this.prisma.user.findMany({
+          where: {
+            AND: [
+              {
+                tags: {
+                  hasSome: skills,
+                },
+              },
+              {
+                tempLocation: {
+                  contains: location,
+                },
+              },
+            ],
+          },
+          include: {
+            jobProfile: true,
+            post: true,
+            groups: true,
+            location: true,
+            widgets: {
+              orderBy: {
+                order: "asc",
+              },
+            },
+            followers: true,
+            following: true,
+            likes: true,
+            comments: true,
+            sender: true,
+            receiver: true,
+            mycontacts: true,
+            contacted: true,
+            attendings: true,
+            applications: true,
+          },
+        });
+      }
+
+      console.log(users, "Users with specified skills and location");
+
+      return users;
+    } catch (error) {
+      console.error(error);
+      throw new Error("An error occurred. Please try again.");
+    }
+  }
+
   // async userRecommendations(userId: string) {
   //   try {
   //     const user = await this.prisma.user.findFirst({
